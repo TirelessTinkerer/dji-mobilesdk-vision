@@ -13,18 +13,41 @@
 		02E2710C1F0EF6A900474319 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 02E2710A1F0EF6A900474319 /* Main.storyboard */; };
 		02E2710E1F0EF6A900474319 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 02E2710D1F0EF6A900474319 /* Assets.xcassets */; };
 		02E271111F0EF6A900474319 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 02E2710F1F0EF6A900474319 /* LaunchScreen.storyboard */; };
+		02E271321F0EFF3A00474319 /* VideoPreviewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02E2712B1F0EFB4900474319 /* VideoPreviewer.framework */; };
+		02E271331F0EFF3A00474319 /* VideoPreviewer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 02E2712B1F0EFB4900474319 /* VideoPreviewer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		71551C9756E476BFC50C6466 /* libPods-drone-cv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B35B3369076CC7343A4AACDD /* libPods-drone-cv.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		02E2711C1F0EF89600474319 /* PBXContainerItemProxy */ = {
+		02E2712A1F0EFB4900474319 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 02E271181F0EF89600474319 /* VideoPreviewer.xcodeproj */;
+			containerPortal = 02E271261F0EFB4900474319 /* VideoPreviewer.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 02A543FD1C3C51CB0083C11B;
 			remoteInfo = VideoPreviewer;
 		};
+		02E271341F0EFF3A00474319 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 02E271261F0EFB4900474319 /* VideoPreviewer.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 02A543FC1C3C51CB0083C11B;
+			remoteInfo = VideoPreviewer;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		02E271361F0EFF3A00474319 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				02E271331F0EFF3A00474319 /* VideoPreviewer.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		02E270FE1F0EF6A900474319 /* drone-cv.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "drone-cv.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -37,7 +60,7 @@
 		02E2710D1F0EF6A900474319 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		02E271101F0EF6A900474319 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		02E271121F0EF6A900474319 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		02E271181F0EF89600474319 /* VideoPreviewer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VideoPreviewer.xcodeproj; path = "../../Mobile-SDK-iOS/Sample Code/VideoPreviewer/VideoPreviewer.xcodeproj"; sourceTree = "<group>"; };
+		02E271261F0EFB4900474319 /* VideoPreviewer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VideoPreviewer.xcodeproj; path = "../../Mobile-SDK-iOS/Sample Code/VideoPreviewer/VideoPreviewer.xcodeproj"; sourceTree = "<group>"; };
 		0F8B5F0459EBB972032268B3 /* Pods-drone-cv.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-drone-cv.debug.xcconfig"; path = "Pods/Target Support Files/Pods-drone-cv/Pods-drone-cv.debug.xcconfig"; sourceTree = "<group>"; };
 		454EFA066911E0EC12E52339 /* Pods-drone-cv.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-drone-cv.release.xcconfig"; path = "Pods/Target Support Files/Pods-drone-cv/Pods-drone-cv.release.xcconfig"; sourceTree = "<group>"; };
 		B35B3369076CC7343A4AACDD /* libPods-drone-cv.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-drone-cv.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -48,6 +71,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				02E271321F0EFF3A00474319 /* VideoPreviewer.framework in Frameworks */,
 				71551C9756E476BFC50C6466 /* libPods-drone-cv.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -97,10 +121,10 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		02E271191F0EF89600474319 /* Products */ = {
+		02E271271F0EFB4900474319 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				02E2711D1F0EF89600474319 /* VideoPreviewer.framework */,
+				02E2712B1F0EFB4900474319 /* VideoPreviewer.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -108,7 +132,7 @@
 		744CA326CB6B2E7B5A6BD106 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				02E271181F0EF89600474319 /* VideoPreviewer.xcodeproj */,
+				02E271261F0EFB4900474319 /* VideoPreviewer.xcodeproj */,
 				B35B3369076CC7343A4AACDD /* libPods-drone-cv.a */,
 			);
 			name = Frameworks;
@@ -136,10 +160,12 @@
 				02E270FC1F0EF6A900474319 /* Resources */,
 				D7C582536F1D81199CFC3B7A /* [CP] Embed Pods Frameworks */,
 				5E3D3357E26F00DF516E791A /* [CP] Copy Pods Resources */,
+				02E271361F0EFF3A00474319 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				02E271351F0EFF3A00474319 /* PBXTargetDependency */,
 			);
 			name = "drone-cv";
 			productName = "drone-cv";
@@ -175,8 +201,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 02E271191F0EF89600474319 /* Products */;
-					ProjectRef = 02E271181F0EF89600474319 /* VideoPreviewer.xcodeproj */;
+					ProductGroup = 02E271271F0EFB4900474319 /* Products */;
+					ProjectRef = 02E271261F0EFB4900474319 /* VideoPreviewer.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -187,11 +213,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		02E2711D1F0EF89600474319 /* VideoPreviewer.framework */ = {
+		02E2712B1F0EFB4900474319 /* VideoPreviewer.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = VideoPreviewer.framework;
-			remoteRef = 02E2711C1F0EF89600474319 /* PBXContainerItemProxy */;
+			remoteRef = 02E2712A1F0EFB4900474319 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -269,6 +295,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		02E271351F0EFF3A00474319 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = VideoPreviewer;
+			targetProxy = 02E271341F0EFF3A00474319 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		02E2710A1F0EF6A900474319 /* Main.storyboard */ = {
@@ -392,7 +426,7 @@
 				INFOPLIST_FILE = "drone-cv/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.djizy.drone-cv";
+				PRODUCT_BUNDLE_IDENTIFIER = com.djizy.ActivationDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -407,7 +441,7 @@
 				INFOPLIST_FILE = "drone-cv/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.djizy.drone-cv";
+				PRODUCT_BUNDLE_IDENTIFIER = com.djizy.ActivationDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
