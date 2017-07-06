@@ -13,7 +13,18 @@
 		02E2710C1F0EF6A900474319 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 02E2710A1F0EF6A900474319 /* Main.storyboard */; };
 		02E2710E1F0EF6A900474319 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 02E2710D1F0EF6A900474319 /* Assets.xcassets */; };
 		02E271111F0EF6A900474319 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 02E2710F1F0EF6A900474319 /* LaunchScreen.storyboard */; };
+		71551C9756E476BFC50C6466 /* libPods-drone-cv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B35B3369076CC7343A4AACDD /* libPods-drone-cv.a */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		02E2711C1F0EF89600474319 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 02E271181F0EF89600474319 /* VideoPreviewer.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 02A543FD1C3C51CB0083C11B;
+			remoteInfo = VideoPreviewer;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		02E270FE1F0EF6A900474319 /* drone-cv.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "drone-cv.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -26,6 +37,10 @@
 		02E2710D1F0EF6A900474319 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		02E271101F0EF6A900474319 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		02E271121F0EF6A900474319 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		02E271181F0EF89600474319 /* VideoPreviewer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VideoPreviewer.xcodeproj; path = "../../Mobile-SDK-iOS/Sample Code/VideoPreviewer/VideoPreviewer.xcodeproj"; sourceTree = "<group>"; };
+		0F8B5F0459EBB972032268B3 /* Pods-drone-cv.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-drone-cv.debug.xcconfig"; path = "Pods/Target Support Files/Pods-drone-cv/Pods-drone-cv.debug.xcconfig"; sourceTree = "<group>"; };
+		454EFA066911E0EC12E52339 /* Pods-drone-cv.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-drone-cv.release.xcconfig"; path = "Pods/Target Support Files/Pods-drone-cv/Pods-drone-cv.release.xcconfig"; sourceTree = "<group>"; };
+		B35B3369076CC7343A4AACDD /* libPods-drone-cv.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-drone-cv.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,6 +48,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				71551C9756E476BFC50C6466 /* libPods-drone-cv.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -44,6 +60,8 @@
 			children = (
 				02E271001F0EF6A900474319 /* drone-cv */,
 				02E270FF1F0EF6A900474319 /* Products */,
+				B74D6DE0C9DF511CCDFEBDCC /* Pods */,
+				744CA326CB6B2E7B5A6BD106 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -79,6 +97,32 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		02E271191F0EF89600474319 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				02E2711D1F0EF89600474319 /* VideoPreviewer.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		744CA326CB6B2E7B5A6BD106 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				02E271181F0EF89600474319 /* VideoPreviewer.xcodeproj */,
+				B35B3369076CC7343A4AACDD /* libPods-drone-cv.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B74D6DE0C9DF511CCDFEBDCC /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				0F8B5F0459EBB972032268B3 /* Pods-drone-cv.debug.xcconfig */,
+				454EFA066911E0EC12E52339 /* Pods-drone-cv.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -86,9 +130,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 02E271151F0EF6A900474319 /* Build configuration list for PBXNativeTarget "drone-cv" */;
 			buildPhases = (
+				400B252CE2ADD0AE2DB01C74 /* [CP] Check Pods Manifest.lock */,
 				02E270FA1F0EF6A900474319 /* Sources */,
 				02E270FB1F0EF6A900474319 /* Frameworks */,
 				02E270FC1F0EF6A900474319 /* Resources */,
+				D7C582536F1D81199CFC3B7A /* [CP] Embed Pods Frameworks */,
+				5E3D3357E26F00DF516E791A /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -126,12 +173,28 @@
 			mainGroup = 02E270F51F0EF6A900474319;
 			productRefGroup = 02E270FF1F0EF6A900474319 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 02E271191F0EF89600474319 /* Products */;
+					ProjectRef = 02E271181F0EF89600474319 /* VideoPreviewer.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				02E270FD1F0EF6A900474319 /* drone-cv */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		02E2711D1F0EF89600474319 /* VideoPreviewer.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = VideoPreviewer.framework;
+			remoteRef = 02E2711C1F0EF89600474319 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		02E270FC1F0EF6A900474319 /* Resources */ = {
@@ -145,6 +208,54 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		400B252CE2ADD0AE2DB01C74 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		5E3D3357E26F00DF516E791A /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-drone-cv/Pods-drone-cv-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D7C582536F1D81199CFC3B7A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-drone-cv/Pods-drone-cv-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		02E270FA1F0EF6A900474319 /* Sources */ = {
@@ -273,6 +384,7 @@
 		};
 		02E271161F0EF6A900474319 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0F8B5F0459EBB972032268B3 /* Pods-drone-cv.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 558H3P6Q9C;
@@ -287,6 +399,7 @@
 		};
 		02E271171F0EF6A900474319 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 454EFA066911E0EC12E52339 /* Pods-drone-cv.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 558H3P6Q9C;
@@ -318,6 +431,7 @@
 				02E271171F0EF6A900474319 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
