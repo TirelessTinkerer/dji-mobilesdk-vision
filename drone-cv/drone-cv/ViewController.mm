@@ -19,7 +19,11 @@
 @property (weak, nonatomic) IBOutlet UIView *fpvPreview;
 @property (weak, nonatomic) IBOutlet UIImageView *imgView;
 @property (strong, nonatomic) UIImage *myImage;
-
+@property (weak, nonatomic) IBOutlet UILabel *debugLabel;
+@property (weak, nonatomic) IBOutlet UILabel *debug2;
+@property (assign, nonatomic) NSInteger counter;
+@property (weak, nonatomic) NSTimer *myTimer;
+@property (nonatomic, copy, nullable) void (^processFrame)(UIImage *frame);
 @end
 
 @implementation ViewController
@@ -29,9 +33,10 @@
     // Do any additional setup after loading the view, typically from a nib.
     [self registerApp];
     self.imgView.contentMode = UIViewContentModeScaleAspectFit;
-    [self.imgView setBackgroundColor:[UIColor blackColor]];
+    [self.imgView setBackgroundColor:[UIColor redColor]];
     self.myImage = [UIImage imageNamed:@"test_site.png"];
     [self.imgView setImage:self.myImage];
+    self.myTimer=nil;
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -77,6 +82,7 @@
         NSLog(@"registerAppSuccess");
         
         [DJISDKManager startConnectionToProduct];
+//        [DJISDKManager enableBridgeModeWithBridgeAppIP:@"10.128.129.54"];
     }
     
     [self showAlertViewWithTitle:@"Register App" withMessage:message];
@@ -123,20 +129,37 @@
 // Called by productConnected
 - (void) setupVideoPreviewer
 {
-    //self.currentRecordTimeLabel.text = @"Connected, setup previewer";
+    self.debugLabel.text = @"Connected, setup previewer";
     [[VideoPreviewer instance] setView:self.fpvPreview];
     [[DJISDKManager videoFeeder].primaryVideoFeed addListener:self withQueue:nil];
     [[VideoPreviewer instance] start];
     
-    //[NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(takeSnapshot) userInfo:nil repeats:YES];
+    self.myTimer = [NSTimer scheduledTimerWithTimeInterval:0.2 target:self selector:@selector(timerCallback) userInfo:nil repeats:YES];
+    self.counter = 0;
+    
+    // This is where you define your image processing method
+    self.processFrame =
+    ^(UIImage  *frame){
+        cv::Mat gray;
+        cv::Mat dst, detected_edges;
+        
+        cv::Mat colorImg = [self cvMatFromUIImage:frame];
+        cv::cvtColor(colorImg, gray, CV_BGR2GRAY);
+        //        blur(gray,detected_edges, cv::Size(3,3));
+        cv::Canny(gray, detected_edges, 40, 120, 3);
+        dst = cv::Scalar::all(0);
+        colorImg.copyTo(dst, detected_edges);
+        [self.imgView setImage:[self UIImageFromCVMat:dst]];
+    };
 }
 
 // Called by productDisconnected
 - (void) resetVideoPreview
 {
-    //self.currentRecordTimeLabel.text = @"Disconnected, distroy previewer";
+    self.debugLabel.text = @"Disconnected, distroy previewer";
     [[VideoPreviewer instance] unSetView];
     [[DJISDKManager videoFeeder].primaryVideoFeed removeListener:self];
+    [self.myTimer invalidate];
 }
 
 #pragma mark - DJIVideoFeedListener
@@ -146,14 +169,37 @@
 //
 //- (void)takeSnapshot
 //{
-//    UIView *snapshot = [self.fpvPreviewView snapshotViewAfterScreenUpdates:YES];
+//    UIView *snapshot = [self.fpvPreview snapshotViewAfterScreenUpdates:YES];
 //    snapshot.tag = 100001;
 //    
-//    if ([self.frameView viewWithTag:100001]) {
-//        [[self.frameView viewWithTag:100001] removeFromSuperview];
+//    if ([self.imgView viewWithTag:100001]) {
+//        [[self.imgView viewWithTag:100001] removeFromSuperview];
 //    }
 //    
-//    [self.frameView addSubview:snapshot];
+//    [self.imgView addSubview:snapshot];
+//    self.debug2.text = [NSString stringWithFormat:@"%d", self.counter++];
+//}
+
+-(void) timerCallback
+{
+    [[VideoPreviewer instance] snapshotPreview:self.processFrame];
+}
+//
+//-(void) takeSnapshot3
+//{
+//    [[VideoPreviewer instance] snapshotPreview:^(UIImage *snapshot) {
+//       
+//        cv::Mat gray;
+//        cv::Mat dst, detected_edges;
+//
+//        cv::Mat colorImg = [self cvMatFromUIImage:snapshot];
+//        cv::cvtColor(colorImg, gray, CV_BGR2GRAY);
+////        blur(gray,detected_edges, cv::Size(3,3));
+//        cv::Canny(gray, detected_edges, 40, 120, 3);
+//        dst = cv::Scalar::all(0);
+//        colorImg.copyTo(dst, detected_edges);
+//        [self.imgView setImage:[self UIImageFromCVMat:dst]];
+//    }];
 //}
 
 
@@ -181,28 +227,6 @@
     return cvMat;
 }
 
-- (cv::Mat)cvMatGrayFromUIImage:(UIImage *)image
-{
-    CGColorSpaceRef colorSpace = CGImageGetColorSpace(image.CGImage);
-    CGFloat cols = image.size.width;
-    CGFloat rows = image.size.height;
-    
-    cv::Mat cvMat(rows, cols, CV_8UC1); // 8 bits per component, 1 channels
-    
-    CGContextRef contextRef = CGBitmapContextCreate(cvMat.data,                 // Pointer to data
-                                                    cols,                       // Width of bitmap
-                                                    rows,                       // Height of bitmap
-                                                    8,                          // Bits per component
-                                                    cvMat.step[0],              // Bytes per row
-                                                    colorSpace,                 // Colorspace
-                                                    kCGImageAlphaNoneSkipLast |
-                                                    kCGBitmapByteOrderDefault); // Bitmap info flags
-    
-    CGContextDrawImage(contextRef, CGRectMake(0, 0, cols, rows), image.CGImage);
-    CGContextRelease(contextRef);
-    
-    return cvMat;
-}
 -(UIImage *)UIImageFromCVMat:(cv::Mat)cvMat
 {
     NSData *data = [NSData dataWithBytes:cvMat.data length:cvMat.elemSize()*cvMat.total()];
