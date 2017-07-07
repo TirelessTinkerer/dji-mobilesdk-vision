@@ -9,12 +9,21 @@
 /* Begin PBXBuildFile section */
 		02E271031F0EF6A900474319 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 02E271021F0EF6A900474319 /* main.m */; };
 		02E271061F0EF6A900474319 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 02E271051F0EF6A900474319 /* AppDelegate.m */; };
-		02E271091F0EF6A900474319 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 02E271081F0EF6A900474319 /* ViewController.m */; };
+		02E271091F0EF6A900474319 /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 02E271081F0EF6A900474319 /* ViewController.mm */; };
 		02E2710C1F0EF6A900474319 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 02E2710A1F0EF6A900474319 /* Main.storyboard */; };
 		02E2710E1F0EF6A900474319 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 02E2710D1F0EF6A900474319 /* Assets.xcassets */; };
 		02E271111F0EF6A900474319 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 02E2710F1F0EF6A900474319 /* LaunchScreen.storyboard */; };
 		02E271321F0EFF3A00474319 /* VideoPreviewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02E2712B1F0EFB4900474319 /* VideoPreviewer.framework */; };
 		02E271331F0EFF3A00474319 /* VideoPreviewer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 02E2712B1F0EFB4900474319 /* VideoPreviewer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		02E2713B1F0F05F100474319 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02E2713A1F0F05F100474319 /* AssetsLibrary.framework */; };
+		02E2713E1F0F061600474319 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02E2713D1F0F061600474319 /* CoreGraphics.framework */; };
+		02E271831F0F5A6700474319 /* libstdc++.6.0.9.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 02E271821F0F5A6700474319 /* libstdc++.6.0.9.tbd */; };
+		02EC54BB1F0F5B38004010BB /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 02EC54BA1F0F5B38004010BB /* libz.tbd */; };
+		02EC54BD1F0F5B62004010BB /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 02EC54BC1F0F5B62004010BB /* libiconv.tbd */; };
+		02EC54BF1F0F5C3E004010BB /* test_site.png in Resources */ = {isa = PBXBuildFile; fileRef = 02EC54BE1F0F5C3E004010BB /* test_site.png */; };
+		02EC54C11F0F5DF3004010BB /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02EC54C01F0F5DF3004010BB /* opencv2.framework */; };
+		02EC54C71F0F5E76004010BB /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02EC54C61F0F5E76004010BB /* AVFoundation.framework */; };
+		02EC54C91F0F5E7D004010BB /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02EC54C81F0F5E7D004010BB /* CoreMedia.framework */; };
 		71551C9756E476BFC50C6466 /* libPods-drone-cv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B35B3369076CC7343A4AACDD /* libPods-drone-cv.a */; };
 /* End PBXBuildFile section */
 
@@ -55,12 +64,21 @@
 		02E271041F0EF6A900474319 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		02E271051F0EF6A900474319 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		02E271071F0EF6A900474319 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		02E271081F0EF6A900474319 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		02E271081F0EF6A900474319 /* ViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewController.mm; sourceTree = "<group>"; };
 		02E2710B1F0EF6A900474319 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		02E2710D1F0EF6A900474319 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		02E271101F0EF6A900474319 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		02E271121F0EF6A900474319 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		02E271261F0EFB4900474319 /* VideoPreviewer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VideoPreviewer.xcodeproj; path = "../../Mobile-SDK-iOS/Sample Code/VideoPreviewer/VideoPreviewer.xcodeproj"; sourceTree = "<group>"; };
+		02E2713A1F0F05F100474319 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
+		02E2713D1F0F061600474319 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		02E271821F0F5A6700474319 /* libstdc++.6.0.9.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.6.0.9.tbd"; path = "usr/lib/libstdc++.6.0.9.tbd"; sourceTree = SDKROOT; };
+		02EC54BA1F0F5B38004010BB /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		02EC54BC1F0F5B62004010BB /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
+		02EC54BE1F0F5C3E004010BB /* test_site.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = test_site.png; path = ../../../../Desktop/test_site.png; sourceTree = "<group>"; };
+		02EC54C01F0F5DF3004010BB /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
+		02EC54C61F0F5E76004010BB /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		02EC54C81F0F5E7D004010BB /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		0F8B5F0459EBB972032268B3 /* Pods-drone-cv.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-drone-cv.debug.xcconfig"; path = "Pods/Target Support Files/Pods-drone-cv/Pods-drone-cv.debug.xcconfig"; sourceTree = "<group>"; };
 		454EFA066911E0EC12E52339 /* Pods-drone-cv.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-drone-cv.release.xcconfig"; path = "Pods/Target Support Files/Pods-drone-cv/Pods-drone-cv.release.xcconfig"; sourceTree = "<group>"; };
 		B35B3369076CC7343A4AACDD /* libPods-drone-cv.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-drone-cv.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -71,6 +89,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				02EC54C91F0F5E7D004010BB /* CoreMedia.framework in Frameworks */,
+				02EC54C71F0F5E76004010BB /* AVFoundation.framework in Frameworks */,
+				02EC54BD1F0F5B62004010BB /* libiconv.tbd in Frameworks */,
+				02EC54BB1F0F5B38004010BB /* libz.tbd in Frameworks */,
+				02EC54C11F0F5DF3004010BB /* opencv2.framework in Frameworks */,
+				02E271831F0F5A6700474319 /* libstdc++.6.0.9.tbd in Frameworks */,
+				02E2713E1F0F061600474319 /* CoreGraphics.framework in Frameworks */,
+				02E2713B1F0F05F100474319 /* AssetsLibrary.framework in Frameworks */,
 				02E271321F0EFF3A00474319 /* VideoPreviewer.framework in Frameworks */,
 				71551C9756E476BFC50C6466 /* libPods-drone-cv.a in Frameworks */,
 			);
@@ -100,10 +126,11 @@
 		02E271001F0EF6A900474319 /* drone-cv */ = {
 			isa = PBXGroup;
 			children = (
+				02EC54BE1F0F5C3E004010BB /* test_site.png */,
 				02E271041F0EF6A900474319 /* AppDelegate.h */,
 				02E271051F0EF6A900474319 /* AppDelegate.m */,
 				02E271071F0EF6A900474319 /* ViewController.h */,
-				02E271081F0EF6A900474319 /* ViewController.m */,
+				02E271081F0EF6A900474319 /* ViewController.mm */,
 				02E2710A1F0EF6A900474319 /* Main.storyboard */,
 				02E2710D1F0EF6A900474319 /* Assets.xcassets */,
 				02E2710F1F0EF6A900474319 /* LaunchScreen.storyboard */,
@@ -132,6 +159,14 @@
 		744CA326CB6B2E7B5A6BD106 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				02EC54C81F0F5E7D004010BB /* CoreMedia.framework */,
+				02EC54C61F0F5E76004010BB /* AVFoundation.framework */,
+				02EC54C01F0F5DF3004010BB /* opencv2.framework */,
+				02EC54BC1F0F5B62004010BB /* libiconv.tbd */,
+				02EC54BA1F0F5B38004010BB /* libz.tbd */,
+				02E271821F0F5A6700474319 /* libstdc++.6.0.9.tbd */,
+				02E2713D1F0F061600474319 /* CoreGraphics.framework */,
+				02E2713A1F0F05F100474319 /* AssetsLibrary.framework */,
 				02E271261F0EFB4900474319 /* VideoPreviewer.xcodeproj */,
 				B35B3369076CC7343A4AACDD /* libPods-drone-cv.a */,
 			);
@@ -227,6 +262,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				02EC54BF1F0F5C3E004010BB /* test_site.png in Resources */,
 				02E271111F0EF6A900474319 /* LaunchScreen.storyboard in Resources */,
 				02E2710E1F0EF6A900474319 /* Assets.xcassets in Resources */,
 				02E2710C1F0EF6A900474319 /* Main.storyboard in Resources */,
@@ -288,7 +324,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				02E271091F0EF6A900474319 /* ViewController.m in Sources */,
+				02E271091F0EF6A900474319 /* ViewController.mm in Sources */,
 				02E271061F0EF6A900474319 /* AppDelegate.m in Sources */,
 				02E271031F0EF6A900474319 /* main.m in Sources */,
 			);
@@ -423,6 +459,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 558H3P6Q9C;
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = "drone-cv/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -438,6 +480,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 558H3P6Q9C;
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = "drone-cv/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
