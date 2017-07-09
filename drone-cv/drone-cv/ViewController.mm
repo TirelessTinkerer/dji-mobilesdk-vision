@@ -129,7 +129,7 @@
 // Called by productConnected
 - (void) setupVideoPreviewer
 {
-    self.debugLabel.text = @"Connected, setup previewer";
+    self.debugLabel.text = @"Connected!";
     [[VideoPreviewer instance] setView:self.fpvPreview];
     [[DJISDKManager videoFeeder].primaryVideoFeed addListener:self withQueue:nil];
     [[VideoPreviewer instance] start];
@@ -156,7 +156,7 @@
 // Called by productDisconnected
 - (void) resetVideoPreview
 {
-    self.debugLabel.text = @"Disconnected, distroy previewer";
+    self.debugLabel.text = @"Disconnected!";
     [[VideoPreviewer instance] unSetView];
     [[DJISDKManager videoFeeder].primaryVideoFeed removeListener:self];
     [self.myTimer invalidate];
