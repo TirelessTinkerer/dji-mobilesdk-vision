@@ -34,7 +34,7 @@
     [self registerApp];
     self.imgView.contentMode = UIViewContentModeScaleAspectFit;
     [self.imgView setBackgroundColor:[UIColor redColor]];
-    self.myImage = [UIImage imageNamed:@"test_site.png"];
+    self.myImage = [UIImage imageNamed:@"mavic.jpg"];
     [self.imgView setImage:self.myImage];
     self.myTimer=nil;
 }

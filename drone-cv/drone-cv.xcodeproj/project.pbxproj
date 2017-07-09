@@ -20,10 +20,10 @@
 		02E271831F0F5A6700474319 /* libstdc++.6.0.9.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 02E271821F0F5A6700474319 /* libstdc++.6.0.9.tbd */; };
 		02EC54BB1F0F5B38004010BB /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 02EC54BA1F0F5B38004010BB /* libz.tbd */; };
 		02EC54BD1F0F5B62004010BB /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 02EC54BC1F0F5B62004010BB /* libiconv.tbd */; };
-		02EC54BF1F0F5C3E004010BB /* test_site.png in Resources */ = {isa = PBXBuildFile; fileRef = 02EC54BE1F0F5C3E004010BB /* test_site.png */; };
 		02EC54C11F0F5DF3004010BB /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02EC54C01F0F5DF3004010BB /* opencv2.framework */; };
 		02EC54C71F0F5E76004010BB /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02EC54C61F0F5E76004010BB /* AVFoundation.framework */; };
 		02EC54C91F0F5E7D004010BB /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02EC54C81F0F5E7D004010BB /* CoreMedia.framework */; };
+		25C4FA351F11E3C400B46006 /* mavic.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 25C4FA341F11E3C400B46006 /* mavic.jpg */; };
 		71551C9756E476BFC50C6466 /* libPods-drone-cv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B35B3369076CC7343A4AACDD /* libPods-drone-cv.a */; };
 /* End PBXBuildFile section */
 
@@ -75,11 +75,11 @@
 		02E271821F0F5A6700474319 /* libstdc++.6.0.9.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.6.0.9.tbd"; path = "usr/lib/libstdc++.6.0.9.tbd"; sourceTree = SDKROOT; };
 		02EC54BA1F0F5B38004010BB /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		02EC54BC1F0F5B62004010BB /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
-		02EC54BE1F0F5C3E004010BB /* test_site.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = test_site.png; path = ../../../../Desktop/test_site.png; sourceTree = "<group>"; };
 		02EC54C01F0F5DF3004010BB /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
 		02EC54C61F0F5E76004010BB /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		02EC54C81F0F5E7D004010BB /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		0F8B5F0459EBB972032268B3 /* Pods-drone-cv.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-drone-cv.debug.xcconfig"; path = "Pods/Target Support Files/Pods-drone-cv/Pods-drone-cv.debug.xcconfig"; sourceTree = "<group>"; };
+		25C4FA341F11E3C400B46006 /* mavic.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = mavic.jpg; sourceTree = SOURCE_ROOT; };
 		454EFA066911E0EC12E52339 /* Pods-drone-cv.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-drone-cv.release.xcconfig"; path = "Pods/Target Support Files/Pods-drone-cv/Pods-drone-cv.release.xcconfig"; sourceTree = "<group>"; };
 		B35B3369076CC7343A4AACDD /* libPods-drone-cv.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-drone-cv.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -126,7 +126,7 @@
 		02E271001F0EF6A900474319 /* drone-cv */ = {
 			isa = PBXGroup;
 			children = (
-				02EC54BE1F0F5C3E004010BB /* test_site.png */,
+				25C4FA341F11E3C400B46006 /* mavic.jpg */,
 				02E271041F0EF6A900474319 /* AppDelegate.h */,
 				02E271051F0EF6A900474319 /* AppDelegate.m */,
 				02E271071F0EF6A900474319 /* ViewController.h */,
@@ -262,7 +262,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				02EC54BF1F0F5C3E004010BB /* test_site.png in Resources */,
+				25C4FA351F11E3C400B46006 /* mavic.jpg in Resources */,
 				02E271111F0EF6A900474319 /* LaunchScreen.storyboard in Resources */,
 				02E2710E1F0EF6A900474319 /* Assets.xcassets in Resources */,
 				02E2710C1F0EF6A900474319 /* Main.storyboard in Resources */,
