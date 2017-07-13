@@ -1,0 +1,25 @@
+//
+//  drone-cv-PrefixHeader.pch
+//  drone-cv
+//
+//  Created by Arjun Menon on 7/12/17.
+//  Copyright © 2017 dji. All rights reserved.
+//
+
+#ifndef drone_cv_PrefixHeader_pch
+#define drone_cv_PrefixHeader_pch
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+#import <Availability.h>
+
+#ifdef __cplusplus
+#import <opencv2/opencv.hpp>
+#endif
+
+#ifdef __OBJC__
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#endif
+
+#endif /* drone_cv_PrefixHeader_pch */

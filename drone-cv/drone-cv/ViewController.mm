@@ -10,6 +10,7 @@
 #import "ViewController.h"
 #import <DJISDK/DJISDK.h>
 #import <VideoPreviewer/VideoPreviewer.h>
+#import "CvConvolutionController.h"
 
 
 #define WeakRef(__obj) __weak typeof(self) __obj = self
@@ -24,6 +25,13 @@
 @property (assign, nonatomic) NSInteger counter;
 @property (weak, nonatomic) NSTimer *myTimer;
 @property (nonatomic, copy, nullable) void (^processFrame)(UIImage *frame);
+
+@property (nonatomic, copy) void (^defaultProcess)(UIImage *frame);
+@property (atomic) enum Filter_Mode filterType;
+
+@property (weak, nonatomic) IBOutlet UIButton *laplaceFilter;
+@property (weak, nonatomic) IBOutlet UIButton *gaussBlue;
+
 @end
 
 @implementation ViewController
@@ -37,6 +45,21 @@
     self.myImage = [UIImage imageNamed:@"mavic.jpg"];
     [self.imgView setImage:self.myImage];
     self.myTimer=nil;
+    
+    self.defaultProcess = ^(UIImage *frame){
+        cv::Mat colorImg, gray;
+        cv::Mat dst, detected_edges;
+        
+        cv::resize([self cvMatFromUIImage:frame], colorImg, cv::Size(480, 270));
+        cv::cvtColor(colorImg, gray, CV_BGR2GRAY);
+        cv::blur(gray,gray, cv::Size(3,3));
+        cv::Canny(gray, detected_edges, 40, 120, 3);
+        dst = cv::Scalar::all(0);
+        colorImg.copyTo(dst, detected_edges);
+        [self.imgView setImage:[self UIImageFromCVMat:dst]];
+    };
+    
+    self.filterType = FILTERMODE_DEFAULT;
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -81,8 +104,9 @@
     {
         NSLog(@"registerAppSuccess");
         
-        [DJISDKManager startConnectionToProduct];
+     //   [DJISDKManager startConnectionToProduct];
 //        [DJISDKManager enableBridgeModeWithBridgeAppIP:@"10.128.129.54"];
+        [DJISDKManager enableBridgeModeWithBridgeAppIP:@"192.168.0.107"];
     }
     
     [self showAlertViewWithTitle:@"Register App" withMessage:message];
@@ -130,6 +154,7 @@
 - (void) setupVideoPreviewer
 {
     self.debugLabel.text = @"Connected!";
+    self.debug2.text = @"Init-ed";
     [[VideoPreviewer instance] setView:self.fpvPreview];
     [[DJISDKManager videoFeeder].primaryVideoFeed addListener:self withQueue:nil];
     [[VideoPreviewer instance] start];
@@ -138,19 +163,7 @@
     self.counter = 0;
     
     // This is where you define your image processing method
-    self.processFrame =
-    ^(UIImage  *frame){
-        cv::Mat gray;
-        cv::Mat dst, detected_edges;
-        
-        cv::Mat colorImg = [self cvMatFromUIImage:frame];
-        cv::cvtColor(colorImg, gray, CV_BGR2GRAY);
-        //        blur(gray,detected_edges, cv::Size(3,3));
-        cv::Canny(gray, detected_edges, 40, 120, 3);
-        dst = cv::Scalar::all(0);
-        colorImg.copyTo(dst, detected_edges);
-        [self.imgView setImage:[self UIImageFromCVMat:dst]];
-    };
+    self.processFrame = self.defaultProcess;
 }
 
 // Called by productDisconnected
@@ -182,6 +195,9 @@
 
 -(void) timerCallback
 {
+    //todo: currently the whole processFrame is called inside glView
+    //we may consider copy out the UIImage and process it in timer
+    //callback
     [[VideoPreviewer instance] snapshotPreview:self.processFrame];
 }
 //
@@ -227,6 +243,20 @@
     return cvMat;
 }
 
+- (cv::Mat)cvMatGrayFromUIImage:(UIImage *)image
+{
+    cv::Mat cvMat = [self cvMatFromUIImage:image];
+    cv::Mat grayMat;
+    
+    if (cvMat.channels() == 1) {
+        grayMat = cvMat;
+    } else{
+        grayMat = cv :: Mat(cvMat.rows,cvMat.cols, CV_8UC1);
+        cv::cvtColor(cvMat, grayMat, CV_BGR2GRAY);
+    }
+    return grayMat;
+}
+
 -(UIImage *)UIImageFromCVMat:(cv::Mat)cvMat
 {
     NSData *data = [NSData dataWithBytes:cvMat.data length:cvMat.elemSize()*cvMat.total()];
@@ -264,4 +294,57 @@
     return finalImage;
 }
 
+// Filter Buttons
+- (IBAction)doLaplace:(id)sender;
+{
+    if(self.filterType == FILTERMODE_LAPLACIAN)
+    {
+        self.filterType = FILTERMODE_DEFAULT;
+        self.processFrame = self.defaultProcess;
+        self.debug2.text = @"Default";
+    }
+    else
+    {
+        self.filterType = FILTERMODE_LAPLACIAN;
+        self.processFrame =
+        ^(UIImage *frame){
+            cv::Mat colorImg;
+            cv::resize([self cvMatGrayFromUIImage:frame], colorImg, cv::Size(480, 270));
+
+            [CvConvolutionController filterLaplace:colorImg withKernelSize:3];
+            
+            [self.imgView setImage:[self UIImageFromCVMat:colorImg]];
+        };
+        self.debug2.text = @"Laplace";
+    }
+}
+
+- (IBAction)doGaussian:(id)sender;
+{
+    if(self.filterType == FILTERMODE_BLUR_GAUSSIAN)
+    {
+        self.filterType = FILTERMODE_DEFAULT;
+        self.processFrame = self.defaultProcess;
+        self.debug2.text = @"Default";
+    }
+    else
+    {
+        self.filterType = FILTERMODE_BLUR_GAUSSIAN;
+        self.processFrame =
+        ^(UIImage *frame){
+            cv::Mat colorImg;
+            cv::resize([self cvMatGrayFromUIImage:frame], colorImg, cv::Size(480, 270));
+            
+            [CvConvolutionController filterBlurHomogeneousAccelerated:colorImg withKernelSize:21];
+            
+            [self.imgView setImage:[self UIImageFromCVMat:colorImg]];
+        };
+        self.debug2.text = @"Laplace";
+    }
+}
+
+- (IBAction)doDetect:(id)sender;
+{
+    
+}
 @end

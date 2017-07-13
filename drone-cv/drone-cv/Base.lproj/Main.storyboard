@@ -58,6 +58,22 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZAS-Wc-ZfJ">
+                                <rect key="frame" x="118" y="262" width="99" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Laplace"/>
+                                <connections>
+                                    <action selector="doLaplace:" destination="BYZ-38-t0r" eventType="touchUpInside" id="OKn-S3-INC"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o0W-BE-fGv">
+                                <rect key="frame" x="236" y="263" width="106" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Blur"/>
+                                <connections>
+                                    <action selector="doGaussian:" destination="BYZ-38-t0r" eventType="touchUpInside" id="AcA-rX-77L"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
@@ -65,7 +81,9 @@
                         <outlet property="debug2" destination="mEm-ac-r6c" id="xKB-Xz-njk"/>
                         <outlet property="debugLabel" destination="P2y-Vf-lio" id="V3w-S2-zh1"/>
                         <outlet property="fpvPreview" destination="HbD-WV-3fe" id="ZZ7-re-CBw"/>
+                        <outlet property="gaussBlue" destination="o0W-BE-fGv" id="l0I-PK-3vI"/>
                         <outlet property="imgView" destination="eU5-11-LTp" id="lfz-Ai-Ym7"/>
+                        <outlet property="laplaceFilter" destination="ZAS-Wc-ZfJ" id="9UK-h8-WaV"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

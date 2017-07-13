@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		028488711F16D86400787BF8 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 028488701F16D86400787BF8 /* CoreImage.framework */; };
+		028488731F16D87800787BF8 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 028488721F16D87800787BF8 /* QuartzCore.framework */; };
+		028488751F16D8D100787BF8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 028488741F16D8D000787BF8 /* UIKit.framework */; };
+		0284887B1F16E0C200787BF8 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0284887A1F16E0C200787BF8 /* Accelerate.framework */; };
+		0284887D1F16E0DF00787BF8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0284887C1F16E0DF00787BF8 /* Foundation.framework */; };
+		028488831F174F2700787BF8 /* CvConvolutionController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 028488821F174F2700787BF8 /* CvConvolutionController.mm */; };
 		02E271031F0EF6A900474319 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 02E271021F0EF6A900474319 /* main.m */; };
 		02E271061F0EF6A900474319 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 02E271051F0EF6A900474319 /* AppDelegate.m */; };
 		02E271091F0EF6A900474319 /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 02E271081F0EF6A900474319 /* ViewController.mm */; };
@@ -59,6 +65,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0284886E1F16D78500787BF8 /* drone-cv-PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "drone-cv-PrefixHeader.pch"; sourceTree = "<group>"; };
+		028488701F16D86400787BF8 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
+		028488721F16D87800787BF8 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		028488741F16D8D000787BF8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		0284887A1F16E0C200787BF8 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		0284887C1F16E0DF00787BF8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		028488811F174F2700787BF8 /* CvConvolutionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CvConvolutionController.h; path = CV_Tricks/CvConvolutionController.h; sourceTree = "<group>"; };
+		028488821F174F2700787BF8 /* CvConvolutionController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CvConvolutionController.mm; path = CV_Tricks/CvConvolutionController.mm; sourceTree = "<group>"; };
 		02E270FE1F0EF6A900474319 /* drone-cv.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "drone-cv.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		02E271021F0EF6A900474319 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		02E271041F0EF6A900474319 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -89,6 +103,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0284887D1F16E0DF00787BF8 /* Foundation.framework in Frameworks */,
+				0284887B1F16E0C200787BF8 /* Accelerate.framework in Frameworks */,
+				028488751F16D8D100787BF8 /* UIKit.framework in Frameworks */,
+				028488731F16D87800787BF8 /* QuartzCore.framework in Frameworks */,
+				028488711F16D86400787BF8 /* CoreImage.framework in Frameworks */,
 				02EC54C91F0F5E7D004010BB /* CoreMedia.framework in Frameworks */,
 				02EC54C71F0F5E76004010BB /* AVFoundation.framework in Frameworks */,
 				02EC54BD1F0F5B62004010BB /* libiconv.tbd in Frameworks */,
@@ -127,10 +146,13 @@
 			isa = PBXGroup;
 			children = (
 				25C4FA341F11E3C400B46006 /* mavic.jpg */,
+				028488811F174F2700787BF8 /* CvConvolutionController.h */,
+				028488821F174F2700787BF8 /* CvConvolutionController.mm */,
 				02E271041F0EF6A900474319 /* AppDelegate.h */,
 				02E271051F0EF6A900474319 /* AppDelegate.m */,
 				02E271071F0EF6A900474319 /* ViewController.h */,
 				02E271081F0EF6A900474319 /* ViewController.mm */,
+				0284886E1F16D78500787BF8 /* drone-cv-PrefixHeader.pch */,
 				02E2710A1F0EF6A900474319 /* Main.storyboard */,
 				02E2710D1F0EF6A900474319 /* Assets.xcassets */,
 				02E2710F1F0EF6A900474319 /* LaunchScreen.storyboard */,
@@ -159,6 +181,11 @@
 		744CA326CB6B2E7B5A6BD106 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0284887C1F16E0DF00787BF8 /* Foundation.framework */,
+				0284887A1F16E0C200787BF8 /* Accelerate.framework */,
+				028488741F16D8D000787BF8 /* UIKit.framework */,
+				028488721F16D87800787BF8 /* QuartzCore.framework */,
+				028488701F16D86400787BF8 /* CoreImage.framework */,
 				02EC54C81F0F5E7D004010BB /* CoreMedia.framework */,
 				02EC54C61F0F5E76004010BB /* AVFoundation.framework */,
 				02EC54C01F0F5DF3004010BB /* opencv2.framework */,
@@ -327,6 +354,7 @@
 				02E271091F0EF6A900474319 /* ViewController.mm in Sources */,
 				02E271061F0EF6A900474319 /* AppDelegate.m in Sources */,
 				02E271031F0EF6A900474319 /* main.m in Sources */,
+				028488831F174F2700787BF8 /* CvConvolutionController.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -463,8 +491,8 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = "";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "drone-cv/drone-cv-PrefixHeader.pch";
 				INFOPLIST_FILE = "drone-cv/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -484,8 +512,8 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = "";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "drone-cv/drone-cv-PrefixHeader.pch";
 				INFOPLIST_FILE = "drone-cv/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
