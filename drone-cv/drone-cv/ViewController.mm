@@ -11,12 +11,18 @@
 #import <DJISDK/DJISDK.h>
 #import <VideoPreviewer/VideoPreviewer.h>
 #import "CvConvolutionController.h"
-
-
+#ifdef __cplusplus
+  #include <vector>
+  #include <opencv2/imgproc/imgproc.hpp>
+  #include <opencv2/objdetect/objdetect.hpp>
+  #include <opencv2/video/tracking.hpp>
+using namespace std;
+#endif
 #define WeakRef(__obj) __weak typeof(self) __obj = self
 #define WeakReturn(__obj) if(__obj ==nil)return;
 
 @interface ViewController()<DJIVideoFeedListener, DJISDKManagerDelegate, DJICameraDelegate, DJIBaseProductDelegate>
+
 @property (weak, nonatomic) IBOutlet UIView *fpvPreview;
 @property (weak, nonatomic) IBOutlet UIImageView *imgView;
 @property (strong, nonatomic) UIImage *myImage;
@@ -31,10 +37,15 @@
 
 @property (weak, nonatomic) IBOutlet UIButton *laplaceFilter;
 @property (weak, nonatomic) IBOutlet UIButton *gaussBlue;
+@property (weak, nonatomic) IBOutlet UIButton *humanDetect;
+@property (nonatomic, retain) CvFaceDetector* cvFaceDetector;
 
 @end
 
 @implementation ViewController
+
+@synthesize cvFaceDetector;
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -47,19 +58,23 @@
     self.myTimer=nil;
     
     self.defaultProcess = ^(UIImage *frame){
-        cv::Mat colorImg, gray;
-        cv::Mat dst, detected_edges;
         
-        cv::resize([self cvMatFromUIImage:frame], colorImg, cv::Size(480, 270));
-        cv::cvtColor(colorImg, gray, CV_BGR2GRAY);
-        cv::blur(gray,gray, cv::Size(3,3));
-        cv::Canny(gray, detected_edges, 40, 120, 3);
-        dst = cv::Scalar::all(0);
-        colorImg.copyTo(dst, detected_edges);
-        [self.imgView setImage:[self UIImageFromCVMat:dst]];
+        cv::Mat colorImg = [self cvMatFromUIImage:frame];
+        if(colorImg.cols == 0)
+        {
+            NSLog(@"Invalid frame!");
+            return;
+        }
+        cv::resize(colorImg, colorImg, cv::Size(480, 360));
+        putText(colorImg, "Default" , cv::Point(150, 20), 1, 2, cv::Scalar(255, 255, 255), 2, 8, 0);
+        
+        [self.imgView setImage:[self UIImageFromCVMat:colorImg]];
     };
     
     self.filterType = FILTERMODE_DEFAULT;
+
+    self.cvFaceDetector = [[CvFaceDetector alloc] init];
+
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -104,9 +119,9 @@
     {
         NSLog(@"registerAppSuccess");
         
-     //   [DJISDKManager startConnectionToProduct];
+        [DJISDKManager startConnectionToProduct];
 //        [DJISDKManager enableBridgeModeWithBridgeAppIP:@"10.128.129.54"];
-        [DJISDKManager enableBridgeModeWithBridgeAppIP:@"192.168.0.107"];
+//        [DJISDKManager enableBridgeModeWithBridgeAppIP:@"192.168.0.107"];
     }
     
     [self showAlertViewWithTitle:@"Register App" withMessage:message];
@@ -159,7 +174,7 @@
     [[DJISDKManager videoFeeder].primaryVideoFeed addListener:self withQueue:nil];
     [[VideoPreviewer instance] start];
     
-    self.myTimer = [NSTimer scheduledTimerWithTimeInterval:0.2 target:self selector:@selector(timerCallback) userInfo:nil repeats:YES];
+    self.myTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(timerCallback) userInfo:nil repeats:YES];
     self.counter = 0;
     
     // This is where you define your image processing method
@@ -308,9 +323,13 @@
         self.filterType = FILTERMODE_LAPLACIAN;
         self.processFrame =
         ^(UIImage *frame){
-            cv::Mat colorImg;
-            cv::resize([self cvMatGrayFromUIImage:frame], colorImg, cv::Size(480, 270));
-
+            cv::Mat colorImg = [self cvMatGrayFromUIImage:frame];
+            if(colorImg.cols == 0)
+            {
+                NSLog(@"Invalid frame!");
+                return;
+            }
+            cv::resize(colorImg, colorImg, cv::Size(480, 360));
             [CvConvolutionController filterLaplace:colorImg withKernelSize:3];
             
             [self.imgView setImage:[self UIImageFromCVMat:colorImg]];
@@ -332,8 +351,14 @@
         self.filterType = FILTERMODE_BLUR_GAUSSIAN;
         self.processFrame =
         ^(UIImage *frame){
-            cv::Mat colorImg;
-            cv::resize([self cvMatGrayFromUIImage:frame], colorImg, cv::Size(480, 270));
+            cv::Mat colorImg = [self cvMatGrayFromUIImage:frame];
+            if(colorImg.cols == 0)
+            {
+                NSLog(@"Invalid frame!");
+                return;
+            }
+            cv::resize(colorImg, colorImg, cv::Size(480, 360));
+
             
             [CvConvolutionController filterBlurHomogeneousAccelerated:colorImg withKernelSize:21];
             
@@ -343,8 +368,57 @@
     }
 }
 
+//-(void) detect(cv::Mat &img, cv::CascadeClassifier &detectorBody)
+//{
+//    vector<cv::Rect> human;
+//    cvtColor(img, img, CV_BGR2GRAY);
+//
+//    detectorBody.detectMultiScale(img, human, 1.1, 2, 0 | 1, cv::Size(40,70), cv::Size(80, 300));
+//    // Draw results from detectorBody into original colored image
+//    if (human.size() > 0) {
+//        for (int gg = 0; gg < human.size(); gg++) {
+//            cv::rectangle(img, human[gg].tl(), human[gg].br(), Scalar(0,0,255), 2, 8, 0);
+//        }
+//    }
+//}
+
 - (IBAction)doDetect:(id)sender;
 {
-    
+    if(self.filterType == FILTERMODE_BODY_DETECT)
+    {
+        self.filterType = FILTERMODE_DEFAULT;
+        self.processFrame = self.defaultProcess;
+        self.debug2.text = @"Default";
+    }
+    else
+    {
+        self.filterType = FILTERMODE_BODY_DETECT;
+        self.processFrame =
+        ^(UIImage *frame){
+            cv::Mat colorImg = [self cvMatGrayFromUIImage:frame];
+            if(colorImg.cols == 0)
+            {
+                NSLog(@"Invalid frame!");
+                return;
+            }
+            cv::resize(colorImg, colorImg, cv::Size(480, 360));
+            
+            NSInteger f=[cvFaceDetector detectFacesInMat:colorImg];
+
+//            vector<cv::Rect> human;
+//            cv::cvtColor(colorImg, colorImg, CV_BGR2GRAY);
+//            
+//            self.detectorBody.detectMultiScale(colorImg, human, 1.1, 2, 0 | 1, cv::Size(40,70), cv::Size(80, 300));
+//            // Draw results from detectorBody into original colored image
+//            if (human.size() > 0) {
+//                for (int gg = 0; gg < human.size(); gg++) {
+//                    cv::rectangle(colorImg, human[gg].tl(), human[gg].br(), Scalar(0,0,255), 2, 8, 0);
+//                }
+//            }
+            
+            [self.imgView setImage:[self UIImageFromCVMat:colorImg]];
+            self.debug2.text = [NSString stringWithFormat:@"%d faces", f];
+        };
+    }
 }
 @end

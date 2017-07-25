@@ -59,7 +59,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZAS-Wc-ZfJ">
-                                <rect key="frame" x="118" y="262" width="99" height="30"/>
+                                <rect key="frame" x="118" y="262" width="66" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Laplace"/>
                                 <connections>
@@ -67,11 +67,19 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o0W-BE-fGv">
-                                <rect key="frame" x="236" y="263" width="106" height="30"/>
+                                <rect key="frame" x="205" y="262" width="48" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Blur"/>
                                 <connections>
                                     <action selector="doGaussian:" destination="BYZ-38-t0r" eventType="touchUpInside" id="AcA-rX-77L"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xDq-hy-TFx">
+                                <rect key="frame" x="265" y="262" width="77" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Detector"/>
+                                <connections>
+                                    <action selector="doDetect:" destination="BYZ-38-t0r" eventType="touchUpInside" id="I31-Ny-TNM"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -82,6 +90,7 @@
                         <outlet property="debugLabel" destination="P2y-Vf-lio" id="V3w-S2-zh1"/>
                         <outlet property="fpvPreview" destination="HbD-WV-3fe" id="ZZ7-re-CBw"/>
                         <outlet property="gaussBlue" destination="o0W-BE-fGv" id="l0I-PK-3vI"/>
+                        <outlet property="humanDetect" destination="xDq-hy-TFx" id="NUl-98-k94"/>
                         <outlet property="imgView" destination="eU5-11-LTp" id="lfz-Ai-Ym7"/>
                         <outlet property="laplaceFilter" destination="ZAS-Wc-ZfJ" id="9UK-h8-WaV"/>
                     </connections>
