@@ -9,18 +9,18 @@ This project opens the door of using DJI's consumer drones, to do near-real-time
 2. At this moment, only iOS demo is provided. So you'll need a Mac to build the code, and an iPhone or iPad to run the App.
 
 ## How to build
-1. Follow the DJI Mobile SDK's [documentation](https://developer.dji.com/mobile-sdk/documentation/application-development-workflow/workflow-integrate.html#xcode-project-integration) to do necessary setup. Basically, you will need to install xcode, [cocoapods](https://guides.cocoapods.org/using/getting-started.html#getting-started), and register an App key from DJI developer [website](http://developer.dji.com/register/).
+1. Follow the DJI Mobile SDK's [documentation](https://developer.dji.com/mobile-sdk/documentation/application-development-workflow/workflow-integrate.html#xcode-project-integration) to do necessary setup. Basically, you will need to install xcode, [cocoapods](https://guides.cocoapods.org/using/getting-started.html#getting-started), and register an App key from DJI developer [website](http://developer.dji.com/register/). When registering the App key, you need to have a unique bundle identifier like `com.yourorganization.yourappname`.
 
 2. Clone this repo to /Users/username/dji-mobilesdk-vision
 
 3. Clone https://github.com/dji-sdk/Mobile-SDK-iOS to /Users/username/Mobile-SDK-iOS . 
 
-4. Download opencv2.framework from the official opencv [sourceforge website](https://sourceforge.net/projects/opencvlibrary/files/opencv-ios/3.2.0/opencv-3.2.0-ios-framework.zip/download). Put the unzipped opencv2.framework to path dji-mobilesdk-vision/drone-cv .
+4. Download opencv2.framework from the official opencv [sourceforge website](https://sourceforge.net/projects/opencvlibrary/files/opencv-ios/2.4.13/opencv-2.4.13.2-ios-framework.zip/download). Put the unzipped opencv2.framework to path dji-mobilesdk-vision/drone-cv. We are using opencv 2.4 for now.
 
-5. Open a terminal, cd into /Users/username/dji-mobilesdk-vision/drone-cv, and run `pod install`.
+5. Open a terminal, cd into /Users/username/dji-mobilesdk-vision/drone-cv, and run `pod install`. This step may take some time.
 
 6. Open /Users/username/dji-mobilesdk-vision/drone-cv/drone-cv.xcworkspace.
 
-7. Put the App key you applied from DJI developer website (in step 1) in the `DJISDKAppKey` entry in Info.plist file.
+7. Put the App key you applied from DJI developer website (in step 1) in the `DJISDKAppKey` entry in Info.plist file. Put the bundle identifier associated with the App Key the General settings of the drone-cv.
 
 8. Build the code, side load to your iOS device, connect your Phone to the RC of the drone.
