@@ -31,6 +31,7 @@
 		02EC54C71F0F5E76004010BB /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02EC54C61F0F5E76004010BB /* AVFoundation.framework */; };
 		02EC54C91F0F5E7D004010BB /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02EC54C81F0F5E7D004010BB /* CoreMedia.framework */; };
 		25C4FA351F11E3C400B46006 /* mavic.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 25C4FA341F11E3C400B46006 /* mavic.jpg */; };
+		328864711F2AAAE90073B6A9 /* OpenCVConversion.mm in Sources */ = {isa = PBXBuildFile; fileRef = 328864701F2AAAE90073B6A9 /* OpenCVConversion.mm */; };
 		32ECCF4E1F29611E00186107 /* haarcascade_frontalface_alt.xml in Resources */ = {isa = PBXBuildFile; fileRef = 32ECCF4D1F29611E00186107 /* haarcascade_frontalface_alt.xml */; };
 		71551C9756E476BFC50C6466 /* libPods-drone-cv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B35B3369076CC7343A4AACDD /* libPods-drone-cv.a */; };
 /* End PBXBuildFile section */
@@ -98,6 +99,8 @@
 		02EC54C81F0F5E7D004010BB /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		0F8B5F0459EBB972032268B3 /* Pods-drone-cv.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-drone-cv.debug.xcconfig"; path = "Pods/Target Support Files/Pods-drone-cv/Pods-drone-cv.debug.xcconfig"; sourceTree = "<group>"; };
 		25C4FA341F11E3C400B46006 /* mavic.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = mavic.jpg; sourceTree = SOURCE_ROOT; };
+		328864701F2AAAE90073B6A9 /* OpenCVConversion.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenCVConversion.mm; path = CV_Tricks/OpenCVConversion.mm; sourceTree = "<group>"; };
+		328864731F2AAB870073B6A9 /* OpenCVConversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenCVConversion.h; path = CV_Tricks/OpenCVConversion.h; sourceTree = "<group>"; };
 		32ECCF4D1F29611E00186107 /* haarcascade_frontalface_alt.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = haarcascade_frontalface_alt.xml; path = CV_Tricks/haarcascade_frontalface_alt.xml; sourceTree = "<group>"; };
 		454EFA066911E0EC12E52339 /* Pods-drone-cv.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-drone-cv.release.xcconfig"; path = "Pods/Target Support Files/Pods-drone-cv/Pods-drone-cv.release.xcconfig"; sourceTree = "<group>"; };
 		B35B3369076CC7343A4AACDD /* libPods-drone-cv.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-drone-cv.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -166,6 +169,8 @@
 				02E2710F1F0EF6A900474319 /* LaunchScreen.storyboard */,
 				02E271121F0EF6A900474319 /* Info.plist */,
 				02E271011F0EF6A900474319 /* Supporting Files */,
+				328864701F2AAAE90073B6A9 /* OpenCVConversion.mm */,
+				328864731F2AAB870073B6A9 /* OpenCVConversion.h */,
 			);
 			path = "drone-cv";
 			sourceTree = "<group>";
@@ -360,6 +365,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				328864711F2AAAE90073B6A9 /* OpenCVConversion.mm in Sources */,
 				02E271091F0EF6A900474319 /* ViewController.mm in Sources */,
 				02E271061F0EF6A900474319 /* AppDelegate.m in Sources */,
 				02E271031F0EF6A900474319 /* main.m in Sources */,

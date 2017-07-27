@@ -11,6 +11,8 @@
 #import <DJISDK/DJISDK.h>
 #import <VideoPreviewer/VideoPreviewer.h>
 #import "CvConvolutionController.h"
+#import "OpenCVConversion.h"
+
 #ifdef __cplusplus
   #include <vector>
   #include <opencv2/imgproc/imgproc.hpp>
@@ -59,7 +61,7 @@ using namespace std;
     
     self.defaultProcess = ^(UIImage *frame){
         
-        cv::Mat colorImg = [self cvMatFromUIImage:frame];
+        cv::Mat colorImg = [OpenCVConversion cvMatFromUIImage:frame];
         if(colorImg.cols == 0)
         {
             NSLog(@"Invalid frame!");
@@ -68,7 +70,7 @@ using namespace std;
         cv::resize(colorImg, colorImg, cv::Size(480, 360));
         putText(colorImg, "Default" , cv::Point(150, 20), 1, 2, cv::Scalar(255, 255, 255), 2, 8, 0);
         
-        [self.imgView setImage:[self UIImageFromCVMat:colorImg]];
+        [self.imgView setImage:[OpenCVConversion UIImageFromCVMat:colorImg]];
     };
     
     self.filterType = FILTERMODE_DEFAULT;
@@ -234,80 +236,6 @@ using namespace std;
 //}
 
 
-#pragma mark - OpenCV helpers
-- (cv::Mat)cvMatFromUIImage:(UIImage *)image
-{
-    CGColorSpaceRef colorSpace = CGImageGetColorSpace(image.CGImage);
-    CGFloat cols = image.size.width;
-    CGFloat rows = image.size.height;
-    
-    cv::Mat cvMat(rows, cols, CV_8UC4); // 8 bits per component, 4 channels (color channels + alpha)
-    
-    CGContextRef contextRef = CGBitmapContextCreate(cvMat.data,                 // Pointer to  data
-                                                    cols,                       // Width of bitmap
-                                                    rows,                       // Height of bitmap
-                                                    8,                          // Bits per component
-                                                    cvMat.step[0],              // Bytes per row
-                                                    colorSpace,                 // Colorspace
-                                                    kCGImageAlphaNoneSkipLast |
-                                                    kCGBitmapByteOrderDefault); // Bitmap info flags
-    
-    CGContextDrawImage(contextRef, CGRectMake(0, 0, cols, rows), image.CGImage);
-    CGContextRelease(contextRef);
-    
-    return cvMat;
-}
-
-- (cv::Mat)cvMatGrayFromUIImage:(UIImage *)image
-{
-    cv::Mat cvMat = [self cvMatFromUIImage:image];
-    cv::Mat grayMat;
-    
-    if (cvMat.channels() == 1) {
-        grayMat = cvMat;
-    } else{
-        grayMat = cv :: Mat(cvMat.rows,cvMat.cols, CV_8UC1);
-        cv::cvtColor(cvMat, grayMat, CV_BGR2GRAY);
-    }
-    return grayMat;
-}
-
--(UIImage *)UIImageFromCVMat:(cv::Mat)cvMat
-{
-    NSData *data = [NSData dataWithBytes:cvMat.data length:cvMat.elemSize()*cvMat.total()];
-    CGColorSpaceRef colorSpace;
-    
-    if (cvMat.elemSize() == 1) {
-        colorSpace = CGColorSpaceCreateDeviceGray();
-    } else {
-        colorSpace = CGColorSpaceCreateDeviceRGB();
-    }
-    
-    CGDataProviderRef provider = CGDataProviderCreateWithCFData((__bridge CFDataRef)data);
-    
-    // Creating CGImage from cv::Mat
-    CGImageRef imageRef = CGImageCreate(cvMat.cols,                                 //width
-                                        cvMat.rows,                                 //height
-                                        8,                                          //bits per component
-                                        8 * cvMat.elemSize(),                       //bits per pixel
-                                        cvMat.step[0],                            //bytesPerRow
-                                        colorSpace,                                 //colorspace
-                                        kCGImageAlphaNone|kCGBitmapByteOrderDefault,// bitmap info
-                                        provider,                                   //CGDataProviderRef
-                                        NULL,                                       //decode
-                                        false,                                      //should interpolate
-                                        kCGRenderingIntentDefault                   //intent
-                                        );
-    
-    
-    // Getting UIImage from CGImage
-    UIImage *finalImage = [UIImage imageWithCGImage:imageRef];
-    CGImageRelease(imageRef);
-    CGDataProviderRelease(provider);
-    CGColorSpaceRelease(colorSpace);
-    
-    return finalImage;
-}
 
 // Filter Buttons
 - (IBAction)doLaplace:(id)sender;
@@ -323,7 +251,7 @@ using namespace std;
         self.filterType = FILTERMODE_LAPLACIAN;
         self.processFrame =
         ^(UIImage *frame){
-            cv::Mat colorImg = [self cvMatGrayFromUIImage:frame];
+            cv::Mat colorImg = [OpenCVConversion cvMatGrayFromUIImage:frame];
             if(colorImg.cols == 0)
             {
                 NSLog(@"Invalid frame!");
@@ -332,7 +260,7 @@ using namespace std;
             cv::resize(colorImg, colorImg, cv::Size(480, 360));
             [CvConvolutionController filterLaplace:colorImg withKernelSize:3];
             
-            [self.imgView setImage:[self UIImageFromCVMat:colorImg]];
+            [self.imgView setImage:[OpenCVConversion UIImageFromCVMat:colorImg]];
         };
         self.debug2.text = @"Laplace";
     }
@@ -351,7 +279,7 @@ using namespace std;
         self.filterType = FILTERMODE_BLUR_GAUSSIAN;
         self.processFrame =
         ^(UIImage *frame){
-            cv::Mat colorImg = [self cvMatGrayFromUIImage:frame];
+            cv::Mat colorImg = [OpenCVConversion cvMatGrayFromUIImage:frame];
             if(colorImg.cols == 0)
             {
                 NSLog(@"Invalid frame!");
@@ -362,7 +290,7 @@ using namespace std;
             
             [CvConvolutionController filterBlurHomogeneousAccelerated:colorImg withKernelSize:21];
             
-            [self.imgView setImage:[self UIImageFromCVMat:colorImg]];
+            [self.imgView setImage:[OpenCVConversion UIImageFromCVMat:colorImg]];
         };
         self.debug2.text = @"Laplace";
     }
@@ -395,7 +323,7 @@ using namespace std;
         self.filterType = FILTERMODE_BODY_DETECT;
         self.processFrame =
         ^(UIImage *frame){
-            cv::Mat colorImg = [self cvMatGrayFromUIImage:frame];
+            cv::Mat colorImg = [OpenCVConversion cvMatGrayFromUIImage:frame];
             if(colorImg.cols == 0)
             {
                 NSLog(@"Invalid frame!");
@@ -416,7 +344,7 @@ using namespace std;
 //                }
 //            }
             
-            [self.imgView setImage:[self UIImageFromCVMat:colorImg]];
+            [self.imgView setImage:[OpenCVConversion UIImageFromCVMat:colorImg]];
             self.debug2.text = [NSString stringWithFormat:@"%d faces", f];
         };
     }
