@@ -7,12 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "CvFaceDetector.h"
 
 @interface ViewController : UIViewController
-{
-    CvFaceDetector* cvFaceDetector;
-}
+
 enum Filter_Mode {
     FILTERMODE_DEFAULT,
     FILTERMODE_BLUR_HOMOGENEOUS,

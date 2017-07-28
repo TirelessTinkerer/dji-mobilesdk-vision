@@ -15,7 +15,7 @@ This project opens the door of using DJI's consumer drones, to do near-real-time
 
 3. Clone https://github.com/dji-sdk/Mobile-SDK-iOS to /Users/username/Mobile-SDK-iOS . 
 
-4. Download opencv2.framework from the official opencv [sourceforge website](https://sourceforge.net/projects/opencvlibrary/files/opencv-ios/2.4.13/opencv-2.4.13.2-ios-framework.zip/download). Put the unzipped opencv2.framework to path dji-mobilesdk-vision/drone-cv. We are using opencv 2.4 for now.
+4. Download opencv2.framework from the official opencv [website](http://opencv.org/releases.html) and select the latest iOS pack of OpenCV 3.x. Put the opencv2.framework to path dji-mobilesdk-vision/drone-cv. 
 
 5. Open a terminal, cd into /Users/username/dji-mobilesdk-vision/drone-cv, and run `pod install`. This step may take some time.
 

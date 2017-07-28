@@ -10,7 +10,6 @@
 #import "ViewController.h"
 #import <DJISDK/DJISDK.h>
 #import <VideoPreviewer/VideoPreviewer.h>
-#import "CvConvolutionController.h"
 #import "OpenCVConversion.h"
 
 #ifdef __cplusplus
@@ -18,13 +17,16 @@
   #include <opencv2/imgproc/imgproc.hpp>
   #include <opencv2/objdetect/objdetect.hpp>
   #include <opencv2/video/tracking.hpp>
+#include "MagicInAir.h"
 using namespace std;
 #endif
 #define WeakRef(__obj) __weak typeof(self) __obj = self
 #define WeakReturn(__obj) if(__obj ==nil)return;
 
 @interface ViewController()<DJIVideoFeedListener, DJISDKManagerDelegate, DJICameraDelegate, DJIBaseProductDelegate>
-
+{
+    SimpleFaceDetector* myFaceDetector;
+}
 @property (weak, nonatomic) IBOutlet UIView *fpvPreview;
 @property (weak, nonatomic) IBOutlet UIImageView *imgView;
 @property (strong, nonatomic) UIImage *myImage;
@@ -40,14 +42,11 @@ using namespace std;
 @property (weak, nonatomic) IBOutlet UIButton *laplaceFilter;
 @property (weak, nonatomic) IBOutlet UIButton *gaussBlue;
 @property (weak, nonatomic) IBOutlet UIButton *humanDetect;
-@property (nonatomic, retain) CvFaceDetector* cvFaceDetector;
+
 
 @end
 
 @implementation ViewController
-
-@synthesize cvFaceDetector;
-
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -55,8 +54,11 @@ using namespace std;
     [self registerApp];
     self.imgView.contentMode = UIViewContentModeScaleAspectFit;
     [self.imgView setBackgroundColor:[UIColor redColor]];
-    self.myImage = [UIImage imageNamed:@"mavic.jpg"];
-    [self.imgView setImage:self.myImage];
+    
+    UIImage *image = [UIImage imageNamed:@"mavic.jpg"];
+    if(image != nil)
+        self.imgView.image = image;
+
     self.myTimer=nil;
     
     self.defaultProcess = ^(UIImage *frame){
@@ -75,8 +77,7 @@ using namespace std;
     
     self.filterType = FILTERMODE_DEFAULT;
 
-    self.cvFaceDetector = [[CvFaceDetector alloc] init];
-
+    myFaceDetector = new SimpleFaceDetector("haarcascade_frontalface_alt.xml");
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -122,7 +123,6 @@ using namespace std;
         NSLog(@"registerAppSuccess");
         
         [DJISDKManager startConnectionToProduct];
-//        [DJISDKManager enableBridgeModeWithBridgeAppIP:@"10.128.129.54"];
 //        [DJISDKManager enableBridgeModeWithBridgeAppIP:@"192.168.0.107"];
     }
     
@@ -133,7 +133,8 @@ using namespace std;
 /*---------------------- The following function deals with fpv view----------*/
 - (void)productConnected:(DJIBaseProduct *)product
 {
-    if(product){
+    if(product)
+    {
         [product setDelegate:self];
         DJICamera * camera = [self fetchCamera];
         if (camera != nil) {
@@ -258,7 +259,8 @@ using namespace std;
                 return;
             }
             cv::resize(colorImg, colorImg, cv::Size(480, 360));
-            [CvConvolutionController filterLaplace:colorImg withKernelSize:3];
+            
+            filterLaplace(colorImg, 3);
             
             [self.imgView setImage:[OpenCVConversion UIImageFromCVMat:colorImg]];
         };
@@ -288,7 +290,9 @@ using namespace std;
             cv::resize(colorImg, colorImg, cv::Size(480, 360));
 
             
-            [CvConvolutionController filterBlurHomogeneousAccelerated:colorImg withKernelSize:21];
+            //[CvConvolutionController filterBlurHomogeneousAccelerated:colorImg withKernelSize:21];
+            
+            filterBlurHomogeneousAccelerated(colorImg, 21);
             
             [self.imgView setImage:[OpenCVConversion UIImageFromCVMat:colorImg]];
         };
@@ -331,19 +335,7 @@ using namespace std;
             }
             cv::resize(colorImg, colorImg, cv::Size(480, 360));
             
-            NSInteger f=[cvFaceDetector detectFacesInMat:colorImg];
-
-//            vector<cv::Rect> human;
-//            cv::cvtColor(colorImg, colorImg, CV_BGR2GRAY);
-//            
-//            self.detectorBody.detectMultiScale(colorImg, human, 1.1, 2, 0 | 1, cv::Size(40,70), cv::Size(80, 300));
-//            // Draw results from detectorBody into original colored image
-//            if (human.size() > 0) {
-//                for (int gg = 0; gg < human.size(); gg++) {
-//                    cv::rectangle(colorImg, human[gg].tl(), human[gg].br(), Scalar(0,0,255), 2, 8, 0);
-//                }
-//            }
-            
+            NSInteger f =myFaceDetector->detectFaceInMat(colorImg);
             [self.imgView setImage:[OpenCVConversion UIImageFromCVMat:colorImg]];
             self.debug2.text = [NSString stringWithFormat:@"%d faces", f];
         };
