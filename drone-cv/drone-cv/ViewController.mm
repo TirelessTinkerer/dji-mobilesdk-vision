@@ -21,8 +21,8 @@
 using namespace std;
 #endif
 
-#define PHOTO_NUMBER 8
-#define ROTATE_ANGLE 45
+#define PHOTO_NUMBER 4
+#define ROTATE_ANGLE 90
 
 #define weakSelf(__TARGET__) __weak typeof(self) __TARGET__=self
 #define weakReturn(__TARGET__) if(__TARGET__==nil)return;
@@ -43,7 +43,6 @@ using namespace std;
 @property (strong, nonatomic) UIImage *myImage;
 @property (weak, nonatomic) IBOutlet UILabel *debugLabel;
 @property (weak, nonatomic) IBOutlet UILabel *debug2;
-@property (assign, nonatomic) NSInteger counter;
 @property (weak, nonatomic) NSTimer *myTimer;
 @property (nonatomic, copy, nullable) void (^processFrame)(UIImage *frame);
 
@@ -96,10 +95,7 @@ using namespace std;
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-    DJICamera *camera = [self fetchCamera];
-    if (camera && camera.delegate == self) {
-        [camera setDelegate:nil];
-    }
+
     [self resetVideoPreview];
 }
 
@@ -130,68 +126,51 @@ using namespace std;
 {
     NSString* message = @"Register App Successed!";
     if (error) {
-        message = @"Register App Failed! Please enter your App Key and check the network.";
-    }else
-    {
-        NSLog(@"registerAppSuccess");
-        
-        [DJISDKManager startConnectionToProduct];
-//        [DJISDKManager enableBridgeModeWithBridgeAppIP:@"192.168.0.107"];
+        message = @"Failed! Please check your App Key and network.";
     }
     
+    NSLog(message);
     [self showAlertViewWithTitle:@"Register App" withMessage:message];
+    
+    [DJISDKManager startConnectionToProduct];
+    //        [DJISDKManager enableBridgeModeWithBridgeAppIP:@"192.168.0.107"];
 }
-/////////////////////// End App Registration Related functions
 
-/*---------------------- The following function deals with fpv view----------*/
 - (void)productConnected:(DJIBaseProduct* _Nullable)product
 {
     if(product)
     {
-        //[product setDelegate:self];
-        DJICamera * camera = [self fetchCamera];
-        if (camera != nil) {
-            //camera.delegate = self;
-            [self showAlertViewWithTitle:@"productConnected" withMessage:@"Camera Succeeded"];
-        }
-        else
-        {
-            [self showAlertViewWithTitle:@"productConnected" withMessage:@"Camera Failed"];
-        }
-        
-        ////////////////////
-//        DJIFlightController *flightController = [self fetchFlightController];
-//        if (flightController) {
-//            [self showAlertViewWithTitle:@"First get FC" withMessage:@"Succeeded"];
-//            [flightController setDelegate:self];
-//        }
-//        else
-//        {
-//            [self showAlertViewWithTitle:@"First get FC" withMessage:@"Failed"];
-//        }
-//        
-        /////////////////////////////
-        DJIGimbal * myGimbal = [self fetchGimbal];
-        if(myGimbal == nil)
-        {
-            [self showAlertViewWithTitle:@"fetch gimbal" withMessage:@"Failed"];
-        }
-        else
-        {
-            [self showAlertViewWithTitle:@"fetch gimbal" withMessage:@"Succeeded"];
-        }
-        
         [self setupVideoPreviewer]; // Implemented below
-
+        
+        DJICamera * myCamera = [self fetchCamera];
+        DJIGimbal * myGimbal = [self fetchGimbal];
+        DJIFlightController * myFC = [self fetchFlightController];
+        
+        if(myCamera == nil)
+        {
+            [self showAlertViewWithTitle:@"Product Connected" withMessage:@"Failed to fetch camera"];
+        }
+        else if(myGimbal == nil)
+        {
+            [self showAlertViewWithTitle:@"Product Connected" withMessage:@"Failed to fetch gimbal"];
+        }
+        else if(myFC == nil)
+        {
+            [self showAlertViewWithTitle:@"Product Connected" withMessage:@"Failed to fetch FC"];
+        }
+        else
+        {
+            [self showAlertViewWithTitle:@"Product Connected" withMessage:@"All components fetched"];
+        }
+    }
+    else
+    {
+        [self showAlertViewWithTitle:@"Product Connected" withMessage:@"Error!"];
     }
 }
 
 - (void) productDisconnected
 {
-    DJICamera *camera = [self fetchCamera];
-    if(camera && camera.delegate == self) {
-        [camera setDelegate:nil];
-    }
     [self resetVideoPreview]; // Implemented below
 }
 
@@ -200,11 +179,6 @@ using namespace std;
     if (![DJISDKManager product]) {
         return nil;
     }
-    else
-    {
-        [self showAlertViewWithTitle:@"fetchCamera" withMessage:@"Product ok!"];
-    }
-    
     return [DJISDKManager product].camera;
 }
 
@@ -213,16 +187,13 @@ using namespace std;
 
 - (DJIFlightController*) fetchFlightController {
     if (![DJISDKManager product]) {
-        [self showAlertViewWithTitle:@"fetchFlightController" withMessage:@"Failed in product"];
         return nil;
     }
+    
     if ([[DJISDKManager product] isKindOfClass:[DJIAircraft class]]) {
         return ((DJIAircraft*)[DJISDKManager product]).flightController;
     }
-    else
-    {
-        [self showAlertViewWithTitle:@"fetchFlightController" withMessage:@"Wrong class"];
-    }
+    
     return nil;
 }
 
@@ -253,7 +224,6 @@ using namespace std;
     [[VideoPreviewer instance] start];
     
     self.myTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(timerCallback) userInfo:nil repeats:YES];
-    self.counter = 0;
     
     // This is where you define your image processing method
     self.processFrame = self.defaultProcess;
@@ -293,25 +263,6 @@ using namespace std;
     //callback
     [[VideoPreviewer instance] snapshotPreview:self.processFrame];
 }
-//
-//-(void) takeSnapshot3
-//{
-//    [[VideoPreviewer instance] snapshotPreview:^(UIImage *snapshot) {
-//       
-//        cv::Mat gray;
-//        cv::Mat dst, detected_edges;
-//
-//        cv::Mat colorImg = [self cvMatFromUIImage:snapshot];
-//        cv::cvtColor(colorImg, gray, CV_BGR2GRAY);
-////        blur(gray,detected_edges, cv::Size(3,3));
-//        cv::Canny(gray, detected_edges, 40, 120, 3);
-//        dst = cv::Scalar::all(0);
-//        colorImg.copyTo(dst, detected_edges);
-//        [self.imgView setImage:[self UIImageFromCVMat:dst]];
-//    }];
-//}
-
-
 
 // Filter Buttons
 - (IBAction)doLaplace:(id)sender;
@@ -419,6 +370,9 @@ using namespace std;
 
 - (IBAction)gimbalRun:(id)sender;
 {
+    int pitchRotation;
+    static bool down = true;
+    
     DJIGimbal * myGimbal = [self fetchGimbal];
     if(myGimbal == nil)
     {
@@ -426,27 +380,168 @@ using namespace std;
     }
     else
     {
-        [self showAlertViewWithTitle:@"fetch gimbal" withMessage:@"Succeeded"];
+        if(down)
+            pitchRotation = 0;
+        else
+            pitchRotation = -85;
+        
+        down = !down;
+        DJIGimbalRotation *rotation = [DJIGimbalRotation gimbalRotationWithPitchValue:@(pitchRotation)
+                                                                            rollValue:0
+                                                                             yawValue:0 time:2
+                                                                                 mode:DJIGimbalRotationModeAbsoluteAngle];
+        
+        [myGimbal rotateWithRotation:rotation completion:^(NSError * _Nullable error) {
+            if (error)
+            {
+                [self showAlertViewWithTitle:@"rotateWithRotation failed" withMessage:@"Failed"];
+            }
+        }];
     }
 }
 
-- (IBAction)onTakeoffButtonClicked:(id)sender {
+
+- (IBAction)onTakeoffButtonClicked:(id)sender
+{
+    enum {TAKEOFF=0, LAND=1};
+    static int task = TAKEOFF;
+    
+    
     DJIFlightController* fc = [self fetchFlightController];
     if (fc) {
-        [fc startTakeoffWithCompletion:^(NSError * _Nullable error) {
-            if (error) {
-                 [self showAlertViewWithTitle:@"takeoff" withMessage:@"Failed"];
-            }
-            else
-            {
-                [self showAlertViewWithTitle:@"takeoff" withMessage:@"Succeeded"];
-            }
-        }];
+        if(task == TAKEOFF)
+        {
+            [fc startTakeoffWithCompletion:^(NSError * _Nullable error) {
+                if (error) {
+                    [self showAlertViewWithTitle:@"takeoff" withMessage:@"Failed"];
+                }
+                else
+                {
+                    [self showAlertViewWithTitle:@"takeoff" withMessage:@"Succeeded"];
+                }
+            }];
+        }
+        else
+        {
+            [fc startLandingWithCompletion:^(NSError * _Nullable error) {
+                if (error) {
+                    [self showAlertViewWithTitle:@"Landing" withMessage:@"Failed"];
+                }
+                else
+                {
+                    [self showAlertViewWithTitle:@"Landing" withMessage:@"Succeeded"];
+                }
+            }];
+        }
     }
     else
     {
         [self showAlertViewWithTitle:@"Component" withMessage:@"Not exist"];
     }
+    task = (task == TAKEOFF)? LAND : TAKEOFF;
 }
 
+- (IBAction)onDroneMoveClicked:(id)sender
+{
+    [self enableVS];
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self executeVirtualStickControl];
+    });
+}
+
+- (void) enableVS
+{
+    // disable gesture mode
+    if([[DJISDKManager product].model isEqual: DJIAircraftModelNameSpark])
+    {
+        [[DJISDKManager missionControl].activeTrackMissionOperator setGestureModeEnabled:NO withCompletion:^(NSError * _Nullable error) {
+            if (error) {
+                NSLog(@"Set Gesture mode enabled failed");
+            }
+            else {
+                NSLog(@"Set Gesture mode enabled Succeeded");
+            }
+        }];
+    }
+
+    // Enter the virtual stick mode with some default settings
+    DJIFlightController *fc = [self fetchFlightController];
+    fc.yawControlMode = DJIVirtualStickYawControlModeAngle;
+    fc.rollPitchControlMode = DJIVirtualStickRollPitchControlModeVelocity;
+    fc.rollPitchCoordinateSystem = DJIVirtualStickFlightCoordinateSystemBody;
+    //DJIVirtualStickFlightCoordinateSystemBody;
+    [fc setVirtualStickModeEnabled:YES withCompletion:^(NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"Enable VirtualStickControlMode Failed");
+        }
+        else {
+            NSLog(@"Enable VirtualStickControlMode Succeeded");
+        }
+    }];
+
+}
+
+- (void)executeVirtualStickControl
+{
+    __weak DJICamera *camera = [self fetchCamera];
+    
+    for(int i = 0;i < PHOTO_NUMBER; i++){
+        
+        float yawAngle = ROTATE_ANGLE*i;
+        NSLog(@"Yaw angle=%f", yawAngle);
+        if (yawAngle > 180.0) { //Filter the angle between -180 ~ 0, 0 ~ 180
+            yawAngle = yawAngle - 360;
+        }
+        
+        NSTimer *timer =  [NSTimer scheduledTimerWithTimeInterval:0.2 target:self selector:@selector(rotateDrone:) userInfo:@{@"YawAngle":@(yawAngle)} repeats:YES];
+        [timer fire];
+        
+        [[NSRunLoop currentRunLoop]addTimer:timer forMode:NSDefaultRunLoopMode];
+        [[NSRunLoop currentRunLoop]runUntilDate:[NSDate dateWithTimeIntervalSinceNow:2]];
+        
+        [timer invalidate];
+        timer = nil;
+        
+        sleep(2);
+    }
+    
+    DJIFlightController *flightController = [self fetchFlightController];
+    [flightController setVirtualStickModeEnabled:NO withCompletion:^(NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"Disable VirtualStickControlMode Failed");
+            DJIFlightController *flightController = [self fetchFlightController];
+            [flightController setVirtualStickModeEnabled:NO withCompletion:nil];
+        }
+    }];
+    
+    weakSelf(target);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        weakReturn(target);
+        [target showAlertViewWithTitle:@"Capture Photos" withMessage:@"Capture finished"];
+    });
+}
+
+- (void)rotateDrone:(NSTimer *)timer
+{
+    NSDictionary *dict = [timer userInfo];
+    float yawAngle = [[dict objectForKey:@"YawAngle"] floatValue];
+    
+    DJIFlightController *flightController = [self fetchFlightController];
+    
+    DJIVirtualStickFlightControlData vsFlightCtrlData;
+    vsFlightCtrlData.pitch = 0;
+    vsFlightCtrlData.roll = 0;
+    vsFlightCtrlData.verticalThrottle = 0;
+    vsFlightCtrlData.yaw = yawAngle;
+    
+    flightController.isVirtualStickAdvancedModeEnabled = YES;
+    
+    [flightController sendVirtualStickFlightControlData:vsFlightCtrlData withCompletion:^(NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"Send FlightControl Data Failed %@", error.description);
+        }
+    }];
+    
+}
 @end

@@ -59,7 +59,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZAS-Wc-ZfJ">
-                                <rect key="frame" x="118" y="262" width="66" height="30"/>
+                                <rect key="frame" x="124" y="229" width="66" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Laplace"/>
                                 <connections>
@@ -67,7 +67,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o0W-BE-fGv">
-                                <rect key="frame" x="205" y="262" width="48" height="30"/>
+                                <rect key="frame" x="211" y="229" width="48" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Blur"/>
                                 <connections>
@@ -75,7 +75,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xDq-hy-TFx">
-                                <rect key="frame" x="265" y="262" width="77" height="30"/>
+                                <rect key="frame" x="271" y="229" width="77" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Detector"/>
                                 <connections>
@@ -83,7 +83,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PXj-lZ-5Vj">
-                                <rect key="frame" x="357" y="262" width="79" height="30"/>
+                                <rect key="frame" x="363" y="229" width="79" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Gimbal"/>
                                 <connections>
@@ -91,11 +91,19 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="89C-ac-f6X">
-                                <rect key="frame" x="455" y="262" width="62" height="30"/>
+                                <rect key="frame" x="461" y="229" width="62" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Fly"/>
+                                <state key="normal" title="Takeoff"/>
                                 <connections>
                                     <action selector="onTakeoffButtonClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="hgK-5g-hx7"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oG9-0o-1GA">
+                                <rect key="frame" x="461" y="270" width="62" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Move"/>
+                                <connections>
+                                    <action selector="onDroneMoveClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="oYO-9c-SAE"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -109,7 +117,6 @@
                         <outlet property="humanDetect" destination="xDq-hy-TFx" id="NUl-98-k94"/>
                         <outlet property="imgView" destination="eU5-11-LTp" id="lfz-Ai-Ym7"/>
                         <outlet property="laplaceFilter" destination="ZAS-Wc-ZfJ" id="9UK-h8-WaV"/>
-                        <outlet property="testGimbal" destination="PXj-lZ-5Vj" id="y7U-Kh-jKr"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

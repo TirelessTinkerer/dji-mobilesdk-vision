@@ -27,12 +27,31 @@
 		02EC54C71F0F5E76004010BB /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02EC54C61F0F5E76004010BB /* AVFoundation.framework */; };
 		02EC54C91F0F5E7D004010BB /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02EC54C81F0F5E7D004010BB /* CoreMedia.framework */; };
 		25C4FA351F11E3C400B46006 /* mavic.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 25C4FA341F11E3C400B46006 /* mavic.jpg */; };
+		320626CE1F30E553007ABADC /* VideoPreviewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 320626CD1F30E542007ABADC /* VideoPreviewer.framework */; };
+		320626CF1F30E553007ABADC /* VideoPreviewer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 320626CD1F30E542007ABADC /* VideoPreviewer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		328864711F2AAAE90073B6A9 /* OpenCVConversion.mm in Sources */ = {isa = PBXBuildFile; fileRef = 328864701F2AAAE90073B6A9 /* OpenCVConversion.mm */; };
 		328864791F2AB3870073B6A9 /* MagicInAir.mm in Sources */ = {isa = PBXBuildFile; fileRef = 328864771F2AB3870073B6A9 /* MagicInAir.mm */; };
 		328864811F2BE8740073B6A9 /* lbpcascade_frontalface.xml in Resources */ = {isa = PBXBuildFile; fileRef = 328864801F2BE8740073B6A9 /* lbpcascade_frontalface.xml */; };
 		32ECCF4E1F29611E00186107 /* haarcascade_frontalface_alt.xml in Resources */ = {isa = PBXBuildFile; fileRef = 32ECCF4D1F29611E00186107 /* haarcascade_frontalface_alt.xml */; };
 		71551C9756E476BFC50C6466 /* libPods-drone-cv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B35B3369076CC7343A4AACDD /* libPods-drone-cv.a */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		320626CC1F30E542007ABADC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 320626C81F30E541007ABADC /* VideoPreviewer.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 02A543FD1C3C51CB0083C11B;
+			remoteInfo = VideoPreviewer;
+		};
+		320626D01F30E553007ABADC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 320626C81F30E541007ABADC /* VideoPreviewer.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 02A543FC1C3C51CB0083C11B;
+			remoteInfo = VideoPreviewer;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		02E271361F0EFF3A00474319 /* Embed Frameworks */ = {
@@ -41,6 +60,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				320626CF1F30E553007ABADC /* VideoPreviewer.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -74,6 +94,7 @@
 		02EC54C81F0F5E7D004010BB /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		0F8B5F0459EBB972032268B3 /* Pods-drone-cv.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-drone-cv.debug.xcconfig"; path = "Pods/Target Support Files/Pods-drone-cv/Pods-drone-cv.debug.xcconfig"; sourceTree = "<group>"; };
 		25C4FA341F11E3C400B46006 /* mavic.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = mavic.jpg; sourceTree = SOURCE_ROOT; };
+		320626C81F30E541007ABADC /* VideoPreviewer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VideoPreviewer.xcodeproj; path = ../VideoPreviewer/VideoPreviewer.xcodeproj; sourceTree = "<group>"; };
 		328864701F2AAAE90073B6A9 /* OpenCVConversion.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenCVConversion.mm; path = CV_Tricks/OpenCVConversion.mm; sourceTree = "<group>"; };
 		328864731F2AAB870073B6A9 /* OpenCVConversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenCVConversion.h; path = CV_Tricks/OpenCVConversion.h; sourceTree = "<group>"; };
 		328864771F2AB3870073B6A9 /* MagicInAir.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; name = MagicInAir.mm; path = CV_Tricks/MagicInAir.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -97,6 +118,7 @@
 				02EC54C91F0F5E7D004010BB /* CoreMedia.framework in Frameworks */,
 				02EC54C71F0F5E76004010BB /* AVFoundation.framework in Frameworks */,
 				02EC54BD1F0F5B62004010BB /* libiconv.tbd in Frameworks */,
+				320626CE1F30E553007ABADC /* VideoPreviewer.framework in Frameworks */,
 				02EC54BB1F0F5B38004010BB /* libz.tbd in Frameworks */,
 				02EC54C11F0F5DF3004010BB /* opencv2.framework in Frameworks */,
 				02E271831F0F5A6700474319 /* libstdc++.6.0.9.tbd in Frameworks */,
@@ -159,9 +181,18 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		320626C91F30E541007ABADC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				320626CD1F30E542007ABADC /* VideoPreviewer.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		744CA326CB6B2E7B5A6BD106 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				320626C81F30E541007ABADC /* VideoPreviewer.xcodeproj */,
 				0284887C1F16E0DF00787BF8 /* Foundation.framework */,
 				0284887A1F16E0C200787BF8 /* Accelerate.framework */,
 				028488741F16D8D000787BF8 /* UIKit.framework */,
@@ -207,6 +238,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				320626D11F30E553007ABADC /* PBXTargetDependency */,
 			);
 			name = "drone-cv";
 			productName = "drone-cv";
@@ -240,12 +272,28 @@
 			mainGroup = 02E270F51F0EF6A900474319;
 			productRefGroup = 02E270FF1F0EF6A900474319 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 320626C91F30E541007ABADC /* Products */;
+					ProjectRef = 320626C81F30E541007ABADC /* VideoPreviewer.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				02E270FD1F0EF6A900474319 /* drone-cv */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		320626CD1F30E542007ABADC /* VideoPreviewer.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = VideoPreviewer.framework;
+			remoteRef = 320626CC1F30E542007ABADC /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		02E270FC1F0EF6A900474319 /* Resources */ = {
@@ -325,6 +373,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		320626D11F30E553007ABADC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = VideoPreviewer;
+			targetProxy = 320626D01F30E553007ABADC /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		02E2710A1F0EF6A900474319 /* Main.storyboard */ = {
