@@ -18,8 +18,6 @@
 		02E2710C1F0EF6A900474319 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 02E2710A1F0EF6A900474319 /* Main.storyboard */; };
 		02E2710E1F0EF6A900474319 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 02E2710D1F0EF6A900474319 /* Assets.xcassets */; };
 		02E271111F0EF6A900474319 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 02E2710F1F0EF6A900474319 /* LaunchScreen.storyboard */; };
-		02E271321F0EFF3A00474319 /* VideoPreviewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02E2712B1F0EFB4900474319 /* VideoPreviewer.framework */; };
-		02E271331F0EFF3A00474319 /* VideoPreviewer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 02E2712B1F0EFB4900474319 /* VideoPreviewer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		02E2713B1F0F05F100474319 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02E2713A1F0F05F100474319 /* AssetsLibrary.framework */; };
 		02E2713E1F0F061600474319 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02E2713D1F0F061600474319 /* CoreGraphics.framework */; };
 		02E271831F0F5A6700474319 /* libstdc++.6.0.9.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 02E271821F0F5A6700474319 /* libstdc++.6.0.9.tbd */; };
@@ -31,26 +29,10 @@
 		25C4FA351F11E3C400B46006 /* mavic.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 25C4FA341F11E3C400B46006 /* mavic.jpg */; };
 		328864711F2AAAE90073B6A9 /* OpenCVConversion.mm in Sources */ = {isa = PBXBuildFile; fileRef = 328864701F2AAAE90073B6A9 /* OpenCVConversion.mm */; };
 		328864791F2AB3870073B6A9 /* MagicInAir.mm in Sources */ = {isa = PBXBuildFile; fileRef = 328864771F2AB3870073B6A9 /* MagicInAir.mm */; };
+		328864811F2BE8740073B6A9 /* lbpcascade_frontalface.xml in Resources */ = {isa = PBXBuildFile; fileRef = 328864801F2BE8740073B6A9 /* lbpcascade_frontalface.xml */; };
 		32ECCF4E1F29611E00186107 /* haarcascade_frontalface_alt.xml in Resources */ = {isa = PBXBuildFile; fileRef = 32ECCF4D1F29611E00186107 /* haarcascade_frontalface_alt.xml */; };
 		71551C9756E476BFC50C6466 /* libPods-drone-cv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B35B3369076CC7343A4AACDD /* libPods-drone-cv.a */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		02E2712A1F0EFB4900474319 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 02E271261F0EFB4900474319 /* VideoPreviewer.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 02A543FD1C3C51CB0083C11B;
-			remoteInfo = VideoPreviewer;
-		};
-		02E271341F0EFF3A00474319 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 02E271261F0EFB4900474319 /* VideoPreviewer.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 02A543FC1C3C51CB0083C11B;
-			remoteInfo = VideoPreviewer;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		02E271361F0EFF3A00474319 /* Embed Frameworks */ = {
@@ -59,7 +41,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				02E271331F0EFF3A00474319 /* VideoPreviewer.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -83,7 +64,6 @@
 		02E2710D1F0EF6A900474319 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		02E271101F0EF6A900474319 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		02E271121F0EF6A900474319 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		02E271261F0EFB4900474319 /* VideoPreviewer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VideoPreviewer.xcodeproj; path = "../../Mobile-SDK-iOS/Sample Code/VideoPreviewer/VideoPreviewer.xcodeproj"; sourceTree = "<group>"; };
 		02E2713A1F0F05F100474319 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		02E2713D1F0F061600474319 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		02E271821F0F5A6700474319 /* libstdc++.6.0.9.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.6.0.9.tbd"; path = "usr/lib/libstdc++.6.0.9.tbd"; sourceTree = SDKROOT; };
@@ -98,6 +78,7 @@
 		328864731F2AAB870073B6A9 /* OpenCVConversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenCVConversion.h; path = CV_Tricks/OpenCVConversion.h; sourceTree = "<group>"; };
 		328864771F2AB3870073B6A9 /* MagicInAir.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; name = MagicInAir.mm; path = CV_Tricks/MagicInAir.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		3288647C1F2AF1A00073B6A9 /* MagicInAir.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = MagicInAir.h; path = CV_Tricks/MagicInAir.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		328864801F2BE8740073B6A9 /* lbpcascade_frontalface.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = lbpcascade_frontalface.xml; path = CV_Tricks/lbpcascade_frontalface.xml; sourceTree = "<group>"; };
 		32ECCF4D1F29611E00186107 /* haarcascade_frontalface_alt.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = haarcascade_frontalface_alt.xml; path = CV_Tricks/haarcascade_frontalface_alt.xml; sourceTree = "<group>"; };
 		454EFA066911E0EC12E52339 /* Pods-drone-cv.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-drone-cv.release.xcconfig"; path = "Pods/Target Support Files/Pods-drone-cv/Pods-drone-cv.release.xcconfig"; sourceTree = "<group>"; };
 		B35B3369076CC7343A4AACDD /* libPods-drone-cv.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-drone-cv.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -121,7 +102,6 @@
 				02E271831F0F5A6700474319 /* libstdc++.6.0.9.tbd in Frameworks */,
 				02E2713E1F0F061600474319 /* CoreGraphics.framework in Frameworks */,
 				02E2713B1F0F05F100474319 /* AssetsLibrary.framework in Frameworks */,
-				02E271321F0EFF3A00474319 /* VideoPreviewer.framework in Frameworks */,
 				71551C9756E476BFC50C6466 /* libPods-drone-cv.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -153,6 +133,7 @@
 				328864771F2AB3870073B6A9 /* MagicInAir.mm */,
 				3288647C1F2AF1A00073B6A9 /* MagicInAir.h */,
 				32ECCF4D1F29611E00186107 /* haarcascade_frontalface_alt.xml */,
+				328864801F2BE8740073B6A9 /* lbpcascade_frontalface.xml */,
 				25C4FA341F11E3C400B46006 /* mavic.jpg */,
 				02E271041F0EF6A900474319 /* AppDelegate.h */,
 				02E271051F0EF6A900474319 /* AppDelegate.m */,
@@ -178,14 +159,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		02E271271F0EFB4900474319 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				02E2712B1F0EFB4900474319 /* VideoPreviewer.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		744CA326CB6B2E7B5A6BD106 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -202,7 +175,6 @@
 				02E271821F0F5A6700474319 /* libstdc++.6.0.9.tbd */,
 				02E2713D1F0F061600474319 /* CoreGraphics.framework */,
 				02E2713A1F0F05F100474319 /* AssetsLibrary.framework */,
-				02E271261F0EFB4900474319 /* VideoPreviewer.xcodeproj */,
 				B35B3369076CC7343A4AACDD /* libPods-drone-cv.a */,
 			);
 			name = Frameworks;
@@ -235,7 +207,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				02E271351F0EFF3A00474319 /* PBXTargetDependency */,
 			);
 			name = "drone-cv";
 			productName = "drone-cv";
@@ -269,28 +240,12 @@
 			mainGroup = 02E270F51F0EF6A900474319;
 			productRefGroup = 02E270FF1F0EF6A900474319 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 02E271271F0EFB4900474319 /* Products */;
-					ProjectRef = 02E271261F0EFB4900474319 /* VideoPreviewer.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				02E270FD1F0EF6A900474319 /* drone-cv */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		02E2712B1F0EFB4900474319 /* VideoPreviewer.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = VideoPreviewer.framework;
-			remoteRef = 02E2712A1F0EFB4900474319 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		02E270FC1F0EF6A900474319 /* Resources */ = {
@@ -302,6 +257,7 @@
 				02E271111F0EF6A900474319 /* LaunchScreen.storyboard in Resources */,
 				02E2710E1F0EF6A900474319 /* Assets.xcassets in Resources */,
 				02E2710C1F0EF6A900474319 /* Main.storyboard in Resources */,
+				328864811F2BE8740073B6A9 /* lbpcascade_frontalface.xml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -369,14 +325,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		02E271351F0EFF3A00474319 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = VideoPreviewer;
-			targetProxy = 02E271341F0EFF3A00474319 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		02E2710A1F0EF6A900474319 /* Main.storyboard */ = {

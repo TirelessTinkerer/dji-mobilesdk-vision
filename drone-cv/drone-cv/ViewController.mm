@@ -20,13 +20,24 @@
 #include "MagicInAir.h"
 using namespace std;
 #endif
-#define WeakRef(__obj) __weak typeof(self) __obj = self
-#define WeakReturn(__obj) if(__obj ==nil)return;
 
-@interface ViewController()<DJIVideoFeedListener, DJISDKManagerDelegate, DJICameraDelegate, DJIBaseProductDelegate>
+#define PHOTO_NUMBER 8
+#define ROTATE_ANGLE 45
+
+#define weakSelf(__TARGET__) __weak typeof(self) __TARGET__=self
+#define weakReturn(__TARGET__) if(__TARGET__==nil)return;
+
+
+@interface ViewController()<DJIVideoFeedListener, DJISDKManagerDelegate>
 {
     SimpleFaceDetector* myFaceDetector;
 }
+
+//@property (atomic) CLLocationCoordinate2D aircraftLocation;
+@property (atomic) double aircraftAltitude;
+@property (atomic) DJIGPSSignalLevel gpsSignalLevel;
+@property (atomic) double aircraftYaw;
+
 @property (weak, nonatomic) IBOutlet UIView *fpvPreview;
 @property (weak, nonatomic) IBOutlet UIImageView *imgView;
 @property (strong, nonatomic) UIImage *myImage;
@@ -40,9 +51,9 @@ using namespace std;
 @property (atomic) enum Filter_Mode filterType;
 
 @property (weak, nonatomic) IBOutlet UIButton *laplaceFilter;
-@property (weak, nonatomic) IBOutlet UIButton *gaussBlue;
+@property (weak, nonatomic) IBOutlet UIButton *gaussBlur;
 @property (weak, nonatomic) IBOutlet UIButton *humanDetect;
-
+@property (weak, nonatomic) IBOutlet UIButton *testGimbal;
 
 @end
 
@@ -77,7 +88,9 @@ using namespace std;
     
     self.filterType = FILTERMODE_DEFAULT;
 
-    myFaceDetector = new SimpleFaceDetector("haarcascade_frontalface_alt.xml");
+   // myFaceDetector = new SimpleFaceDetector("haarcascade_frontalface_alt.xml");
+    myFaceDetector = new SimpleFaceDetector("lbpcascade_frontalface");
+
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -131,16 +144,45 @@ using namespace std;
 /////////////////////// End App Registration Related functions
 
 /*---------------------- The following function deals with fpv view----------*/
-- (void)productConnected:(DJIBaseProduct *)product
+- (void)productConnected:(DJIBaseProduct* _Nullable)product
 {
     if(product)
     {
-        [product setDelegate:self];
+        //[product setDelegate:self];
         DJICamera * camera = [self fetchCamera];
         if (camera != nil) {
-            camera.delegate = self;
+            //camera.delegate = self;
+            [self showAlertViewWithTitle:@"productConnected" withMessage:@"Camera Succeeded"];
         }
+        else
+        {
+            [self showAlertViewWithTitle:@"productConnected" withMessage:@"Camera Failed"];
+        }
+        
+        ////////////////////
+//        DJIFlightController *flightController = [self fetchFlightController];
+//        if (flightController) {
+//            [self showAlertViewWithTitle:@"First get FC" withMessage:@"Succeeded"];
+//            [flightController setDelegate:self];
+//        }
+//        else
+//        {
+//            [self showAlertViewWithTitle:@"First get FC" withMessage:@"Failed"];
+//        }
+//        
+        /////////////////////////////
+        DJIGimbal * myGimbal = [self fetchGimbal];
+        if(myGimbal == nil)
+        {
+            [self showAlertViewWithTitle:@"fetch gimbal" withMessage:@"Failed"];
+        }
+        else
+        {
+            [self showAlertViewWithTitle:@"fetch gimbal" withMessage:@"Succeeded"];
+        }
+        
         [self setupVideoPreviewer]; // Implemented below
+
     }
 }
 
@@ -153,20 +195,53 @@ using namespace std;
     [self resetVideoPreview]; // Implemented below
 }
 
-- (DJICamera*) fetchCamera
-{
-    if(![DJISDKManager product]){
+- (DJICamera*) fetchCamera {
+    
+    if (![DJISDKManager product]) {
+        return nil;
+    }
+    else
+    {
+        [self showAlertViewWithTitle:@"fetchCamera" withMessage:@"Product ok!"];
+    }
+    
+    return [DJISDKManager product].camera;
+}
+
+
+
+
+- (DJIFlightController*) fetchFlightController {
+    if (![DJISDKManager product]) {
+        [self showAlertViewWithTitle:@"fetchFlightController" withMessage:@"Failed in product"];
+        return nil;
+    }
+    if ([[DJISDKManager product] isKindOfClass:[DJIAircraft class]]) {
+        return ((DJIAircraft*)[DJISDKManager product]).flightController;
+    }
+    else
+    {
+        [self showAlertViewWithTitle:@"fetchFlightController" withMessage:@"Wrong class"];
+    }
+    return nil;
+}
+
+
+- (DJIGimbal*) fetchGimbal {
+    if (![DJISDKManager product]) {
         return nil;
     }
     
-    if([[DJISDKManager product] isKindOfClass:[DJIAircraft class]]){
-        return ((DJIAircraft*)[DJISDKManager product]).camera;
-    } else if([[DJISDKManager product] isKindOfClass:[DJIHandheld class]]) {
-        return ((DJIHandheld*)[DJISDKManager product]).camera;
+    if ([[DJISDKManager product] isKindOfClass:[DJIAircraft class]]) {
+        return ((DJIAircraft*)[DJISDKManager product]).gimbal;
+    }
+    else if ([[DJISDKManager product] isKindOfClass:[DJIHandheld class]]) {
+        return ((DJIHandheld*)[DJISDKManager product]).gimbal;
     }
     
     return nil;
 }
+
 
 // Called by productConnected
 - (void) setupVideoPreviewer
@@ -341,4 +416,37 @@ using namespace std;
         };
     }
 }
+
+- (IBAction)gimbalRun:(id)sender;
+{
+    DJIGimbal * myGimbal = [self fetchGimbal];
+    if(myGimbal == nil)
+    {
+         [self showAlertViewWithTitle:@"fetch gimbal" withMessage:@"Failed"];
+    }
+    else
+    {
+        [self showAlertViewWithTitle:@"fetch gimbal" withMessage:@"Succeeded"];
+    }
+}
+
+- (IBAction)onTakeoffButtonClicked:(id)sender {
+    DJIFlightController* fc = [self fetchFlightController];
+    if (fc) {
+        [fc startTakeoffWithCompletion:^(NSError * _Nullable error) {
+            if (error) {
+                 [self showAlertViewWithTitle:@"takeoff" withMessage:@"Failed"];
+            }
+            else
+            {
+                [self showAlertViewWithTitle:@"takeoff" withMessage:@"Succeeded"];
+            }
+        }];
+    }
+    else
+    {
+        [self showAlertViewWithTitle:@"Component" withMessage:@"Not exist"];
+    }
+}
+
 @end

@@ -8,7 +8,7 @@
 // Some sample codes are borrowed from https://github.com/Duffycola/opencv-ios-demos
 
 #import <Accelerate/Accelerate.h>
-
+#import <CoreFoundation/CoreFoundation.h>
 #ifdef __cplusplus
 
 #include "MagicInAir.h"
@@ -122,8 +122,14 @@ void SimpleFaceDetector::loadCascades(std::string filename)
         delete face_cascade;
     }
     face_cascade = new cv::CascadeClassifier();
+    //CFBundleRef mainBundle = CFBundleGetMainBundle();
     
-    if (!filename.empty() && !face_cascade->load(filename))
+    NSString *fname = [NSString stringWithCString:filename.c_str()
+                                         encoding:[NSString defaultCStringEncoding]];
+    
+    NSString *real_path = [[NSBundle mainBundle] pathForResource:fname ofType:@"xml"];
+    
+    if (real_path != nil && !face_cascade->load([real_path UTF8String]))
     {
         NSLog(@"Unable to load cascade file");
     }
