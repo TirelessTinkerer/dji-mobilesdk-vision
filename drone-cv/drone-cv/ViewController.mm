@@ -343,7 +343,7 @@ using namespace std;
 //    }
 //}
 
-- (IBAction)doDetect:(id)sender;
+- (IBAction)doDetectFace:(id)sender;
 {
     if(self.imgProcType == IMG_PROC_FACE_DETECT)
     {
@@ -370,6 +370,37 @@ using namespace std;
             
             [self.imgView setImage:[OpenCVConversion UIImageFromCVMat:colorImg]];
             self.debug2.text = [NSString stringWithFormat:@"%d faces", f];
+        };
+    }
+}
+
+- (IBAction)doDetectAR:(id)sender
+{
+    if(self.imgProcType == IMG_PROC_USER_1)
+    {
+        self.imgProcType = IMG_PROC_DEFAULT;
+        self.processFrame = self.defaultProcess;
+        self.debug2.text = @"Default";
+    }
+    else
+    {
+        self.imgProcType = IMG_PROC_USER_1;
+        self.processFrame =
+        ^(UIImage *frame){
+            cv::Mat colorImg = [OpenCVConversion cvMatGrayFromUIImage:frame];
+            if(colorImg.cols == 0)
+            {
+                NSLog(@"Invalid frame!");
+                return;
+            }
+            cv::resize(colorImg, colorImg, cv::Size(480, 360));
+            
+            //TODO CMU: insert the image processing function call here
+            //Implement the function in MagicInAir.mm.
+            NSInteger n=detectARTag(colorImg);
+            
+            [self.imgView setImage:[OpenCVConversion UIImageFromCVMat:colorImg]];
+            self.debug2.text = [NSString stringWithFormat:@"%d Tags", n];
         };
     }
 }

@@ -13,6 +13,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/objdetect/objdetect.hpp>
 #include <opencv2/core/core.hpp>
+#include <opencv2/aruco.hpp>
 #include <list>
 
 using namespace std;
@@ -20,6 +21,7 @@ using namespace cv;
 
 void filterLaplace(Mat image, int kernel_size);
 void filterBlurHomogeneousAccelerated(Mat image, int kernel_size);
+int detectARTag(Mat image);
 
 class SimpleFaceDetector
 {
