@@ -24,7 +24,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="736" height="414"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="P2y-Vf-lio">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Debug1" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="P2y-Vf-lio">
                                 <rect key="frame" x="30" y="292.33333333333331" width="160" height="20.333333333333371"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="160" id="f6D-aq-FUZ"/>
@@ -109,14 +109,14 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.40000000000000002" translatesAutoresizingMaskIntoConstraints="NO" id="mEm-ac-r6c">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Debug2" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.40000000000000002" translatesAutoresizingMaskIntoConstraints="NO" id="mEm-ac-r6c">
                                 <rect key="frame" x="30" y="236.33333333333331" width="147.33333333333334" height="35.999999999999943"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oG9-0o-1GA">
-                                <rect key="frame" x="206" y="287.33333333333331" width="38" height="30"/>
+                                <rect key="frame" x="206" y="287" width="38" height="30"/>
                                 <state key="normal" title="Move"/>
                                 <connections>
                                     <action selector="onDroneMoveClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="oYO-9c-SAE"/>
@@ -147,8 +147,8 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="debug1" destination="P2y-Vf-lio" id="N53-9A-MdO"/>
                         <outlet property="debug2" destination="mEm-ac-r6c" id="xKB-Xz-njk"/>
-                        <outlet property="debugLabel" destination="P2y-Vf-lio" id="V3w-S2-zh1"/>
                         <outlet property="fpvPreview" destination="HbD-WV-3fe" id="ZZ7-re-CBw"/>
                         <outlet property="gaussBlur" destination="o0W-BE-fGv" id="X7e-ge-NKn"/>
                         <outlet property="humanDetect" destination="xDq-hy-TFx" id="NUl-98-k94"/>

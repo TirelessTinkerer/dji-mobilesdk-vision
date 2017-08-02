@@ -41,7 +41,7 @@ using namespace std;
 @property (weak, nonatomic) IBOutlet UIView *fpvPreview;
 @property (weak, nonatomic) IBOutlet UIImageView *imgView;
 @property (strong, nonatomic) UIImage *myImage;
-@property (weak, nonatomic) IBOutlet UILabel *debugLabel;
+@property (weak, nonatomic) IBOutlet UILabel *debug1;
 @property (weak, nonatomic) IBOutlet UILabel *debug2;
 @property (weak, nonatomic) NSTimer *myTimer;
 @property (nonatomic, copy, nullable) void (^processFrame)(UIImage *frame);
@@ -60,11 +60,7 @@ using namespace std;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    cout << "OpenCV version : " << CV_VERSION << endl;
-    cout << "Major version : " << CV_MAJOR_VERSION << endl;
-    cout << "Minor version : " << CV_MINOR_VERSION << endl;
-    cout << "Subminor version : " << CV_SUBMINOR_VERSION << endl;
-    
+
     // Do any additional setup after loading the view, typically from a nib.
     [self registerApp];
     self.imgView.contentMode = UIViewContentModeScaleAspectFit;
@@ -223,7 +219,7 @@ using namespace std;
 // Called by productConnected
 - (void) setupVideoPreviewer
 {
-    self.debugLabel.text = @"Connected!";
+    self.debug1.text = @"Connected!";
     self.debug2.text = @"Init-ed";
     [[VideoPreviewer instance] setView:self.fpvPreview];
     [[DJISDKManager videoFeeder].primaryVideoFeed addListener:self withQueue:nil];
@@ -238,7 +234,7 @@ using namespace std;
 // Called by productDisconnected
 - (void) resetVideoPreview
 {
-    self.debugLabel.text = @"Disconnected!";
+    self.debug1.text = @"Disconnected!";
     [[VideoPreviewer instance] unSetView];
     [[DJISDKManager videoFeeder].primaryVideoFeed removeListener:self];
     [self.myTimer invalidate];
@@ -368,17 +364,23 @@ using namespace std;
             }
             cv::resize(colorImg, colorImg, cv::Size(480, 360));
             
+            //TODO CMU: insert the image processing function call here
+            //Implement the function in MagicInAir.mm.
             NSInteger f =myFaceDetector->detectFaceInMat(colorImg);
+            
             [self.imgView setImage:[OpenCVConversion UIImageFromCVMat:colorImg]];
             self.debug2.text = [NSString stringWithFormat:@"%d faces", f];
         };
     }
 }
 
+/**
+ Demo how to move the gimbal to face forward and down.
+ */
 - (IBAction)gimbalRun:(id)sender;
 {
-    int pitchRotation;
-    static bool down = true;
+    enum {FORWARD=0, DOWN=1};
+    static int action = FORWARD;
     
     DJIGimbal * myGimbal = [self fetchGimbal];
     if(myGimbal == nil)
@@ -387,12 +389,12 @@ using namespace std;
     }
     else
     {
-        if(down)
+        int pitchRotation;
+        if(action == FORWARD)
             pitchRotation = 0;
         else
             pitchRotation = -85;
         
-        down = !down;
         DJIGimbalRotation *rotation = [DJIGimbalRotation gimbalRotationWithPitchValue:@(pitchRotation)
                                                                             rollValue:0
                                                                              yawValue:0 time:2
@@ -404,19 +406,22 @@ using namespace std;
                 [self showAlertViewWithTitle:@"rotateWithRotation failed" withMessage:@"Failed"];
             }
         }];
+        
+        action = (action == FORWARD) ? DOWN : FORWARD;
     }
 }
 
-
+/**
+ Demo how to take off and land.
+ */
 - (IBAction)onTakeoffButtonClicked:(id)sender
 {
     enum {TAKEOFF=0, LAND=1};
-    static int task = TAKEOFF;
-    
+    static int action = TAKEOFF;
     
     DJIFlightController* fc = [self fetchFlightController];
     if (fc) {
-        if(task == TAKEOFF)
+        if(action == TAKEOFF)
         {
             [fc startTakeoffWithCompletion:^(NSError * _Nullable error) {
                 if (error) {
@@ -445,7 +450,7 @@ using namespace std;
     {
         [self showAlertViewWithTitle:@"Component" withMessage:@"Not exist"];
     }
-    task = (task == TAKEOFF)? LAND : TAKEOFF;
+    action = (action == TAKEOFF)? LAND : TAKEOFF;
 }
 
 - (IBAction)onDroneMoveClicked:(id)sender
