@@ -47,7 +47,7 @@ using namespace std;
 @property (nonatomic, copy, nullable) void (^processFrame)(UIImage *frame);
 
 @property (nonatomic, copy) void (^defaultProcess)(UIImage *frame);
-@property (atomic) enum Filter_Mode filterType;
+@property (atomic) enum ImgProcess_Mode imgProcType;
 
 @property (weak, nonatomic) IBOutlet UIButton *laplaceFilter;
 @property (weak, nonatomic) IBOutlet UIButton *gaussBlur;
@@ -60,6 +60,11 @@ using namespace std;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    cout << "OpenCV version : " << CV_VERSION << endl;
+    cout << "Major version : " << CV_MAJOR_VERSION << endl;
+    cout << "Minor version : " << CV_MINOR_VERSION << endl;
+    cout << "Subminor version : " << CV_SUBMINOR_VERSION << endl;
+    
     // Do any additional setup after loading the view, typically from a nib.
     [self registerApp];
     self.imgView.contentMode = UIViewContentModeScaleAspectFit;
@@ -72,7 +77,6 @@ using namespace std;
     self.myTimer=nil;
     
     self.defaultProcess = ^(UIImage *frame){
-        
         cv::Mat colorImg = [OpenCVConversion cvMatFromUIImage:frame];
         if(colorImg.cols == 0)
         {
@@ -80,12 +84,14 @@ using namespace std;
             return;
         }
         cv::resize(colorImg, colorImg, cv::Size(480, 360));
-        putText(colorImg, "Default" , cv::Point(150, 20), 1, 2, cv::Scalar(255, 255, 255), 2, 8, 0);
+        
+        // The default image processing routine just put a text to the resized image
+        putText(colorImg, "Default" , cv::Point(150, 40), 1, 4, cv::Scalar(255, 255, 255), 2, 8, 0);
         
         [self.imgView setImage:[OpenCVConversion UIImageFromCVMat:colorImg]];
     };
     
-    self.filterType = FILTERMODE_DEFAULT;
+    self.imgProcType = IMG_PROC_DEFAULT;
 
    // myFaceDetector = new SimpleFaceDetector("haarcascade_frontalface_alt.xml");
     myFaceDetector = new SimpleFaceDetector("lbpcascade_frontalface");
@@ -267,15 +273,15 @@ using namespace std;
 // Filter Buttons
 - (IBAction)doLaplace:(id)sender;
 {
-    if(self.filterType == FILTERMODE_LAPLACIAN)
+    if(self.imgProcType == IMG_PROC_LAPLACIAN)
     {
-        self.filterType = FILTERMODE_DEFAULT;
+        self.imgProcType = IMG_PROC_DEFAULT;
         self.processFrame = self.defaultProcess;
         self.debug2.text = @"Default";
     }
     else
     {
-        self.filterType = FILTERMODE_LAPLACIAN;
+        self.imgProcType = IMG_PROC_LAPLACIAN;
         self.processFrame =
         ^(UIImage *frame){
             cv::Mat colorImg = [OpenCVConversion cvMatGrayFromUIImage:frame];
@@ -286,6 +292,8 @@ using namespace std;
             }
             cv::resize(colorImg, colorImg, cv::Size(480, 360));
             
+            //TODO CMU: insert the image processing function call here
+            //Implement the function in MagicInAir.mm.
             filterLaplace(colorImg, 3);
             
             [self.imgView setImage:[OpenCVConversion UIImageFromCVMat:colorImg]];
@@ -296,15 +304,15 @@ using namespace std;
 
 - (IBAction)doGaussian:(id)sender;
 {
-    if(self.filterType == FILTERMODE_BLUR_GAUSSIAN)
+    if(self.imgProcType == IMG_PROC_BLUR_GAUSSIAN)
     {
-        self.filterType = FILTERMODE_DEFAULT;
+        self.imgProcType = IMG_PROC_DEFAULT;
         self.processFrame = self.defaultProcess;
         self.debug2.text = @"Default";
     }
     else
     {
-        self.filterType = FILTERMODE_BLUR_GAUSSIAN;
+        self.imgProcType = IMG_PROC_BLUR_GAUSSIAN;
         self.processFrame =
         ^(UIImage *frame){
             cv::Mat colorImg = [OpenCVConversion cvMatGrayFromUIImage:frame];
@@ -315,9 +323,8 @@ using namespace std;
             }
             cv::resize(colorImg, colorImg, cv::Size(480, 360));
 
-            
-            //[CvConvolutionController filterBlurHomogeneousAccelerated:colorImg withKernelSize:21];
-            
+            //TODO CMU: insert the image processing function call here
+            //Implement the function in MagicInAir.mm.
             filterBlurHomogeneousAccelerated(colorImg, 21);
             
             [self.imgView setImage:[OpenCVConversion UIImageFromCVMat:colorImg]];
@@ -342,15 +349,15 @@ using namespace std;
 
 - (IBAction)doDetect:(id)sender;
 {
-    if(self.filterType == FILTERMODE_BODY_DETECT)
+    if(self.imgProcType == IMG_PROC_FACE_DETECT)
     {
-        self.filterType = FILTERMODE_DEFAULT;
+        self.imgProcType = IMG_PROC_DEFAULT;
         self.processFrame = self.defaultProcess;
         self.debug2.text = @"Default";
     }
     else
     {
-        self.filterType = FILTERMODE_BODY_DETECT;
+        self.imgProcType = IMG_PROC_FACE_DETECT;
         self.processFrame =
         ^(UIImage *frame){
             cv::Mat colorImg = [OpenCVConversion cvMatGrayFromUIImage:frame];
