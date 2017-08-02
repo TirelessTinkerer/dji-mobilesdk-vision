@@ -52,9 +52,9 @@
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xDq-hy-TFx">
                                         <rect key="frame" x="209.33333333333334" y="0.0" width="90.000000000000028" height="29.999999999999972"/>
-                                        <state key="normal" title="Detector"/>
+                                        <state key="normal" title="Face"/>
                                         <connections>
-                                            <action selector="doDetect:" destination="BYZ-38-t0r" eventType="touchUpInside" id="I31-Ny-TNM"/>
+                                            <action selector="doDetectFace:" destination="BYZ-38-t0r" eventType="touchUpInside" id="VQa-rl-Jt3"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PXj-lZ-5Vj">
@@ -122,6 +122,13 @@
                                     <action selector="onDroneMoveClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="oYO-9c-SAE"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Jmq-mh-t5v">
+                                <rect key="frame" x="294" y="287" width="41" height="30"/>
+                                <state key="normal" title="Aruco"/>
+                                <connections>
+                                    <action selector="doDetectAR:" destination="BYZ-38-t0r" eventType="touchUpInside" id="pWe-hY-yen"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -129,11 +136,13 @@
                             <constraint firstItem="Xc8-Hw-We4" firstAttribute="centerX" secondItem="HbD-WV-3fe" secondAttribute="centerX" id="5Rb-N4-yfC"/>
                             <constraint firstItem="jey-bO-0EK" firstAttribute="top" secondItem="Xc8-Hw-We4" secondAttribute="bottom" constant="7" id="B87-OT-zUT"/>
                             <constraint firstItem="jey-bO-0EK" firstAttribute="top" secondItem="shP-jK-6hw" secondAttribute="bottom" constant="8" id="BIX-uf-Bj1"/>
+                            <constraint firstItem="Jmq-mh-t5v" firstAttribute="centerY" secondItem="oG9-0o-1GA" secondAttribute="centerY" id="HTk-Al-sON"/>
                             <constraint firstItem="P2y-Vf-lio" firstAttribute="top" secondItem="mEm-ac-r6c" secondAttribute="bottom" constant="20" id="LNj-2j-Nui"/>
                             <constraint firstItem="mEm-ac-r6c" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" multiplier="0.2" priority="750" id="R5x-BK-a5g"/>
                             <constraint firstItem="shP-jK-6hw" firstAttribute="centerX" secondItem="eU5-11-LTp" secondAttribute="centerX" id="ZPF-x7-ofo"/>
                             <constraint firstItem="jey-bO-0EK" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="18" id="dQC-FQ-SBI"/>
                             <constraint firstItem="P2y-Vf-lio" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="10" id="fWD-1l-rPm"/>
+                            <constraint firstItem="Jmq-mh-t5v" firstAttribute="leading" secondItem="oG9-0o-1GA" secondAttribute="trailing" constant="50" id="gJf-zo-RYK"/>
                             <constraint firstItem="mEm-ac-r6c" firstAttribute="centerY" secondItem="DUD-6f-aYQ" secondAttribute="centerY" id="klM-8w-TOC"/>
                             <constraint firstItem="DUD-6f-aYQ" firstAttribute="top" secondItem="jey-bO-0EK" secondAttribute="bottom" constant="16" id="mFc-1o-Nz7"/>
                             <constraint firstAttribute="trailingMargin" secondItem="DUD-6f-aYQ" secondAttribute="trailing" constant="10" id="mVo-eU-aeu"/>

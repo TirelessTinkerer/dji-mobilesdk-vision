@@ -78,7 +78,22 @@ void filterBlurHomogeneousAccelerated(Mat image, int kernel_size)
     free(kernel);
 }
 
-
+int detectARTag(Mat image)
+{
+    cv::Ptr<cv::aruco::Dictionary> ardict = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_250);
+    //cv::Mat  imageCopy;
+    //image.copyTo(imageCopy);
+    std::vector<int> ids;
+    std::vector<std::vector<cv::Point2f> > corners;
+    cv::aruco::detectMarkers(image, ardict, corners, ids);
+    
+    int n=ids.size();
+    // if at least one marker detected
+    if (n > 0)
+        cv::aruco::drawDetectedMarkers(image, corners, ids,cv::Scalar( 255, 0, 255 ));
+    
+    return n;
+}
 
 SimpleFaceDetector::SimpleFaceDetector(std::string filename)
 {
