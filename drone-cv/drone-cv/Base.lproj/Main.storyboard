@@ -38,7 +38,7 @@
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZAS-Wc-ZfJ">
                                         <rect key="frame" x="0.0" y="0.0" width="89.666666666666657" height="29.999999999999972"/>
-                                        <state key="normal" title="Laplace"/>
+                                        <state key="normal" title="Edge"/>
                                         <connections>
                                             <action selector="doLaplace:" destination="BYZ-38-t0r" eventType="touchUpInside" id="OKn-S3-INC"/>
                                         </connections>
@@ -158,11 +158,8 @@
                     <connections>
                         <outlet property="debug1" destination="P2y-Vf-lio" id="N53-9A-MdO"/>
                         <outlet property="debug2" destination="mEm-ac-r6c" id="xKB-Xz-njk"/>
-                        <outlet property="fpvPreview" destination="HbD-WV-3fe" id="ZZ7-re-CBw"/>
-                        <outlet property="gaussBlur" destination="o0W-BE-fGv" id="X7e-ge-NKn"/>
-                        <outlet property="humanDetect" destination="xDq-hy-TFx" id="NUl-98-k94"/>
-                        <outlet property="imgView" destination="eU5-11-LTp" id="lfz-Ai-Ym7"/>
-                        <outlet property="laplaceFilter" destination="ZAS-Wc-ZfJ" id="9UK-h8-WaV"/>
+                        <outlet property="viewLive" destination="HbD-WV-3fe" id="phO-kD-nlN"/>
+                        <outlet property="viewProcessed" destination="eU5-11-LTp" id="JLx-wh-Yte"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

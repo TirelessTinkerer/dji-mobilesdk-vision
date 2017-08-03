@@ -2,7 +2,7 @@
 //  ViewController.m
 //  drone-cv
 //
-//  Created by Arjun Menon on 7/6/17.
+//  Created by Zhiyuan Li on 7/6/17.
 //  Copyright © 2017 dji. All rights reserved.
 //
 
@@ -33,26 +33,27 @@ using namespace std;
     SimpleFaceDetector* myFaceDetector;
 }
 
-//@property (atomic) CLLocationCoordinate2D aircraftLocation;
-@property (atomic) double aircraftAltitude;
-@property (atomic) DJIGPSSignalLevel gpsSignalLevel;
-@property (atomic) double aircraftYaw;
+@property (weak, nonatomic) IBOutlet UIView *viewLive;
+@property (weak, nonatomic) IBOutlet UIImageView *viewProcessed;
 
-@property (weak, nonatomic) IBOutlet UIView *fpvPreview;
-@property (weak, nonatomic) IBOutlet UIImageView *imgView;
-@property (strong, nonatomic) UIImage *myImage;
 @property (weak, nonatomic) IBOutlet UILabel *debug1;
 @property (weak, nonatomic) IBOutlet UILabel *debug2;
-@property (weak, nonatomic) NSTimer *myTimer;
-@property (nonatomic, copy, nullable) void (^processFrame)(UIImage *frame);
 
+@property (weak, nonatomic) NSTimer *myTimer;
+
+@property (nonatomic, copy, nullable) void (^processFrame)(UIImage *frame);
 @property (nonatomic, copy) void (^defaultProcess)(UIImage *frame);
+
 @property (atomic) enum ImgProcess_Mode imgProcType;
 
-@property (weak, nonatomic) IBOutlet UIButton *laplaceFilter;
-@property (weak, nonatomic) IBOutlet UIButton *gaussBlur;
-@property (weak, nonatomic) IBOutlet UIButton *humanDetect;
-@property (weak, nonatomic) IBOutlet UIButton *testGimbal;
+// Buttons
+@property (weak, nonatomic) IBOutlet UIButton *btnLaplace;
+@property (weak, nonatomic) IBOutlet UIButton *btnBlur;
+@property (weak, nonatomic) IBOutlet UIButton *btnFaceDetect;
+@property (weak, nonatomic) IBOutlet UIButton *btnGimbal;
+@property (weak, nonatomic) IBOutlet UIButton *btnTakeoffLand;
+@property (weak, nonatomic) IBOutlet UIButton *btnMoveTest;
+@property (weak, nonatomic) IBOutlet UIButton *btnArucoTag;
 
 @end
 
@@ -63,19 +64,20 @@ using namespace std;
 
     // Do any additional setup after loading the view, typically from a nib.
     [self registerApp];
-    self.imgView.contentMode = UIViewContentModeScaleAspectFit;
-    [self.imgView setBackgroundColor:[UIColor redColor]];
+    self.viewProcessed.contentMode = UIViewContentModeScaleAspectFit;
+    [self.viewProcessed setBackgroundColor:[UIColor redColor]];
     
     UIImage *image = [UIImage imageNamed:@"mavic.jpg"];
     if(image != nil)
-        self.imgView.image = image;
+        self.viewProcessed.image = image;
 
     self.myTimer=nil;
     
+    // We define the default frame processing function (block)
+    // to be just add a "Default" label on the resized image
     self.defaultProcess = ^(UIImage *frame){
         cv::Mat colorImg = [OpenCVConversion cvMatFromUIImage:frame];
-        if(colorImg.cols == 0)
-        {
+        if(colorImg.cols == 0) {
             NSLog(@"Invalid frame!");
             return;
         }
@@ -84,14 +86,12 @@ using namespace std;
         // The default image processing routine just put a text to the resized image
         putText(colorImg, "Default" , cv::Point(150, 40), 1, 4, cv::Scalar(255, 255, 255), 2, 8, 0);
         
-        [self.imgView setImage:[OpenCVConversion UIImageFromCVMat:colorImg]];
+        [self.viewProcessed setImage:[OpenCVConversion UIImageFromCVMat:colorImg]];
     };
     
     self.imgProcType = IMG_PROC_DEFAULT;
 
-   // myFaceDetector = new SimpleFaceDetector("haarcascade_frontalface_alt.xml");
     myFaceDetector = new SimpleFaceDetector("lbpcascade_frontalface");
-
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -106,8 +106,7 @@ using namespace std;
     // Dispose of any resources that can be recreated.
 }
 
-
-//////////////////////// The following functions deals with App Registration
+#pragma mark App Register
 - (void)registerApp
 {
     //Please enter your App key in the "DJISDKAppKey" key in info.plist file.
@@ -126,16 +125,18 @@ using namespace std;
 #pragma mark DJISDKManagerDelegate Method
 - (void)appRegisteredWithError:(NSError *)error
 {
-    NSString* message = @"Register App Successed!";
+    NSString* message = @"Register:OK!";
     if (error) {
-        message = @"Failed! Please check your App Key and network.";
+        message = @"Register:Failed";
     }
     
+    self.debug1.text = message;
     NSLog(message);
-    [self showAlertViewWithTitle:@"Register App" withMessage:message];
     
     [DJISDKManager startConnectionToProduct];
-    //        [DJISDKManager enableBridgeModeWithBridgeAppIP:@"192.168.0.107"];
+    
+    //Use the following line if you are debugging with bridge
+    //[DJISDKManager enableBridgeModeWithBridgeAppIP:@"192.168.0.107"];
 }
 
 - (void)productConnected:(DJIBaseProduct* _Nullable)product
@@ -148,20 +149,16 @@ using namespace std;
         DJIGimbal * myGimbal = [self fetchGimbal];
         DJIFlightController * myFC = [self fetchFlightController];
         
-        if(myCamera == nil)
-        {
+        if(myCamera == nil){
             [self showAlertViewWithTitle:@"Product Connected" withMessage:@"Failed to fetch camera"];
         }
-        else if(myGimbal == nil)
-        {
+        else if(myGimbal == nil){
             [self showAlertViewWithTitle:@"Product Connected" withMessage:@"Failed to fetch gimbal"];
         }
-        else if(myFC == nil)
-        {
+        else if(myFC == nil){
             [self showAlertViewWithTitle:@"Product Connected" withMessage:@"Failed to fetch FC"];
         }
-        else
-        {
+        else{
             [self showAlertViewWithTitle:@"Product Connected" withMessage:@"All components fetched"];
         }
     }
@@ -176,16 +173,13 @@ using namespace std;
     [self resetVideoPreview]; // Implemented below
 }
 
+#pragma mark Get Drone Components
 - (DJICamera*) fetchCamera {
-    
     if (![DJISDKManager product]) {
         return nil;
     }
     return [DJISDKManager product].camera;
 }
-
-
-
 
 - (DJIFlightController*) fetchFlightController {
     if (![DJISDKManager product]) {
@@ -198,7 +192,6 @@ using namespace std;
     
     return nil;
 }
-
 
 - (DJIGimbal*) fetchGimbal {
     if (![DJISDKManager product]) {
@@ -221,13 +214,16 @@ using namespace std;
 {
     self.debug1.text = @"Connected!";
     self.debug2.text = @"Init-ed";
-    [[VideoPreviewer instance] setView:self.fpvPreview];
+    [[VideoPreviewer instance] setView:self.viewLive];
     [[DJISDKManager videoFeeder].primaryVideoFeed addListener:self withQueue:nil];
     [[VideoPreviewer instance] start];
     
-    self.myTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(timerCallback) userInfo:nil repeats:YES];
+    self.myTimer = [NSTimer scheduledTimerWithTimeInterval:0.1
+                                                    target:self
+                                                  selector:@selector(timerCallback)
+                                                  userInfo:nil
+                                                   repeats:YES];
     
-    // This is where you define your image processing method
     self.processFrame = self.defaultProcess;
 }
 
@@ -260,9 +256,6 @@ using namespace std;
 
 -(void) timerCallback
 {
-    //todo: currently the whole processFrame is called inside glView
-    //we may consider copy out the UIImage and process it in timer
-    //callback
     [[VideoPreviewer instance] snapshotPreview:self.processFrame];
 }
 
@@ -280,19 +273,19 @@ using namespace std;
         self.imgProcType = IMG_PROC_LAPLACIAN;
         self.processFrame =
         ^(UIImage *frame){
-            cv::Mat colorImg = [OpenCVConversion cvMatGrayFromUIImage:frame];
-            if(colorImg.cols == 0)
+            cv::Mat grayImg = [OpenCVConversion cvMatGrayFromUIImage:frame];
+            if(grayImg.cols == 0)
             {
                 NSLog(@"Invalid frame!");
                 return;
             }
-            cv::resize(colorImg, colorImg, cv::Size(480, 360));
+            cv::resize(grayImg, grayImg, cv::Size(480, 360));
             
             //TODO CMU: insert the image processing function call here
             //Implement the function in MagicInAir.mm.
-            filterLaplace(colorImg, 3);
+            filterLaplace(grayImg, 3);
             
-            [self.imgView setImage:[OpenCVConversion UIImageFromCVMat:colorImg]];
+            [self.viewProcessed setImage:[OpenCVConversion UIImageFromCVMat:grayImg]];
         };
         self.debug2.text = @"Laplace";
     }
@@ -311,21 +304,21 @@ using namespace std;
         self.imgProcType = IMG_PROC_BLUR_GAUSSIAN;
         self.processFrame =
         ^(UIImage *frame){
-            cv::Mat colorImg = [OpenCVConversion cvMatGrayFromUIImage:frame];
-            if(colorImg.cols == 0)
+            cv::Mat grayImg = [OpenCVConversion cvMatGrayFromUIImage:frame];
+            if(grayImg.cols == 0)
             {
                 NSLog(@"Invalid frame!");
                 return;
             }
-            cv::resize(colorImg, colorImg, cv::Size(480, 360));
+            cv::resize(grayImg, grayImg, cv::Size(480, 360));
 
             //TODO CMU: insert the image processing function call here
             //Implement the function in MagicInAir.mm.
-            filterBlurHomogeneousAccelerated(colorImg, 21);
+            filterBlurHomogeneousAccelerated(grayImg, 21);
             
-            [self.imgView setImage:[OpenCVConversion UIImageFromCVMat:colorImg]];
+            [self.viewProcessed setImage:[OpenCVConversion UIImageFromCVMat:grayImg]];
         };
-        self.debug2.text = @"Laplace";
+        self.debug2.text = @"Blur";
     }
 }
 
@@ -356,19 +349,19 @@ using namespace std;
         self.imgProcType = IMG_PROC_FACE_DETECT;
         self.processFrame =
         ^(UIImage *frame){
-            cv::Mat colorImg = [OpenCVConversion cvMatGrayFromUIImage:frame];
-            if(colorImg.cols == 0)
+            cv::Mat grayImg = [OpenCVConversion cvMatGrayFromUIImage:frame];
+            if(grayImg.cols == 0)
             {
                 NSLog(@"Invalid frame!");
                 return;
             }
-            cv::resize(colorImg, colorImg, cv::Size(480, 360));
+            cv::resize(grayImg, grayImg, cv::Size(480, 360));
             
             //TODO CMU: insert the image processing function call here
             //Implement the function in MagicInAir.mm.
-            NSInteger f =myFaceDetector->detectFaceInMat(colorImg);
+            NSInteger f = myFaceDetector->detectFaceInMat(grayImg);
             
-            [self.imgView setImage:[OpenCVConversion UIImageFromCVMat:colorImg]];
+            [self.viewProcessed setImage:[OpenCVConversion UIImageFromCVMat:grayImg]];
             self.debug2.text = [NSString stringWithFormat:@"%d faces", f];
         };
     }
@@ -387,19 +380,19 @@ using namespace std;
         self.imgProcType = IMG_PROC_USER_1;
         self.processFrame =
         ^(UIImage *frame){
-            cv::Mat colorImg = [OpenCVConversion cvMatGrayFromUIImage:frame];
-            if(colorImg.cols == 0)
+            cv::Mat grayImg = [OpenCVConversion cvMatGrayFromUIImage:frame];
+            if(grayImg.cols == 0)
             {
                 NSLog(@"Invalid frame!");
                 return;
             }
-            cv::resize(colorImg, colorImg, cv::Size(480, 360));
+            cv::resize(grayImg, grayImg, cv::Size(480, 360));
             
             //TODO CMU: insert the image processing function call here
             //Implement the function in MagicInAir.mm.
-            NSInteger n=detectARTag(colorImg);
+            NSInteger n=detectARTag(grayImg);
             
-            [self.imgView setImage:[OpenCVConversion UIImageFromCVMat:colorImg]];
+            [self.viewProcessed setImage:[OpenCVConversion UIImageFromCVMat:grayImg]];
             self.debug2.text = [NSString stringWithFormat:@"%d Tags", n];
         };
     }
@@ -435,6 +428,7 @@ using namespace std;
             if (error)
             {
                 [self showAlertViewWithTitle:@"rotateWithRotation failed" withMessage:@"Failed"];
+                self.debug2.text = @"rotation failed";
             }
         }];
         
@@ -463,6 +457,7 @@ using namespace std;
                     [self showAlertViewWithTitle:@"takeoff" withMessage:@"Succeeded"];
                 }
             }];
+            self.btnTakeoffLand.titleLabel.text=@"Land";
         }
         else
         {
@@ -475,13 +470,14 @@ using namespace std;
                     [self showAlertViewWithTitle:@"Landing" withMessage:@"Succeeded"];
                 }
             }];
+            self.btnTakeoffLand.titleLabel.text=@"Takeoff";
         }
+        action = (action == TAKEOFF)? LAND : TAKEOFF;
     }
     else
     {
         [self showAlertViewWithTitle:@"Component" withMessage:@"Not exist"];
     }
-    action = (action == TAKEOFF)? LAND : TAKEOFF;
 }
 
 - (IBAction)onDroneMoveClicked:(id)sender
