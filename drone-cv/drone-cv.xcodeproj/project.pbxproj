@@ -29,6 +29,7 @@
 		320626CE1F30E553007ABADC /* VideoPreviewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 320626CD1F30E542007ABADC /* VideoPreviewer.framework */; };
 		320626CF1F30E553007ABADC /* VideoPreviewer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 320626CD1F30E542007ABADC /* VideoPreviewer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		321110441F319BCE009D88EC /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 321110431F319BCE009D88EC /* opencv2.framework */; };
+		3211104F1F33DE53009D88EC /* DroneHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3211104E1F33DE53009D88EC /* DroneHelper.mm */; };
 		328864711F2AAAE90073B6A9 /* OpenCVConversion.mm in Sources */ = {isa = PBXBuildFile; fileRef = 328864701F2AAAE90073B6A9 /* OpenCVConversion.mm */; };
 		328864791F2AB3870073B6A9 /* MagicInAir.mm in Sources */ = {isa = PBXBuildFile; fileRef = 328864771F2AB3870073B6A9 /* MagicInAir.mm */; };
 		328864811F2BE8740073B6A9 /* lbpcascade_frontalface.xml in Resources */ = {isa = PBXBuildFile; fileRef = 328864801F2BE8740073B6A9 /* lbpcascade_frontalface.xml */; };
@@ -95,6 +96,8 @@
 		25C4FA341F11E3C400B46006 /* mavic.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = mavic.jpg; sourceTree = SOURCE_ROOT; };
 		320626C81F30E541007ABADC /* VideoPreviewer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VideoPreviewer.xcodeproj; path = ../VideoPreviewer/VideoPreviewer.xcodeproj; sourceTree = "<group>"; };
 		321110431F319BCE009D88EC /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
+		3211104D1F33DE53009D88EC /* DroneHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DroneHelper.h; path = CV_Tricks/DroneHelper.h; sourceTree = "<group>"; };
+		3211104E1F33DE53009D88EC /* DroneHelper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DroneHelper.mm; path = CV_Tricks/DroneHelper.mm; sourceTree = "<group>"; };
 		328864701F2AAAE90073B6A9 /* OpenCVConversion.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenCVConversion.mm; path = CV_Tricks/OpenCVConversion.mm; sourceTree = "<group>"; };
 		328864731F2AAB870073B6A9 /* OpenCVConversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenCVConversion.h; path = CV_Tricks/OpenCVConversion.h; sourceTree = "<group>"; };
 		328864771F2AB3870073B6A9 /* MagicInAir.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; name = MagicInAir.mm; path = CV_Tricks/MagicInAir.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -152,6 +155,8 @@
 		02E271001F0EF6A900474319 /* drone-cv */ = {
 			isa = PBXGroup;
 			children = (
+				3211104D1F33DE53009D88EC /* DroneHelper.h */,
+				3211104E1F33DE53009D88EC /* DroneHelper.mm */,
 				328864771F2AB3870073B6A9 /* MagicInAir.mm */,
 				3288647C1F2AF1A00073B6A9 /* MagicInAir.h */,
 				32ECCF4D1F29611E00186107 /* haarcascade_frontalface_alt.xml */,
@@ -366,6 +371,7 @@
 			files = (
 				328864711F2AAAE90073B6A9 /* OpenCVConversion.mm in Sources */,
 				02E271091F0EF6A900474319 /* ViewController.mm in Sources */,
+				3211104F1F33DE53009D88EC /* DroneHelper.mm in Sources */,
 				02E271061F0EF6A900474319 /* AppDelegate.m in Sources */,
 				02E271031F0EF6A900474319 /* main.m in Sources */,
 				328864791F2AB3870073B6A9 /* MagicInAir.mm in Sources */,

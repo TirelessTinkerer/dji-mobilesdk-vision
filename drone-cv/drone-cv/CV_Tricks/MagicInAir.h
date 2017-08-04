@@ -9,6 +9,8 @@
 #ifndef MagicInAir_h
 #define MagicInAir_h
 
+#import "DroneHelper.h"
+
 #ifdef __cplusplus
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/objdetect/objdetect.hpp>
@@ -21,7 +23,8 @@ using namespace cv;
 
 void filterLaplace(Mat image, int kernel_size);
 void filterBlurHomogeneousAccelerated(Mat image, int kernel_size);
-int detectARTag(Mat image);
+int  detectARTag(Mat image);
+void sampleFeedback(Mat image, DroneHelper * drone);
 
 class SimpleFaceDetector
 {

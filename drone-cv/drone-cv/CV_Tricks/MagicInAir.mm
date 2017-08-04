@@ -9,6 +9,7 @@
 
 #import <Accelerate/Accelerate.h>
 #import <CoreFoundation/CoreFoundation.h>
+
 #ifdef __cplusplus
 
 #include "MagicInAir.h"
@@ -93,6 +94,24 @@ int detectARTag(Mat image)
         cv::aruco::drawDetectedMarkers(image, corners, ids,cv::Scalar( 255, 0, 255 ));
     
     return n;
+}
+
+void sampleFeedback(Mat image, DroneHelper * drone)
+{
+/**
+ * Remember this function is called every time
+ * a frame is available. So don't do long loop here.
+ */
+    cvtColor(image, image, COLOR_BGR2YUV);
+    
+    extractChannel(image, image, 0);
+    
+    DJIVirtualStickFlightControlData ctrl;
+    ctrl.pitch = 0.1;
+    ctrl.roll = 0.0;
+    ctrl.yaw  = 0.0;
+    ctrl.verticalThrottle = 0.0;
+    [drone sendMovementCommand:ctrl];
 }
 
 SimpleFaceDetector::SimpleFaceDetector(std::string filename)

@@ -129,6 +129,14 @@
                                     <action selector="doDetectAR:" destination="BYZ-38-t0r" eventType="touchUpInside" id="pWe-hY-yen"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="telemetry" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kdw-1U-jsz">
+                                <rect key="frame" x="522" y="277" width="176" height="129"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.93579141530724175" green="0.97259688603956029" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -156,8 +164,10 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="btnTakeoffLand" destination="89C-ac-f6X" id="VGm-pl-7Xy"/>
                         <outlet property="debug1" destination="P2y-Vf-lio" id="N53-9A-MdO"/>
                         <outlet property="debug2" destination="mEm-ac-r6c" id="xKB-Xz-njk"/>
+                        <outlet property="telemetry" destination="kdw-1U-jsz" id="3s8-5g-flp"/>
                         <outlet property="viewLive" destination="HbD-WV-3fe" id="phO-kD-nlN"/>
                         <outlet property="viewProcessed" destination="eU5-11-LTp" id="JLx-wh-Yte"/>
                     </connections>
