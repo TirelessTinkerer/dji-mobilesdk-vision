@@ -9,7 +9,7 @@
 #import <DJISDK/DJISDK.h>
 #import <Foundation/Foundation.h>
 
-@interface DroneHelper : NSObject
+@interface DroneHelper : NSObject <DJIFlightControllerDelegate>
 
 @property(nonatomic, readwrite) float NEDVelocityX;
 @property(nonatomic, readwrite) float NEDVelocityY;
@@ -20,6 +20,12 @@
 @property(nonatomic, assign) double yaw;
 @property(nonatomic, assign) BOOL   isFlying;
 
-- (void) setCurrentState:(DJIFlightControllerState *) state;
+
+//- (void) setCurrentState:(DJIFlightControllerState *) state;
+- (BOOL) sendMovementCommand:(DJIVirtualStickFlightControlData) vsSetpoint;
+- (BOOL) enterVirtualStickMode;
+- (BOOL) exitVirtualStickMode;
+- (BOOL) takeoff;
+- (BOOL) land;
 
 @end

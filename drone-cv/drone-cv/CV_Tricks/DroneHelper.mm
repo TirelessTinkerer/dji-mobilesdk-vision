@@ -10,19 +10,18 @@
 
 @implementation DroneHelper
 
-
 -(instancetype)init
 {
     self = [super init];
     if (self) {
-        self.NEDVelocityX = 10;
-        self.NEDVelocityY = 10;
-        self.NEDVelocityZ = 10;
-        self.heightAboveHome = 10;
-        self.roll = 10;
-        self.pitch = 10;
-        self.yaw = 10;
-        self.isFlying = 10;
+        _NEDVelocityX = 10;
+        _NEDVelocityY = 10;
+        _NEDVelocityZ = 10;
+        _heightAboveHome = 10;
+        _roll = 10;
+        _pitch = 10;
+        _yaw = 10;
+        _isFlying = 10;
     }
     return self;
 }
@@ -39,11 +38,20 @@
     self.isFlying = state.isFlying;
 }
 
-- (BOOL) enableVirtualStick
+#pragma mark FlightControllerDelegate
+-(void)flightController:(DJIFlightController *)fc didUpdateState:(DJIFlightControllerState *)state
 {
+    //self.debug1.text = [NSString stringWithFormat:@"h=%.3f",  state.altitude ];
+    [self setCurrentState:state];
+}
+
+#pragma mark Enable and Disable virtual stick
+- (BOOL) enterVirtualStickMode
+{
+    __block BOOL result=TRUE;
     DJIBaseProduct *p = [DJISDKManager product];
     if(p == nil) {
-        NSLog(@"enableVirtualStick failed: no product connected");
+        NSLog(@"enterVirtualStickMode failed: no product connected");
         return FALSE;
     }
     // disable gesture mode
@@ -51,34 +59,55 @@
         [[DJISDKManager missionControl].activeTrackMissionOperator setGestureModeEnabled:NO withCompletion:^(NSError * _Nullable error) {
             if (error) {
                 NSLog(@"Set Gesture mode enabled failed");
-            }
-            else {
-                NSLog(@"Set Gesture mode enabled Succeeded");
+                result = FALSE;
             }
         }];
     }
+    if(!result) return FALSE;
 
-    
     // Enter the virtual stick mode with some default settings
     DJIFlightController *fc = [self fetchFlightController];
     if(fc == nil) {
-        NSLog(@"enableVirtualStick failed: can't fetch FC");
+        NSLog(@"enterVirtualStickMode failed: can't fetch FC");
         return FALSE;
     }
     
-    fc.yawControlMode            = DJIVirtualStickYawControlModeAngle;
+    fc.yawControlMode            = DJIVirtualStickYawControlModeAngularVelocity;
     fc.rollPitchControlMode      = DJIVirtualStickRollPitchControlModeVelocity;
     fc.rollPitchCoordinateSystem = DJIVirtualStickFlightCoordinateSystemBody;
     //DJIVirtualStickFlightCoordinateSystemBody;
     [fc setVirtualStickModeEnabled:YES withCompletion:^(NSError * _Nullable error) {
         if (error) {
-            NSLog(@"Enable VirtualStickControlMode Failed");
+            NSLog(@"Enter VirtualStickControlMode Failed");
+            result = FALSE;
         }
         else {
-            NSLog(@"Enable VirtualStickControlMode Succeeded");
+            NSLog(@"Enter VirtualStickControlMode Succeeded");
         }
     }];
-    return TRUE;
+    return result;
+}
+
+- (BOOL) exitVirtualStickMode
+{
+    __block BOOL result = TRUE;
+    DJIFlightController* fc = [self fetchFlightController];
+    if (fc) {
+        [fc setVirtualStickModeEnabled:NO withCompletion:^(NSError * _Nullable error) {
+            if (error){
+                NSLog(@"Exit VirtualStickControlMode Failed");
+                result = FALSE;
+            } else{
+                NSLog(@"Exit Virtual Stick Mode:Succeeded");
+            }
+        }];
+    }
+    else
+    {
+        NSLog(@"Component not exist.");
+        result = FALSE;
+    }
+    return result;
 }
 
 #pragma mark Drone movement
@@ -100,6 +129,42 @@
     return TRUE;
 }
 
+#pragma mark Takeoff and land
+- (BOOL) takeoff
+{
+    __block BOOL result = FALSE;
+    DJIFlightController* fc = [self fetchFlightController];
+    if (fc)
+    {
+        [fc startTakeoffWithCompletion:^(NSError * _Nullable error) {
+            if (error) {
+                NSLog(@"Takeoff failed!");
+            }
+            else {
+                result = TRUE;
+            }
+        }];
+    }
+    return result;
+}
+
+- (BOOL) land
+{
+    __block BOOL result = FALSE;
+    DJIFlightController* fc = [self fetchFlightController];
+    if (fc)
+    {
+        [fc startLandingWithCompletion:^(NSError * _Nullable error) {
+            if (error) {
+                NSLog(@"Land failed!");
+            }
+            else {
+                result = TRUE;
+            }
+        }];
+    }
+    return result;
+}
 
 #pragma mark Get Drone Components
 - (DJICamera*) fetchCamera {
