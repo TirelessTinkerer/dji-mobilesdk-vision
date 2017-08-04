@@ -11,7 +11,7 @@
 #import <DJISDK/DJISDK.h>
 #import <VideoPreviewer/VideoPreviewer.h>
 #import "OpenCVConversion.h"
-
+#import "DroneHelper.h"
 #ifdef __cplusplus
   #include <vector>
   #include <opencv2/imgproc/imgproc.hpp>
@@ -28,7 +28,7 @@ using namespace std;
 #define weakReturn(__TARGET__) if(__TARGET__==nil)return;
 
 
-@interface ViewController()<DJIVideoFeedListener, DJISDKManagerDelegate>
+@interface ViewController()<DJIVideoFeedListener, DJISDKManagerDelegate, DJIFlightControllerDelegate>
 {
     SimpleFaceDetector* myFaceDetector;
 }
@@ -44,6 +44,8 @@ using namespace std;
 @property (nonatomic, copy, nullable) void (^processFrame)(UIImage *frame);
 @property (nonatomic, copy) void (^defaultProcess)(UIImage *frame);
 
+@property (weak, nonatomic) DroneHelper *spark;
+
 @property (atomic) enum ImgProcess_Mode imgProcType;
 
 // Buttons
@@ -54,6 +56,9 @@ using namespace std;
 @property (weak, nonatomic) IBOutlet UIButton *btnTakeoffLand;
 @property (weak, nonatomic) IBOutlet UIButton *btnMoveTest;
 @property (weak, nonatomic) IBOutlet UIButton *btnArucoTag;
+
+
+@property (atomic) double aircraftAltitude;
 
 @end
 
@@ -92,6 +97,7 @@ using namespace std;
     self.imgProcType = IMG_PROC_DEFAULT;
 
     myFaceDetector = new SimpleFaceDetector("lbpcascade_frontalface");
+    self.spark = [[DroneHelper alloc] init];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -160,6 +166,7 @@ using namespace std;
         }
         else{
             [self showAlertViewWithTitle:@"Product Connected" withMessage:@"All components fetched"];
+            myFC.delegate = self;
         }
     }
     else
@@ -171,6 +178,17 @@ using namespace std;
 - (void) productDisconnected
 {
     [self resetVideoPreview]; // Implemented below
+    
+}
+
+
+/**
+ *  This should really be in class drone helper
+ */
+-(void)flightController:(DJIFlightController *)fc didUpdateState:(DJIFlightControllerState *)state
+{
+    self.debug1.text = [NSString stringWithFormat:@"h=%.3f",  state.altitude ];
+    [self.spark setCurrentState:state];
 }
 
 #pragma mark Get Drone Components
@@ -457,7 +475,8 @@ using namespace std;
                     [self showAlertViewWithTitle:@"takeoff" withMessage:@"Succeeded"];
                 }
             }];
-            self.btnTakeoffLand.titleLabel.text=@"Land";
+            [self.btnTakeoffLand setTitle:@"Land" forState:UIControlStateNormal];
+            action = LAND;
         }
         else
         {
@@ -470,9 +489,9 @@ using namespace std;
                     [self showAlertViewWithTitle:@"Landing" withMessage:@"Succeeded"];
                 }
             }];
-            self.btnTakeoffLand.titleLabel.text=@"Takeoff";
+            [self.btnTakeoffLand setTitle:@"Takeoff" forState:UIControlStateNormal];
+            action = TAKEOFF;
         }
-        action = (action == TAKEOFF)? LAND : TAKEOFF;
     }
     else
     {
@@ -583,4 +602,9 @@ using namespace std;
     }];
     
 }
+
+- (IBAction)readData:(id)sender {
+    self.debug1.text = [NSString stringWithFormat:@"h=%.3f",  self.spark.heightAboveHome];
+}
+
 @end

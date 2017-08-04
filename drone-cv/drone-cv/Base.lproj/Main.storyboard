@@ -129,6 +129,14 @@
                                     <action selector="doDetectAR:" destination="BYZ-38-t0r" eventType="touchUpInside" id="pWe-hY-yen"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="H3h-f3-HTL">
+                                <rect key="frame" x="421" y="287" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="read"/>
+                                <connections>
+                                    <action selector="readData:" destination="BYZ-38-t0r" eventType="touchUpInside" id="i0S-Ue-QGi"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -156,6 +164,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="btnTakeoffLand" destination="89C-ac-f6X" id="VGm-pl-7Xy"/>
                         <outlet property="debug1" destination="P2y-Vf-lio" id="N53-9A-MdO"/>
                         <outlet property="debug2" destination="mEm-ac-r6c" id="xKB-Xz-njk"/>
                         <outlet property="viewLive" destination="HbD-WV-3fe" id="phO-kD-nlN"/>
