@@ -61,7 +61,7 @@
                                         <rect key="frame" x="314.33333333333337" y="0.0" width="89.666666666666686" height="29.999999999999972"/>
                                         <state key="normal" title="Gimbal"/>
                                         <connections>
-                                            <action selector="gimbalRun:" destination="BYZ-38-t0r" eventType="touchUpInside" id="utd-Qd-dXK"/>
+                                            <action selector="onGimbalButtonClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="TWu-QO-PFn"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="89C-ac-f6X">

@@ -102,9 +102,9 @@ void sampleFeedback(Mat image, DroneHelper * drone)
  * Remember this function is called every time
  * a frame is available. So don't do long loop here.
  */
-    cvtColor(image, image, COLOR_BGR2YUV);
+    cv::cvtColor(image, image, COLOR_BGR2YUV);
     
-    extractChannel(image, image, 0);
+    cv::extractChannel(image, image, 0);
     
     DJIVirtualStickFlightControlData ctrl;
     ctrl.pitch = 0.1;
@@ -114,6 +114,8 @@ void sampleFeedback(Mat image, DroneHelper * drone)
     [drone sendMovementCommand:ctrl];
 }
 
+
+# pragma mark Face detection using CV
 SimpleFaceDetector::SimpleFaceDetector(std::string filename)
 {
     loadCascades(filename);

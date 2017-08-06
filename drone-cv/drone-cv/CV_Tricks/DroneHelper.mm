@@ -166,6 +166,31 @@
     return result;
 }
 
+#pragma mark Gimbal Pitch
+- (BOOL) setGimbalPitchDegree : (float) pitchAngleDegree
+{
+    __block BOOL result = TRUE;
+    DJIGimbal * myGimbal = [self fetchGimbal];
+    if(myGimbal == nil)
+    {
+        return FALSE;
+    }
+    DJIGimbalRotation *rotation = [DJIGimbalRotation gimbalRotationWithPitchValue:@(pitchAngleDegree)
+                                                                        rollValue:0
+                                                                         yawValue:0 time:(fabs(pitchAngleDegree)/90.0)
+                                                                             mode:DJIGimbalRotationModeAbsoluteAngle];
+    
+    [myGimbal rotateWithRotation:rotation completion:^(NSError * _Nullable error) {
+        if (error)
+        {
+            //[self showAlertViewWithTitle:@"rotateWithRotation failed" withMessage:@"Failed"];
+            //self.debug2.text = @"rotation failed";
+            result = FALSE;
+        }
+    }];
+    return result;
+}
+
 #pragma mark Get Drone Components
 - (DJICamera*) fetchCamera {
     if (![DJISDKManager product]) {

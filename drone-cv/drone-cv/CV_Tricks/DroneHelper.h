@@ -23,6 +23,7 @@
 
 //- (void) setCurrentState:(DJIFlightControllerState *) state;
 - (BOOL) sendMovementCommand:(DJIVirtualStickFlightControlData) vsSetpoint;
+- (BOOL) setGimbalPitchDegree : (float) pitchAngleDegree;
 - (BOOL) enterVirtualStickMode;
 - (BOOL) exitVirtualStickMode;
 - (BOOL) takeoff;

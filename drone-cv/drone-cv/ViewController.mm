@@ -419,38 +419,24 @@ using namespace std;
 /**
  Demo how to move the gimbal to face forward and down.
  */
-- (IBAction)gimbalRun:(id)sender;
+- (IBAction)onGimbalButtonClicked:(id)sender;
 {
     enum {FORWARD=0, DOWN=1};
     static int action = FORWARD;
     
-    DJIGimbal * myGimbal = [self fetchGimbal];
-    if(myGimbal == nil)
+    if(action == FORWARD)
     {
-         [self showAlertViewWithTitle:@"fetch gimbal" withMessage:@"Failed"];
+        if([self.spark setGimbalPitchDegree: 0.0] == FALSE) {
+            [self showAlertViewWithTitle:@"Move Gimbal" withMessage:@"Failed"];
+        }
+        action = DOWN;
     }
     else
     {
-        int pitchRotation;
-        if(action == FORWARD)
-            pitchRotation = 0;
-        else
-            pitchRotation = -85;
-        
-        DJIGimbalRotation *rotation = [DJIGimbalRotation gimbalRotationWithPitchValue:@(pitchRotation)
-                                                                            rollValue:0
-                                                                             yawValue:0 time:2
-                                                                                 mode:DJIGimbalRotationModeAbsoluteAngle];
-        
-        [myGimbal rotateWithRotation:rotation completion:^(NSError * _Nullable error) {
-            if (error)
-            {
-                [self showAlertViewWithTitle:@"rotateWithRotation failed" withMessage:@"Failed"];
-                self.debug2.text = @"rotation failed";
-            }
-        }];
-        
-        action = (action == FORWARD) ? DOWN : FORWARD;
+        if([self.spark setGimbalPitchDegree: -85.0] == FALSE) {
+            [self showAlertViewWithTitle:@"Move Gimbal" withMessage:@"Failed"];
+        }
+        action = FORWARD;
     }
 }
 
