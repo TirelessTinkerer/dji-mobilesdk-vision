@@ -134,7 +134,7 @@ using namespace std;
 {
     NSString* message = @"Register:OK!";
     if (error) {
-        message = @"Register:Failed";
+        message = [NSString stringWithFormat:@"Register:Failed. %@"];
     }
     
     self.debug1.text = message;
@@ -385,8 +385,68 @@ using namespace std;
     }
 }
 
+cv::Point2f VectorAverage(std::vector<cv::Point2f>& corners){
+    cv::Point2f average(0,0);
+    for(auto i=0; i<corners.size(); i++)
+        average = average + corners[i];
+    average = average/(float)corners.size();
+    return average;
+}
+
+cv::Point2f convertImageVectorToMotionVector(cv::Point2f im_vector){
+    cv::Point2f p(-im_vector.y,im_vector.x);
+    p=p/std::sqrt(p.x*p.x + p.y*p.y);
+    p = 0.2*p;
+    return p;
+}
+
+bool PitchGimbal(DroneHelper *spark,float pitch){
+    if([spark setGimbalPitchDegree: pitch] == FALSE) {
+        return false;
+    }
+    return true;
+}
+
+bool TakeOff(DroneHelper *spark){
+    if([spark takeoff] == FALSE) {
+            return false;
+    }
+    return true;
+}
+
+bool Land(DroneHelper *spark){
+    if([spark land] == FALSE) {
+        return false;
+    }
+    return true;
+}
+
+bool Move(DJIFlightController *flightController, float pitch, float roll, float yaw_rate, float vertical_throttle ){
+    //DJIFlightController *flightController = [self fetchFlightController];
+    DJIVirtualStickFlightControlData vsFlightCtrlData;
+    vsFlightCtrlData.pitch = roll;
+    vsFlightCtrlData.roll = pitch;
+    vsFlightCtrlData.verticalThrottle = vertical_throttle;
+    vsFlightCtrlData.yaw = yaw_rate;
+    
+    flightController.isVirtualStickAdvancedModeEnabled = YES;
+    
+    [flightController sendVirtualStickFlightControlData:vsFlightCtrlData withCompletion:^(NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"Send FlightControl Data Failed %@", error.description);
+        }
+    }];
+    return true;
+}
+
 - (IBAction)doDetectAR:(id)sender
 {
+    [self enableVS];
+    enum {IN_AIR, ON_GROUND};
+    static int detect_state  = IN_AIR;
+    static int counter= 0;
+    //counter = counter+1;
+    
     if(self.imgProcType == IMG_PROC_USER_1)
     {
         self.imgProcType = IMG_PROC_DEFAULT;
@@ -408,8 +468,55 @@ using namespace std;
             
             //TODO CMU: insert the image processing function call here
             //Implement the function in MagicInAir.mm.
-            NSInteger n=detectARTag(grayImg);
+            std::vector<std::vector<cv::Point2f> > corners;
+            std::vector<int> ids = detectARTagIDs(corners,grayImg);
+            NSInteger n = ids.size();
+            bool found_tag1 = false;
+            bool found_tag2 = false;
+            cv::Point2f next_marker_center(0,0);
+            for(auto i=0;i<n;i++)
+            {
+                if(ids[i] == 34)
+                {
+                    found_tag1 = true;
+                }
+                if(ids[i] == 33)
+                {
+                    found_tag2 = true;
+                }
+
+                std::cout<<"\nID: "<<ids[i];
+                next_marker_center = VectorAverage(corners[i]);
+                
+            }
             
+            cv::Point2f image_vector = next_marker_center-cv::Point2f(240,180);
+            cv::Point2f motion_vector = convertImageVectorToMotionVector(image_vector);
+            
+            if(n==0)
+                motion_vector = cv::Point2f(0,0);
+            
+            DroneHelper *spark_ptr = [self spark];
+            PitchGimbal(spark_ptr,-75.0);
+            
+            // TAKEOFF
+            //TakeOff(spark_ptr);
+
+            //LAND
+            //Land(spark_ptr);
+            
+            counter = counter+1;
+            DJIFlightController *flightController = [self fetchFlightController];
+            //if(counter<100)
+            if((image_vector.x*image_vector.x + image_vector.y*image_vector.y)<900)
+                Move(flightController, motion_vector.x, motion_vector.y, 0, -0.2);
+            else
+                Move(flightController, motion_vector.x, motion_vector.y, 0, 0);
+            
+            std::cout<<"Moving By::"<<motion_vector<<"\n";
+            //else
+            //    Move(flightController, 0, 0, 0, 0);
+            //std::cout<<"State::"<<detect_state<<" found1::"<<found_tag1<<" found2::"<<found_tag2;
             [self.viewProcessed setImage:[OpenCVConversion UIImageFromCVMat:grayImg]];
             self.debug2.text = [NSString stringWithFormat:@"%d Tags", n];
         };
@@ -433,7 +540,7 @@ using namespace std;
     }
     else
     {
-        if([self.spark setGimbalPitchDegree: -85.0] == FALSE) {
+        if([self.spark setGimbalPitchDegree: -65.0] == FALSE) {
             [self showAlertViewWithTitle:@"Move Gimbal" withMessage:@"Failed"];
         }
         action = FORWARD;
@@ -462,10 +569,10 @@ using namespace std;
     else
     {
         if([self.spark land] == FALSE) {
-            [self showAlertViewWithTitle:@"Takeoff" withMessage:@"Failed"];
+            [self showAlertViewWithTitle:@"Land" withMessage:@"Failed"];
         }
         else {
-            [self showAlertViewWithTitle:@"Takeoff" withMessage:@"Succeeded"];
+            [self showAlertViewWithTitle:@"Land" withMessage:@"Succeeded"];
         }
         
         [self.btnTakeoffLand setTitle:@"Takeoff" forState:UIControlStateNormal];
@@ -514,37 +621,38 @@ using namespace std;
 //    });
 //}
 //
-//- (void) enableVS
-//{
-//    // disable gesture mode
-//    if([[DJISDKManager product].model isEqual: DJIAircraftModelNameSpark])
-//    {
-//        [[DJISDKManager missionControl].activeTrackMissionOperator setGestureModeEnabled:NO withCompletion:^(NSError * _Nullable error) {
-//            if (error) {
-//                NSLog(@"Set Gesture mode enabled failed");
-//            }
-//            else {
-//                NSLog(@"Set Gesture mode enabled Succeeded");
-//            }
-//        }];
-//    }
-//
-//    // Enter the virtual stick mode with some default settings
-//    DJIFlightController *fc = [self fetchFlightController];
-//    fc.yawControlMode = DJIVirtualStickYawControlModeAngle;
-//    fc.rollPitchControlMode = DJIVirtualStickRollPitchControlModeVelocity;
-//    fc.rollPitchCoordinateSystem = DJIVirtualStickFlightCoordinateSystemBody;
-//    //DJIVirtualStickFlightCoordinateSystemBody;
-//    [fc setVirtualStickModeEnabled:YES withCompletion:^(NSError * _Nullable error) {
-//        if (error) {
-//            NSLog(@"Enable VirtualStickControlMode Failed");
-//        }
-//        else {
-//            NSLog(@"Enable VirtualStickControlMode Succeeded");
-//        }
-//    }];
-//
-//}
+- (void) enableVS
+{
+    // disable gesture mode
+    if([[DJISDKManager product].model isEqual: DJIAircraftModelNameSpark])
+    {
+        [[DJISDKManager missionControl].activeTrackMissionOperator setGestureModeEnabled:NO withCompletion:^(NSError * _Nullable error) {
+            if (error) {
+                NSLog(@"Set Gesture mode enabled failed");
+            }
+            else {
+                NSLog(@"Set Gesture mode enabled Succeeded");
+            }
+        }];
+    }
+
+    // Enter the virtual stick mode with some default settings
+    DJIFlightController *fc = [self fetchFlightController];
+    //fc.yawControlMode = DJIVirtualStickYawControlModeAngle;
+    fc.yawControlMode =DJIVirtualStickYawControlModeAngularVelocity;
+    fc.rollPitchControlMode = DJIVirtualStickRollPitchControlModeVelocity;
+    fc.rollPitchCoordinateSystem = DJIVirtualStickFlightCoordinateSystemBody;
+    //DJIVirtualStickFlightCoordinateSystemBody;
+    [fc setVirtualStickModeEnabled:YES withCompletion:^(NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"Enable VirtualStickControlMode Failed");
+        }
+        else {
+            NSLog(@"Enable VirtualStickControlMode Succeeded");
+        }
+    }];
+
+}
 //
 //- (void)executeVirtualStickControl
 //{

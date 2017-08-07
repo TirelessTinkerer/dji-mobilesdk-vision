@@ -24,6 +24,7 @@ using namespace cv;
 void filterLaplace(Mat image, int kernel_size);
 void filterBlurHomogeneousAccelerated(Mat image, int kernel_size);
 int  detectARTag(Mat image);
+std::vector<int> detectARTagIDs(std::vector<std::vector<cv::Point2f> >& corners,Mat image);
 void sampleFeedback(Mat image, DroneHelper * drone);
 
 class SimpleFaceDetector
