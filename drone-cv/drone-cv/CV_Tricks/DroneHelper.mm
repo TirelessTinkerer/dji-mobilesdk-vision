@@ -48,7 +48,6 @@
 #pragma mark Enable and Disable virtual stick
 - (BOOL) enterVirtualStickMode
 {
-    __block BOOL result=TRUE;
     DJIBaseProduct *p = [DJISDKManager product];
     if(p == nil) {
         NSLog(@"enterVirtualStickMode failed: no product connected");
@@ -58,12 +57,10 @@
     if([p.model isEqual: DJIAircraftModelNameSpark]) {
         [[DJISDKManager missionControl].activeTrackMissionOperator setGestureModeEnabled:NO withCompletion:^(NSError * _Nullable error) {
             if (error) {
-                NSLog(@"Set Gesture mode enabled failed");
-                result = FALSE;
+                NSLog(@"Set Gesture mode enabled failed %@", error.description);
             }
         }];
     }
-    if(!result) return FALSE;
 
     // Enter the virtual stick mode with some default settings
     DJIFlightController *fc = [self fetchFlightController];
@@ -72,31 +69,30 @@
         return FALSE;
     }
     
+    fc.verticalControlMode       = DJIVirtualStickVerticalControlModeVelocity;
     fc.yawControlMode            = DJIVirtualStickYawControlModeAngularVelocity;
     fc.rollPitchControlMode      = DJIVirtualStickRollPitchControlModeVelocity;
     fc.rollPitchCoordinateSystem = DJIVirtualStickFlightCoordinateSystemBody;
+    
     //DJIVirtualStickFlightCoordinateSystemBody;
     [fc setVirtualStickModeEnabled:YES withCompletion:^(NSError * _Nullable error) {
         if (error) {
-            NSLog(@"Enter VirtualStickControlMode Failed");
-            result = FALSE;
+            NSLog(@"Enter VirtualStickControlMode Failed %@", error.description);
         }
         else {
             NSLog(@"Enter VirtualStickControlMode Succeeded");
         }
     }];
-    return result;
+    return TRUE;
 }
 
 - (BOOL) exitVirtualStickMode
 {
-    __block BOOL result = TRUE;
     DJIFlightController* fc = [self fetchFlightController];
     if (fc) {
         [fc setVirtualStickModeEnabled:NO withCompletion:^(NSError * _Nullable error) {
             if (error){
-                NSLog(@"Exit VirtualStickControlMode Failed");
-                result = FALSE;
+                NSLog(@"Exit VirtualStickControlMode Failed: %@", error.description);
             } else{
                 NSLog(@"Exit Virtual Stick Mode:Succeeded");
             }
@@ -105,9 +101,9 @@
     else
     {
         NSLog(@"Component not exist.");
-        result = FALSE;
+        return FALSE;
     }
-    return result;
+    return TRUE;
 }
 
 #pragma mark Drone movement
@@ -132,63 +128,60 @@
 #pragma mark Takeoff and land
 - (BOOL) takeoff
 {
-    __block BOOL result = FALSE;
     DJIFlightController* fc = [self fetchFlightController];
     if (fc)
     {
         [fc startTakeoffWithCompletion:^(NSError * _Nullable error) {
             if (error) {
-                NSLog(@"Takeoff failed!");
-            }
-            else {
-                result = TRUE;
+                NSLog(@"Takeoff failed: %@", error.description);
             }
         }];
     }
-    return result;
+    else
+    {
+        return FALSE;
+    }
+    return TRUE;
 }
 
 - (BOOL) land
 {
-    __block BOOL result = FALSE;
     DJIFlightController* fc = [self fetchFlightController];
     if (fc)
     {
         [fc startLandingWithCompletion:^(NSError * _Nullable error) {
             if (error) {
-                NSLog(@"Land failed!");
-            }
-            else {
-                result = TRUE;
+                NSLog(@"Land failed: %@", error.description);
             }
         }];
     }
-    return result;
+    else
+    {
+        return FALSE;
+    }
+    return TRUE;
 }
 
 #pragma mark Gimbal Pitch
 - (BOOL) setGimbalPitchDegree : (float) pitchAngleDegree
 {
-    __block BOOL result = TRUE;
     DJIGimbal * myGimbal = [self fetchGimbal];
     if(myGimbal == nil)
     {
         return FALSE;
     }
     DJIGimbalRotation *rotation = [DJIGimbalRotation gimbalRotationWithPitchValue:@(pitchAngleDegree)
-                                                                        rollValue:0
-                                                                         yawValue:0 time:(fabs(pitchAngleDegree)/90.0)
+                                                                        rollValue:@0.0
+                                                                         yawValue:@0.0 time:2.0
                                                                              mode:DJIGimbalRotationModeAbsoluteAngle];
     
     [myGimbal rotateWithRotation:rotation completion:^(NSError * _Nullable error) {
         if (error)
         {
-            //[self showAlertViewWithTitle:@"rotateWithRotation failed" withMessage:@"Failed"];
-            //self.debug2.text = @"rotation failed";
-            result = FALSE;
+            NSLog(@"Gimbal rotate failed:%@", error.description);
         }
     }];
-    return result;
+    return TRUE;
 }
 
 #pragma mark Get Drone Components

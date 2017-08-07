@@ -35,12 +35,12 @@ bool Land(DroneHelper *spark){
     return true;
 }
 
-bool Move(DJIFlightController *flightController, float pitch, float roll, float yaw_rate, float vertical_throttle ){
+bool Move(DJIFlightController *flightController, float vx, float vy, float yaw_rate, float vz ){
     //DJIFlightController *flightController = [self fetchFlightController];
     DJIVirtualStickFlightControlData vsFlightCtrlData;
-    vsFlightCtrlData.pitch = roll;
-    vsFlightCtrlData.roll = pitch;
-    vsFlightCtrlData.verticalThrottle = vertical_throttle;
+    vsFlightCtrlData.pitch = vy;
+    vsFlightCtrlData.roll = vx;
+    vsFlightCtrlData.verticalThrottle = vz;
     vsFlightCtrlData.yaw = yaw_rate;
     
     flightController.isVirtualStickAdvancedModeEnabled = YES;

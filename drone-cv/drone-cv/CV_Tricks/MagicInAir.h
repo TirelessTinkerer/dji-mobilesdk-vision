@@ -24,7 +24,7 @@ using namespace cv;
 bool PitchGimbal(DroneHelper *spark,float pitch);
 bool TakeOff(DroneHelper *spark);
 bool Land(DroneHelper *spark);
-bool Move(DJIFlightController *flightController, float pitch, float roll, float yaw_rate, float vertical_throttle );
+bool Move(DJIFlightController *flightController, float vx, float vy, float yaw_rate, float vz );
 std::vector<int> detectARTagIDs(std::vector<std::vector<cv::Point2f> >& corners,Mat image);
 cv::Point2f VectorAverage(std::vector<cv::Point2f>& corners);
 cv::Point2f convertImageVectorToMotionVector(cv::Point2f im_vector);
