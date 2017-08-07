@@ -26,6 +26,8 @@
 - (BOOL) setGimbalPitchDegree : (float) pitchAngleDegree;
 - (BOOL) enterVirtualStickMode;
 - (BOOL) exitVirtualStickMode;
+- (BOOL) setVerticleModeToAbsoluteHeight;
+- (BOOL) setVerticleModeToVelocity;
 - (BOOL) takeoff;
 - (BOOL) land;
 

@@ -387,7 +387,10 @@ using namespace std;
 
 - (IBAction)doDetectAR:(id)sender
 {
-    [self enableVS];
+    //[self enableVS];
+    [self.spark enterVirtualStickMode];
+    [self.spark setVerticleModeToAbsoluteHeight];
+    
     enum {IN_AIR, ON_GROUND};
     static int detect_state  = IN_AIR;
     static int counter= 0;
@@ -595,6 +598,7 @@ using namespace std;
     }];
 
 }
+
 //
 //- (void)executeVirtualStickControl
 //{
