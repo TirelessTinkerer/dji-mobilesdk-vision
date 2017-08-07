@@ -14,6 +14,79 @@
 
 #include "MagicInAir.h"
 
+bool PitchGimbal(DroneHelper *spark,float pitch){
+    if([spark setGimbalPitchDegree: pitch] == FALSE) {
+        return false;
+    }
+    return true;
+}
+
+bool TakeOff(DroneHelper *spark){
+    if([spark takeoff] == FALSE) {
+        return false;
+    }
+    return true;
+}
+
+bool Land(DroneHelper *spark){
+    if([spark land] == FALSE) {
+        return false;
+    }
+    return true;
+}
+
+bool Move(DJIFlightController *flightController, float pitch, float roll, float yaw_rate, float vertical_throttle ){
+    //DJIFlightController *flightController = [self fetchFlightController];
+    DJIVirtualStickFlightControlData vsFlightCtrlData;
+    vsFlightCtrlData.pitch = roll;
+    vsFlightCtrlData.roll = pitch;
+    vsFlightCtrlData.verticalThrottle = vertical_throttle;
+    vsFlightCtrlData.yaw = yaw_rate;
+    
+    flightController.isVirtualStickAdvancedModeEnabled = YES;
+    
+    [flightController sendVirtualStickFlightControlData:vsFlightCtrlData withCompletion:^(NSError * _Nullable error) {
+     if (error) {
+     NSLog(@"Send FlightControl Data Failed %@", error.description);
+     }
+     }];
+    return true;
+}
+
+
+std::vector<int> detectARTagIDs(std::vector<std::vector<cv::Point2f> >& corners, Mat image)
+{
+    cv::Ptr<cv::aruco::Dictionary> ardict = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_250);
+    //cv::Mat  imageCopy;
+    //image.copyTo(imageCopy);
+    std::vector<int> ids;
+    ;
+    cv::aruco::detectMarkers(image, ardict, corners, ids);
+    
+    int n=ids.size();
+    // if at least one marker detected
+    if (n > 0)
+        cv::aruco::drawDetectedMarkers(image, corners, ids,cv::Scalar( 255, 0, 255 ));
+    
+    return ids;
+}
+
+
+cv::Point2f VectorAverage(std::vector<cv::Point2f>& corners){
+    cv::Point2f average(0,0);
+    for(auto i=0; i<corners.size(); i++)
+        average = average + corners[i];
+    average = average/(float)corners.size();
+    return average;
+}
+
+cv::Point2f convertImageVectorToMotionVector(cv::Point2f im_vector){
+    cv::Point2f p(-im_vector.y,im_vector.x);
+    p=p/std::sqrt(p.x*p.x + p.y*p.y);
+    p = 0.2*p;
+    return p;
+}
+
 //+ (void)filterLaplace:(Mat)image withKernelSize:(int)kernel_size;
 void filterLaplace(Mat image, int kernel_size)
 {
@@ -95,24 +168,6 @@ int detectARTag(Mat image)
     
     return n;
 }
-
-std::vector<int> detectARTagIDs(std::vector<std::vector<cv::Point2f> >& corners, Mat image)
-{
-    cv::Ptr<cv::aruco::Dictionary> ardict = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_250);
-    //cv::Mat  imageCopy;
-    //image.copyTo(imageCopy);
-    std::vector<int> ids;
-    ;
-    cv::aruco::detectMarkers(image, ardict, corners, ids);
-    
-    int n=ids.size();
-    // if at least one marker detected
-    if (n > 0)
-        cv::aruco::drawDetectedMarkers(image, corners, ids,cv::Scalar( 255, 0, 255 ));
-    
-    return ids;
-}
-
 
 void sampleFeedback(Mat image, DroneHelper * drone)
 {
