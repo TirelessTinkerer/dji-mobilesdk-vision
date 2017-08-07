@@ -96,6 +96,24 @@ int detectARTag(Mat image)
     return n;
 }
 
+std::vector<int> detectARTagIDs(std::vector<std::vector<cv::Point2f> >& corners, Mat image)
+{
+    cv::Ptr<cv::aruco::Dictionary> ardict = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_250);
+    //cv::Mat  imageCopy;
+    //image.copyTo(imageCopy);
+    std::vector<int> ids;
+    ;
+    cv::aruco::detectMarkers(image, ardict, corners, ids);
+    
+    int n=ids.size();
+    // if at least one marker detected
+    if (n > 0)
+        cv::aruco::drawDetectedMarkers(image, corners, ids,cv::Scalar( 255, 0, 255 ));
+    
+    return ids;
+}
+
+
 void sampleFeedback(Mat image, DroneHelper * drone)
 {
 /**
