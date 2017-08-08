@@ -26,9 +26,9 @@ bool TakeOff(DroneHelper *spark);
 bool Land(DroneHelper *spark);
 
 
-bool MoveVxVyYawrateVz(DJIFlightController *flightController, float V_forward, float V_right, float yaw_rate, float V_up );
+bool MoveVxVyYawrateVz(DroneHelper *spark, float V_forward, float V_right, float yaw_rate, float V_up );
 
-bool MoveVxVyYawrateHeight(DJIFlightController *flightController, float V_forward, float V_right, float yaw_rate, float height );
+bool MoveVxVyYawrateHeight(DroneHelper *spark, float V_forward, float V_right, float yaw_rate, float height );
 
 std::vector<int> detectARTagIDs(std::vector<std::vector<cv::Point2f> >& corners,Mat image);
 cv::Point2f VectorAverage(std::vector<cv::Point2f>& corners);
