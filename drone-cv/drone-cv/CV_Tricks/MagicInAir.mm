@@ -35,12 +35,12 @@ bool Land(DroneHelper *spark){
     return true;
 }
 
-bool Move(DJIFlightController *flightController, float vx, float vy, float yaw_rate, float vz ){
+bool MoveVxVyYawrateVz(DJIFlightController *flightController, float V_forward, float V_right, float yaw_rate, float V_up ){
     //DJIFlightController *flightController = [self fetchFlightController];
     DJIVirtualStickFlightControlData vsFlightCtrlData;
-    vsFlightCtrlData.pitch = vy;
-    vsFlightCtrlData.roll = vx;
-    vsFlightCtrlData.verticalThrottle = vz;
+    vsFlightCtrlData.pitch = V_right;
+    vsFlightCtrlData.roll = V_forward;
+    vsFlightCtrlData.verticalThrottle = V_up;
     vsFlightCtrlData.yaw = yaw_rate;
     
     flightController.isVirtualStickAdvancedModeEnabled = YES;
@@ -53,6 +53,24 @@ bool Move(DJIFlightController *flightController, float vx, float vy, float yaw_r
     return true;
 }
 
+bool MoveVxVyYawrateHeight(DJIFlightController *flightController, float V_forward, float V_right, float yaw_rate, float height )
+{
+    //DJIFlightController *flightController = [self fetchFlightController];
+    DJIVirtualStickFlightControlData vsFlightCtrlData;
+    vsFlightCtrlData.pitch = V_right;
+    vsFlightCtrlData.roll = V_forward;
+    vsFlightCtrlData.verticalThrottle = height;
+    vsFlightCtrlData.yaw = yaw_rate;
+    
+    flightController.isVirtualStickAdvancedModeEnabled = YES;
+    
+    [flightController sendVirtualStickFlightControlData:vsFlightCtrlData withCompletion:^(NSError * _Nullable error) {
+     if (error) {
+     NSLog(@"Send FlightControl Data Failed %@", error.description);
+     }
+     }];
+    return true;
+}
 
 std::vector<int> detectARTagIDs(std::vector<std::vector<cv::Point2f> >& corners, Mat image)
 {

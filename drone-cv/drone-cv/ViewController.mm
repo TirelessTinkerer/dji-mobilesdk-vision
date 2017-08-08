@@ -388,9 +388,6 @@ using namespace std;
 - (IBAction)doDetectAR:(id)sender
 {
     //[self enableVS];
-    [self.spark enterVirtualStickMode];
-    [self.spark setVerticleModeToAbsoluteHeight];
-    
     enum {IN_AIR, ON_GROUND};
     static int detect_state  = IN_AIR;
     static int counter= 0;
@@ -403,6 +400,9 @@ using namespace std;
     }
     else
     {
+        [self.spark enterVirtualStickMode];
+        [self.spark setVerticleModeToVelocity];
+        
         self.imgProcType = IMG_PROC_USER_1;
         self.processFrame =
         ^(UIImage *frame){
@@ -456,9 +456,9 @@ using namespace std;
             
             //if(counter<100)
             if((image_vector.x*image_vector.x + image_vector.y*image_vector.y)<900)
-                Move(flightController, motion_vector.x, motion_vector.y, 0, -0.2);
+                MoveVxVyYawrateVz(flightController, motion_vector.x, motion_vector.y, 0, -0.2);
             else
-                Move(flightController, motion_vector.x, motion_vector.y, 0, 0);
+                MoveVxVyYawrateVz(flightController, motion_vector.x, motion_vector.y, 0, 0);
             
             std::cout<<"Moving By::"<<motion_vector<<"\n";
             
