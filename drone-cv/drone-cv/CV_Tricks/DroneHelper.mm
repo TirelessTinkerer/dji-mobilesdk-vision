@@ -61,11 +61,16 @@
             }
         }];
     }
+    return TRUE;
+}
 
+- (BOOL) setVerticleModeToVelocity
+{
+    
     // Enter the virtual stick mode with some default settings
     DJIFlightController *fc = [self fetchFlightController];
     if(fc == nil) {
-        NSLog(@"enterVirtualStickMode failed: can't fetch FC");
+        NSLog(@"setVerticleModeToVelocity failed: can't fetch FC");
         return FALSE;
     }
     
@@ -77,10 +82,36 @@
     //DJIVirtualStickFlightCoordinateSystemBody;
     [fc setVirtualStickModeEnabled:YES withCompletion:^(NSError * _Nullable error) {
         if (error) {
-            NSLog(@"Enter VirtualStickControlMode Failed %@", error.description);
+            NSLog(@"setVerticleModeToVelocity Failed %@", error.description);
         }
         else {
-            NSLog(@"Enter VirtualStickControlMode Succeeded");
+            NSLog(@"setVerticleModeToVelocity Succeeded");
+        }
+    }];
+    return TRUE;
+}
+
+- (BOOL) setVerticleModeToAbsoluteHeight
+{
+    // Enter the virtual stick mode with some default settings
+    DJIFlightController *fc = [self fetchFlightController];
+    if(fc == nil) {
+        NSLog(@"setVerticleModeToAbsoluteHeight failed: can't fetch FC");
+        return FALSE;
+    }
+    
+    fc.verticalControlMode       = DJIVirtualStickVerticalControlModePosition;
+    fc.yawControlMode            = DJIVirtualStickYawControlModeAngularVelocity;
+    fc.rollPitchControlMode      = DJIVirtualStickRollPitchControlModeVelocity;
+    fc.rollPitchCoordinateSystem = DJIVirtualStickFlightCoordinateSystemBody;
+    
+    //DJIVirtualStickFlightCoordinateSystemBody;
+    [fc setVirtualStickModeEnabled:YES withCompletion:^(NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"setVerticleModeToAbsoluteHeight Failed %@", error.description);
+        }
+        else {
+            NSLog(@"setVerticleModeToAbsoluteHeight Succeeded");
         }
     }];
     return TRUE;

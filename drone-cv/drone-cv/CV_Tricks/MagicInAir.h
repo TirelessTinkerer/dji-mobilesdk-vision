@@ -24,7 +24,12 @@ using namespace cv;
 bool PitchGimbal(DroneHelper *spark,float pitch);
 bool TakeOff(DroneHelper *spark);
 bool Land(DroneHelper *spark);
-bool Move(DJIFlightController *flightController, float vx, float vy, float yaw_rate, float vz );
+
+
+bool MoveVxVyYawrateVz(DJIFlightController *flightController, float V_forward, float V_right, float yaw_rate, float V_up );
+
+bool MoveVxVyYawrateHeight(DJIFlightController *flightController, float V_forward, float V_right, float yaw_rate, float height );
+
 std::vector<int> detectARTagIDs(std::vector<std::vector<cv::Point2f> >& corners,Mat image);
 cv::Point2f VectorAverage(std::vector<cv::Point2f>& corners);
 cv::Point2f convertImageVectorToMotionVector(cv::Point2f im_vector);
@@ -34,7 +39,7 @@ cv::Point2f convertImageVectorToMotionVector(cv::Point2f im_vector);
 void filterLaplace(Mat image, int kernel_size);
 void filterBlurHomogeneousAccelerated(Mat image, int kernel_size);
 int  detectARTag(Mat image);
-void sampleFeedback(Mat image, DroneHelper * drone);
+void sampleMovement(Mat image, DroneHelper * drone);
 
 class SimpleFaceDetector
 {

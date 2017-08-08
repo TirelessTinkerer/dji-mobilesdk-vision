@@ -387,9 +387,7 @@ using namespace std;
 
 - (IBAction)doDetectAR:(id)sender
 {
-    [self enableVS];
-    enum {IN_AIR, ON_GROUND};
-    static int detect_state  = IN_AIR;
+    //Not using here, just show how to use static variable
     static int counter= 0;
 
     if(self.imgProcType == IMG_PROC_USER_1)
@@ -400,12 +398,14 @@ using namespace std;
     }
     else
     {
+        [self.spark enterVirtualStickMode];
+        [self.spark setVerticleModeToAbsoluteHeight];
+        
         self.imgProcType = IMG_PROC_USER_1;
         self.processFrame =
         ^(UIImage *frame){
             counter = counter+1;
             DroneHelper *spark_ptr = [self spark];
-            DJIFlightController *flightController = [self fetchFlightController];
             
             cv::Mat grayImg = [OpenCVConversion cvMatGrayFromUIImage:frame];
             if(grayImg.cols == 0)
@@ -418,30 +418,37 @@ using namespace std;
             std::vector<std::vector<cv::Point2f> > corners;
             std::vector<int> ids = detectARTagIDs(corners,grayImg);
             NSInteger n = ids.size();
-            bool found_tag1 = false;
-            bool found_tag2 = false;
-            cv::Point2f next_marker_center(0,0);
+
+            cv::Point2f marker_center(0,0);
+            bool tag_for_takeoff = FALSE;
             for(auto i=0;i<n;i++)
             {
                 if(ids[i] == 34)
                 {
-                    found_tag1 = true;
-                }
-                if(ids[i] == 33)
-                {
-                    found_tag2 = true;
+                    if(self.spark.isFlying == FALSE && tag_for_takeoff == FALSE)
+                    {
+                        tag_for_takeoff = TRUE;
+                        TakeOff(spark_ptr);
+                    }
                 }
 
                 std::cout<<"\nID: "<<ids[i];
-                next_marker_center = VectorAverage(corners[i]);
-                
+                marker_center = VectorAverage(corners[i]);
             }
             
-            cv::Point2f image_vector = next_marker_center-cv::Point2f(240,180);
-            cv::Point2f motion_vector = convertImageVectorToMotionVector(image_vector);
-            
-            if(n==0)
-                motion_vector = cv::Point2f(0,0);
+//          Codes commented below show how to drive the drone to move to the direction
+//          such that desired tag is in the center of image frame
+//            cv::Point2f image_vector = marker_center-cv::Point2f(240,180);
+//            cv::Point2f motion_vector = convertImageVectorToMotionVector(image_vector);
+//            if(n==0){
+//                motion_vector = cv::Point2f(0,0);
+//            }
+//            if((image_vector.x*image_vector.x + image_vector.y*image_vector.y)<900)
+//                MoveVxVyYawrateVz(spark_ptr, motion_vector.x, motion_vector.y, 0, -0.2);
+//            else
+//                MoveVxVyYawrateVz(spark_ptr, motion_vector.x, motion_vector.y, 0, 0);
+//            
+//            std::cout<<"Moving By::"<<motion_vector<<"\n";
             
             PitchGimbal(spark_ptr,-75.0);
             
@@ -451,13 +458,8 @@ using namespace std;
             //LAND
             //Land(spark_ptr);
             
-            //if(counter<100)
-            if((image_vector.x*image_vector.x + image_vector.y*image_vector.y)<900)
-                Move(flightController, motion_vector.x, motion_vector.y, 0, -0.2);
-            else
-                Move(flightController, motion_vector.x, motion_vector.y, 0, 0);
-            
-            std::cout<<"Moving By::"<<motion_vector<<"\n";
+
+
             
             [self.viewProcessed setImage:[OpenCVConversion UIImageFromCVMat:grayImg]];
             self.debug2.text = [NSString stringWithFormat:@"%d Tags", n];
@@ -534,6 +536,8 @@ using namespace std;
     {
         self.imgProcType = IMG_PROC_USER_2;
         [self.spark enterVirtualStickMode];
+        [self.spark setVerticleModeToVelocity];
+
         self.processFrame =
         ^(UIImage *frame){
             cv::Mat colorImg = [OpenCVConversion cvMatFromUIImage:frame];
@@ -546,7 +550,7 @@ using namespace std;
             
             //TODO CMU: insert the image processing function call here
             //Implement the function in MagicInAir.mm.
-            sampleFeedback(colorImg, self.spark);
+            sampleMovement(colorImg, self.spark);
             
             [self.viewProcessed setImage:[OpenCVConversion UIImageFromCVMat:colorImg]];
             //self.debug2.text = [NSString stringWithFormat:@"%d Tags", n];
@@ -595,6 +599,7 @@ using namespace std;
     }];
 
 }
+
 //
 //- (void)executeVirtualStickControl
 //{
