@@ -35,41 +35,25 @@ bool Land(DroneHelper *spark){
     return true;
 }
 
-bool MoveVxVyYawrateVz(DJIFlightController *flightController, float V_forward, float V_right, float yaw_rate, float V_up ){
-    //DJIFlightController *flightController = [self fetchFlightController];
+bool MoveVxVyYawrateVz(DroneHelper *spark, float V_forward, float V_right, float yaw_rate, float V_up ){
     DJIVirtualStickFlightControlData vsFlightCtrlData;
     vsFlightCtrlData.pitch = V_right;
     vsFlightCtrlData.roll = V_forward;
     vsFlightCtrlData.verticalThrottle = V_up;
     vsFlightCtrlData.yaw = yaw_rate;
     
-    flightController.isVirtualStickAdvancedModeEnabled = YES;
-    
-    [flightController sendVirtualStickFlightControlData:vsFlightCtrlData withCompletion:^(NSError * _Nullable error) {
-     if (error) {
-     NSLog(@"Send FlightControl Data Failed %@", error.description);
-     }
-     }];
-    return true;
+    return([spark sendMovementCommand:vsFlightCtrlData]);
 }
 
-bool MoveVxVyYawrateHeight(DJIFlightController *flightController, float V_forward, float V_right, float yaw_rate, float height )
+bool MoveVxVyYawrateHeight(DroneHelper *spark, float V_forward, float V_right, float yaw_rate, float height )
 {
-    //DJIFlightController *flightController = [self fetchFlightController];
     DJIVirtualStickFlightControlData vsFlightCtrlData;
     vsFlightCtrlData.pitch = V_right;
     vsFlightCtrlData.roll = V_forward;
     vsFlightCtrlData.verticalThrottle = height;
     vsFlightCtrlData.yaw = yaw_rate;
     
-    flightController.isVirtualStickAdvancedModeEnabled = YES;
-    
-    [flightController sendVirtualStickFlightControlData:vsFlightCtrlData withCompletion:^(NSError * _Nullable error) {
-     if (error) {
-     NSLog(@"Send FlightControl Data Failed %@", error.description);
-     }
-     }];
-    return true;
+    return([spark sendMovementCommand:vsFlightCtrlData]);
 }
 
 std::vector<int> detectARTagIDs(std::vector<std::vector<cv::Point2f> >& corners, Mat image)
@@ -187,7 +171,7 @@ int detectARTag(Mat image)
     return n;
 }
 
-void sampleFeedback(Mat image, DroneHelper * drone)
+void sampleMovement(Mat image, DroneHelper * drone)
 {
 /**
  * Remember this function is called every time

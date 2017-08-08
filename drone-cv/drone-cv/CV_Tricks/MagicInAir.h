@@ -39,7 +39,7 @@ cv::Point2f convertImageVectorToMotionVector(cv::Point2f im_vector);
 void filterLaplace(Mat image, int kernel_size);
 void filterBlurHomogeneousAccelerated(Mat image, int kernel_size);
 int  detectARTag(Mat image);
-void sampleFeedback(Mat image, DroneHelper * drone);
+void sampleMovement(Mat image, DroneHelper * drone);
 
 class SimpleFaceDetector
 {
