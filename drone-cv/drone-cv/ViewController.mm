@@ -17,6 +17,7 @@
   #include <opencv2/imgproc/imgproc.hpp>
   #include <opencv2/objdetect/objdetect.hpp>
   #include <opencv2/video/tracking.hpp>
+#include <opencv2/imgcodecs/ios.h>
 #include "MagicInAir.h"
 using namespace std;
 #endif
@@ -86,7 +87,9 @@ using namespace std;
             NSLog(@"Invalid frame!");
             return;
         }
-        cv::resize(colorImg, colorImg, cv::Size(480, 360));
+//        std::cout<<"\n wh"<<colorImg.cols<<"  "<<colorImg.rows;
+        cv::resize(colorImg, colorImg, cv::Size(640, 360));
+//        std::cout<<"\n wh"<<colorImg.cols<<"  "<<colorImg.rows;
         
         // The default image processing routine just put a text to the resized image
         putText(colorImg, "Default" , cv::Point(150, 40), 1, 4, cv::Scalar(255, 255, 255), 2, 8, 0);
@@ -373,7 +376,7 @@ using namespace std;
                 NSLog(@"Invalid frame!");
                 return;
             }
-            cv::resize(grayImg, grayImg, cv::Size(480, 360));
+            cv::resize(grayImg, grayImg, cv::Size(640, 360));
             
             //TODO CMU: insert the image processing function call here
             //Implement the function in MagicInAir.mm.
@@ -390,7 +393,7 @@ using namespace std;
     //[self enableVS];
     [self.spark enterVirtualStickMode];
     [self.spark setVerticleModeToAbsoluteHeight];
-    
+    static int goal_id = 1;
     enum {IN_AIR, ON_GROUND};
     static int detect_state  = IN_AIR;
     static int counter= 0;
@@ -416,37 +419,95 @@ using namespace std;
                 NSLog(@"Invalid frame!");
                 return;
             }
-            cv::resize(grayImg, grayImg, cv::Size(480, 360));
-            
-            std::vector<std::vector<cv::Point2f> > corners;
-            std::vector<int> ids = detectARTagIDs(corners,grayImg);
-            NSInteger n = ids.size();
-            bool found_tag1 = false;
-            bool found_tag2 = false;
-            cv::Point2f next_marker_center(0,0);
-            for(auto i=0;i<n;i++)
+            cv::resize(grayImg, grayImg, cv::Size(640, 360));
+            //calibrate
+            if(counter%10 == 0 && false)
             {
-                if(ids[i] == 34)
-                {
-                    found_tag1 = true;
-                }
-                if(ids[i] == 33)
-                {
-                    found_tag2 = true;
-                }
+//                cv::imwrite( "image_meri_hai.jpg", grayImg );
+                UIImage* Im2save = [OpenCVConversion UIImageFromCVMat:grayImg];
+                UIImageWriteToSavedPhotosAlbum(Im2save,nil,nil, nil);
+//                UIImageWriteToSavedPhotosAlbum(Im2save,self, #selector(image(_:didFinishSavingWithError:contextInfo:)), nil);
+            }
+            std::vector<std::vector<cv::Point2f> > corners;
+            std::vector<int> detected_marker_IDs = detectARTagIDs(corners,grayImg);
+            NSInteger n = detected_marker_IDs.size();
+            
+            // print the indices found
+            std::vector<int> indices_found;
+            
+            //<TESTING INTRISICS>
+            if(n>0)
+            {
+            std::vector<cv::Point3f> objectPoints;
+            cv::Point3f p1,p2,p3,p4;
+            p1.x = 0;   p1.y=0; p1.z=0;
+            p2.x = .10;  p2.y=0; p2.z=0;
+            p3.x = .10;  p3.y=.10;p3.z=0;
+            p4.x = 0;   p4.y=.10;p4.z=0;
+            objectPoints.push_back(p1);objectPoints.push_back(p2);objectPoints.push_back(p3);objectPoints.push_back(p4);
+            std::vector<cv::Point2f> detectedCorners = corners[0];
+            cv::Mat cameraMatrix;
+            cv::Vec4f distCoeff;
+            cameraMatrix = cv::Mat::zeros(3, 3, CV_32F);
+            cameraMatrix.at<float>(0,0) = 633.4373;
+            cameraMatrix.at<float>(0,2) = 328.3448;
+            cameraMatrix.at<float>(1,1) = 636.4243;
+            cameraMatrix.at<float>(1,2) = 186.8022;
+            cameraMatrix.at<float>(2,2) = 1.0;
+            
+            distCoeff.zeros();
+            
+            cv::Mat rvec(3,3,CV_32F);
+            cv::Mat tvec(3,1,CV_32F);
+//                std::cout<<"corners:"<<detectedCorners.size()<<" Object:"<<objectPoints.size()<<cameraMatrix;
+            cv::solvePnP(objectPoints,detectedCorners,cameraMatrix,distCoeff,rvec,tvec);
+            cv::transpose(tvec, tvec);
+            cv::Rodrigues(rvec, rvec);
+            cv::Mat u,l;
+            cv::Vec3d rpy = cv::RQDecomp3x3(rvec, u, l);
+            std::cout<<"\nTvec: "<<tvec;
+            std::cout<<"\nRPY: "<<rpy;
+            }
+            // <TESTING INTRINSICS/>
 
-                std::cout<<"\nID: "<<ids[i];
-                next_marker_center = VectorAverage(corners[i]);
-                
+            static const int marker_waypt[] = {20, 19, 32, 13, 12, 34, 01, 30, 31, 05, 26, 03, 33, 18, 22, 27, 23, 21, 16, 10};
+            //std::vector<int> marker_waypt_indices(bla, bla+sizeof(bla)/sizeof(bla[0]));
+// find the indices of the aruco tags in marker_waypt_indices being detected
+            
+            bool found_goal_id = false;
+            int goal_index_detect = 0;
+            for(auto i=0; i<n; i++)
+            {
+                if(detected_marker_IDs[i]==marker_waypt[goal_id]){
+                    found_goal_id = true;
+                    goal_index_detect = i;
+                    break;
+                }
             }
             
-            cv::Point2f image_vector = next_marker_center-cv::Point2f(240,180);
-            cv::Point2f motion_vector = convertImageVectorToMotionVector(image_vector);
+            cv::Point2f motion_vector(0,0);
+            cv::Point2f marker_center(0,0);
+            if(found_goal_id)
+            {
+                marker_center = VectorAverage(corners[goal_index_detect]);
+                cv::Point2f image_vector = marker_center - cv::Point2f(240,180);
+                motion_vector = convertImageVectorToMotionVector(image_vector);
+            }
+            std::cout<<"Moving By::"<<motion_vector<<" Moving to::"<<marker_waypt[goal_id]<<"\n";
+            std::cout<<"Waypoint num::"<<goal_id;
+            Move(flightController, motion_vector.x, motion_vector.y, 0, 3);
+            if(goal_achieved(marker_center) && found_goal_id)
+            {
+                goal_id = goal_id+1;
+                //goal_id = std::min(goal_id+1,marker_waypt_indices.size()-1);
+                if(goal_id <= 19)
+                    goal_id = goal_id;
+                else
+                    goal_id = 0;
+            }
             
-            if(n==0)
-                motion_vector = cv::Point2f(0,0);
             
-            PitchGimbal(spark_ptr,-75.0);
+//            PitchGimbal(spark_ptr,-85.0);
             
             // TAKEOFF
             //TakeOff(spark_ptr);
@@ -455,13 +516,10 @@ using namespace std;
             //Land(spark_ptr);
             
             //if(counter<100)
-            if((image_vector.x*image_vector.x + image_vector.y*image_vector.y)<900)
-                Move(flightController, motion_vector.x, motion_vector.y, 0, -0.2);
-            else
-                Move(flightController, motion_vector.x, motion_vector.y, 0, 0);
-            
-            std::cout<<"Moving By::"<<motion_vector<<"\n";
-            
+            //if((image_vector.x*image_vector.x + image_vector.y*image_vector.y)<900)
+            //   Move(flightController, motion_vector.x, motion_vector.y, 0, 3);
+            //else
+            //Move(flightController, motion_vector.x, motion_vector.y, 0, 3);
             [self.viewProcessed setImage:[OpenCVConversion UIImageFromCVMat:grayImg]];
             self.debug2.text = [NSString stringWithFormat:@"%d Tags", n];
         };

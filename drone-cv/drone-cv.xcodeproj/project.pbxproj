@@ -261,7 +261,6 @@
 				TargetAttributes = {
 					02E270FD1F0EF6A900474319 = {
 						CreatedOnToolsVersion = 8.3.3;
-						DevelopmentTeam = 558H3P6Q9C;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -505,7 +504,7 @@
 			baseConfigurationReference = 0F8B5F0459EBB972032268B3 /* Pods-drone-cv.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 558H3P6Q9C;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -516,7 +515,7 @@
 				INFOPLIST_FILE = "drone-cv/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.djizy.ActivationDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sankalp.rissapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -526,7 +525,7 @@
 			baseConfigurationReference = 454EFA066911E0EC12E52339 /* Pods-drone-cv.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 558H3P6Q9C;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -537,7 +536,7 @@
 				INFOPLIST_FILE = "drone-cv/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.djizy.ActivationDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sankalp.rissapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

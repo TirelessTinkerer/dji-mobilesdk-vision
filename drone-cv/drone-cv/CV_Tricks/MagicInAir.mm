@@ -71,6 +71,12 @@ std::vector<int> detectARTagIDs(std::vector<std::vector<cv::Point2f> >& corners,
     return ids;
 }
 
+bool goal_achieved(cv::Point2f point)
+{
+    int MINIMUM_DIST_PIXELS = 1000;
+    cv::Point2f image_vector = point - cv::Point2f(240,180);
+    return (image_vector.x*image_vector.x + image_vector.y*image_vector.y) < MINIMUM_DIST_PIXELS;
+}
 
 cv::Point2f VectorAverage(std::vector<cv::Point2f>& corners){
     cv::Point2f average(0,0);
@@ -82,8 +88,11 @@ cv::Point2f VectorAverage(std::vector<cv::Point2f>& corners){
 
 cv::Point2f convertImageVectorToMotionVector(cv::Point2f im_vector){
     cv::Point2f p(-im_vector.y,im_vector.x);
-    p=p/std::sqrt(p.x*p.x + p.y*p.y);
-    p = 0.2*p;
+    float k=0.004;
+    p = k*p;
+    float norm = std::sqrt(p.x*p.x + p.y*p.y);
+    if(norm>0.5)
+        p = 0.5*p/norm;
     return p;
 }
 
