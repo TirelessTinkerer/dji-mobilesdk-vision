@@ -308,5 +308,81 @@ void SimpleFaceDetector::loadCascades(std::string filename)
         NSLog(@"------Loaded cascade file");
     }
 }
+void MarkerPose(std::vector<Point2f> detectedCorners, cv::Point3f &tag_frame, cv::Vec3d &rpy){
+    cv::Mat rvec(3,3,CV_32F);
+    cv::Mat tvec(3,1,CV_32F);
+    std::vector<cv::Point3f> objectPoints;
+    cv::Point3f p1,p2,p3,p4;
+    p1.x = 0;   p1.y=0; p1.z=0;
+    p2.x = .10;  p2.y=0; p2.z=0;
+    p3.x = .10;  p3.y=.10;p3.z=0;
+    p4.x = 0;   p4.y=.10;p4.z=0;
+    objectPoints.push_back(p1);objectPoints.push_back(p2);objectPoints.push_back(p3);objectPoints.push_back(p4);
+    //std::vector<cv::Point2f> detectedCorners = corners[0];
+    cv::Mat cameraMatrix;
+    cv::Vec4f distCoeff;
+    cameraMatrix = cv::Mat::zeros(3, 3, CV_32F);
+    cameraMatrix.at<float>(0,0) = 633.4373;
+    cameraMatrix.at<float>(0,2) = 328.3448;
+    cameraMatrix.at<float>(1,1) = 636.4243;
+    cameraMatrix.at<float>(1,2) = 186.8022;
+    cameraMatrix.at<float>(2,2) = 1.0;
+    
+    distCoeff.zeros();
+    
+    //                std::cout<<"corners:"<<detectedCorners.size()<<" Object:"<<objectPoints.size()<<cameraMatrix;
+    cv::solvePnP(objectPoints,detectedCorners,cameraMatrix,distCoeff,rvec,tvec);
+    cv::transpose(tvec, tvec);
+    cv::Rodrigues(rvec, rvec);
+    cv::Mat u,l;
+    rpy = cv::RQDecomp3x3(rvec, u, l);
+    std::cout<<"\nTvec: "<<tvec;
+    std::cout<<"\nRPY: "<<rpy;
+    tag_frame; tag_frame.x = tvec.at<double>(0);
+    tag_frame.y = tvec.at<double>(1);
+    tag_frame.z = tvec.at<double>(2);
+}
 
+bool CenterOnTag(DJIFlightController *flightController , std::vector<std::vector<cv::Point2f> > &corners, std::vector<int>& detected_marker_IDs, int query_id){
+    //<TESTING INTRISICS>
+    int n = detected_marker_IDs.size();
+    bool found_goal_id = false;
+    int goal_index_detect = 0;
+    for(auto i=0; i<n; i++)
+    {
+        if(detected_marker_IDs[i]==query_id){
+            found_goal_id = true;
+            goal_index_detect = i;
+            break;
+        }
+    }
+    if(found_goal_id)
+    {
+        cv::Point3f tag_frame;
+        cv::Vec3d rpy;
+        MarkerPose(corners[goal_index_detect], tag_frame, rpy);
+        
+        //Trying to center
+        cv::Point3f tag_pos = TagFrame2DroneFrame(tag_frame);
+        cv::Point3f target_pos(1.2,0,0);
+        float tag_yaw = rpy[1];
+        float yaw_rate_output;
+        cv::Point3f motion_vector = TagPos2Control(tag_pos, target_pos, tag_yaw, yaw_rate_output);
+        std::cout<< "\n Tag::"<<tag_frame.x<<"::"<<tag_frame.y<<"::"<<tag_frame.z<<"\n";
+        std::cout<<"Transformed Tag::"<<tag_pos.x<<"::"<<tag_pos.y<<"::"<<tag_pos.z<<"::"<<tag_yaw<<"\n";
+        std::cout<<"Motion Vector::"<<motion_vector.x<<"::"<<motion_vector.y<<"::"<<yaw_rate_output<<"\n";
+        //int MINIMUM_DIST_PIXELS = 900;
+        float yaw = 0;
+        if(goal_achieved3d(target_pos, tag_pos) && goal_achieved_yaw(tag_yaw)){
+            return true;
+        }
+        else{
+            Move(flightController, motion_vector.x, motion_vector.y, yaw_rate_output, 1.5);
+        }
+    }
+    else{
+        Move(flightController, 0, 0, 20, 1.5);
+    }
+    return false;
+}
 #endif

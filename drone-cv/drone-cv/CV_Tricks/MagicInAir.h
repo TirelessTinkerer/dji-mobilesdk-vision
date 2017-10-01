@@ -31,6 +31,8 @@ cv::Point2f VectorAverage(std::vector<cv::Point2f>& corners);
 cv::Point2f convertImageVectorToMotionVector(cv::Point2f im_vector);
 cv::Point3f TagFrame2DroneFrame(cv::Point3f tag_pos);
 cv::Point3f TagPos2Control(cv::Point3f tag_pos, cv::Point3f target_pos, float yaw, float &yaw_rate_op);
+void MarkerPose(std::vector<Point2f> detectedCorners, cv::Point3f &tag_frame, cv::Vec3d &rpy);
+bool CenterOnTag(DJIFlightController *flightController , std::vector<std::vector<cv::Point2f> > &corners, std::vector<int>& detected_marker_IDs, int query_id);
 //int MINIMUM_DIST_PIXELS = 900;
 bool goal_achieved_yaw(float yaw);
 bool goal_achieved3d(cv::Point3f target_pos, cv::Point3f marker_pos);
