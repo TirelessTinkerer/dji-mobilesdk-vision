@@ -397,6 +397,7 @@ using namespace std;
     enum {IN_AIR, ON_GROUND};
     static int detect_state  = IN_AIR;
     static int counter= 0;
+    static bool yaw_mode = false;
 
     if(self.imgProcType == IMG_PROC_USER_1)
     {
@@ -438,76 +439,105 @@ using namespace std;
             //<TESTING INTRISICS>
             if(n>0)
             {
-            std::vector<cv::Point3f> objectPoints;
-            cv::Point3f p1,p2,p3,p4;
-            p1.x = 0;   p1.y=0; p1.z=0;
-            p2.x = .10;  p2.y=0; p2.z=0;
-            p3.x = .10;  p3.y=.10;p3.z=0;
-            p4.x = 0;   p4.y=.10;p4.z=0;
-            objectPoints.push_back(p1);objectPoints.push_back(p2);objectPoints.push_back(p3);objectPoints.push_back(p4);
-            std::vector<cv::Point2f> detectedCorners = corners[0];
-            cv::Mat cameraMatrix;
-            cv::Vec4f distCoeff;
-            cameraMatrix = cv::Mat::zeros(3, 3, CV_32F);
-            cameraMatrix.at<float>(0,0) = 633.4373;
-            cameraMatrix.at<float>(0,2) = 328.3448;
-            cameraMatrix.at<float>(1,1) = 636.4243;
-            cameraMatrix.at<float>(1,2) = 186.8022;
-            cameraMatrix.at<float>(2,2) = 1.0;
+                std::vector<cv::Point3f> objectPoints;
+                cv::Point3f p1,p2,p3,p4;
+                p1.x = 0;   p1.y=0; p1.z=0;
+                p2.x = .10;  p2.y=0; p2.z=0;
+                p3.x = .10;  p3.y=.10;p3.z=0;
+                p4.x = 0;   p4.y=.10;p4.z=0;
+                objectPoints.push_back(p1);objectPoints.push_back(p2);objectPoints.push_back(p3);objectPoints.push_back(p4);
+                std::vector<cv::Point2f> detectedCorners = corners[0];
+                cv::Mat cameraMatrix;
+                cv::Vec4f distCoeff;
+                cameraMatrix = cv::Mat::zeros(3, 3, CV_32F);
+                cameraMatrix.at<float>(0,0) = 633.4373;
+                cameraMatrix.at<float>(0,2) = 328.3448;
+                cameraMatrix.at<float>(1,1) = 636.4243;
+                cameraMatrix.at<float>(1,2) = 186.8022;
+                cameraMatrix.at<float>(2,2) = 1.0;
             
-            distCoeff.zeros();
+                distCoeff.zeros();
             
-            cv::Mat rvec(3,3,CV_32F);
-            cv::Mat tvec(3,1,CV_32F);
+                cv::Mat rvec(3,3,CV_32F);
+                cv::Mat tvec(3,1,CV_32F);
 //                std::cout<<"corners:"<<detectedCorners.size()<<" Object:"<<objectPoints.size()<<cameraMatrix;
-            cv::solvePnP(objectPoints,detectedCorners,cameraMatrix,distCoeff,rvec,tvec);
-            cv::transpose(tvec, tvec);
-            cv::Rodrigues(rvec, rvec);
-            cv::Mat u,l;
-            cv::Vec3d rpy = cv::RQDecomp3x3(rvec, u, l);
-            std::cout<<"\nTvec: "<<tvec;
-            std::cout<<"\nRPY: "<<rpy;
+                cv::solvePnP(objectPoints,detectedCorners,cameraMatrix,distCoeff,rvec,tvec);
+                cv::transpose(tvec, tvec);
+                cv::Rodrigues(rvec, rvec);
+                cv::Mat u,l;
+                cv::Vec3d rpy = cv::RQDecomp3x3(rvec, u, l);
+                std::cout<<"\nTvec: "<<tvec;
+                std::cout<<"\nRPY: "<<rpy;
+                
+                
+            //Trying to center
+                cv::Point3f tag_frame; tag_frame.x = tvec.at<double>(0);
+                tag_frame.y = tvec.at<double>(1);
+                 tag_frame.z = tvec.at<double>(2);
+                cv::Point3f tag_pos = TagFrame2DroneFrame(tag_frame);
+                cv::Point3f target_pos(1.2,0,0);
+                float tag_yaw = rpy[1];
+                float yaw_rate_output;
+                cv::Point3f motion_vector = TagPos2Control(tag_pos, target_pos, tag_yaw, yaw_rate_output);
+                std::cout<< "\n Tag::"<<tag_frame.x<<"::"<<tag_frame.y<<"::"<<tag_frame.z<<"\n";
+                std::cout<<"Transformed Tag::"<<tag_pos.x<<"::"<<tag_pos.y<<"::"<<tag_pos.z<<"::"<<tag_yaw<<"\n";
+                std::cout<<"Motion Vector::"<<motion_vector.x<<"::"<<motion_vector.y<<"::"<<yaw_rate_output<<"\n";
+                //int MINIMUM_DIST_PIXELS = 900;
+                float yaw = 0;
+                if(goal_achieved3d(target_pos, tag_pos) && goal_achieved_yaw(tag_yaw)){
+                    Land(spark_ptr);
+                }
+                else{
+                    Move(flightController, motion_vector.x, motion_vector.y, yaw_rate_output, 1.5);
+                }
             }
-            // <TESTING INTRINSICS/>
-
-            static const int marker_waypt[] = {20, 19, 32, 13, 12, 34, 01, 30, 31, 05, 26, 03, 33, 18, 22, 27, 23, 21, 16, 10};
-            //std::vector<int> marker_waypt_indices(bla, bla+sizeof(bla)/sizeof(bla[0]));
-// find the indices of the aruco tags in marker_waypt_indices being detected
+            else{
+                    Move(flightController, 0, 0, 20, 1.5);
+                }
             
-            bool found_goal_id = false;
-            int goal_index_detect = 0;
-            for(auto i=0; i<n; i++)
-            {
-                if(detected_marker_IDs[i]==marker_waypt[goal_id]){
+            //Move(flightController, 0, 0, 20, 1);
+            // <TESTING INTRINSICS/>
+            
+            if(0){
+                static const int marker_waypt[] = {20, 19, 32, 13, 12, 34, 01, 30, 31, 05, 26, 03, 33, 18, 22, 27, 23, 21, 16, 10};
+                //std::vector<int> marker_waypt_indices(bla, bla+sizeof(bla)/sizeof(bla[0]));
+                // find the indices of the aruco tags in marker_waypt_indices being detected
+            
+                bool found_goal_id = false;
+                int goal_index_detect = 0;
+                for(auto i=0; i<n; i++)
+                {
+                    if(detected_marker_IDs[i]==marker_waypt[goal_id]){
                     found_goal_id = true;
                     goal_index_detect = i;
                     break;
                 }
+                }
+            
+                cv::Point2f motion_vector(0,0);
+                cv::Point2f marker_center(0,0);
+                if(found_goal_id)
+                {
+                    marker_center = VectorAverage(corners[goal_index_detect]);
+                    cv::Point2f image_vector = marker_center - cv::Point2f(240,180);
+                    motion_vector = convertImageVectorToMotionVector(image_vector);
+                }
+                //std::cout<<"Moving By::"<<motion_vector<<" Moving to::"<<marker_waypt[goal_id]<<"\n";
+                //std::cout<<"Waypoint num::"<<goal_id;
+                Move(flightController, motion_vector.x, motion_vector.y, 0, 3);
+                if(goal_achieved(marker_center) && found_goal_id)
+                {
+                    goal_id = goal_id+1;
+                    //goal_id = std::min(goal_id+1,marker_waypt_indices.size()-1);
+                    if(goal_id <= 19)
+                        goal_id = goal_id;
+                    else
+                        goal_id = 0;
+                }
             }
             
-            cv::Point2f motion_vector(0,0);
-            cv::Point2f marker_center(0,0);
-            if(found_goal_id)
-            {
-                marker_center = VectorAverage(corners[goal_index_detect]);
-                cv::Point2f image_vector = marker_center - cv::Point2f(240,180);
-                motion_vector = convertImageVectorToMotionVector(image_vector);
-            }
-            std::cout<<"Moving By::"<<motion_vector<<" Moving to::"<<marker_waypt[goal_id]<<"\n";
-            std::cout<<"Waypoint num::"<<goal_id;
-            Move(flightController, motion_vector.x, motion_vector.y, 0, 3);
-            if(goal_achieved(marker_center) && found_goal_id)
-            {
-                goal_id = goal_id+1;
-                //goal_id = std::min(goal_id+1,marker_waypt_indices.size()-1);
-                if(goal_id <= 19)
-                    goal_id = goal_id;
-                else
-                    goal_id = 0;
-            }
             
-            
-//            PitchGimbal(spark_ptr,-85.0);
+            PitchGimbal(spark_ptr,0.0);
             
             // TAKEOFF
             //TakeOff(spark_ptr);

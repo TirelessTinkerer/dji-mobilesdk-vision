@@ -71,6 +71,24 @@ std::vector<int> detectARTagIDs(std::vector<std::vector<cv::Point2f> >& corners,
     return ids;
 }
 
+bool goal_achieved3d(cv::Point3f target_pos, cv::Point3f marker_pos){
+    float distance_threshold = 0.2;
+    float yaw_threshold = 10.0;
+    cv::Point3f p = target_pos - marker_pos;
+    float dot_product = p.dot(p);
+    if(dot_product < (distance_threshold*distance_threshold))
+        return true;
+    return false;
+}
+
+bool goal_achieved_yaw(float yaw){
+    float yaw_threshold = 10.0;
+    if(std::abs(yaw) < yaw_threshold)
+        return true;
+    return false;
+}
+
+
 bool goal_achieved(cv::Point2f point)
 {
     int MINIMUM_DIST_PIXELS = 1000;
@@ -94,6 +112,32 @@ cv::Point2f convertImageVectorToMotionVector(cv::Point2f im_vector){
     if(norm>0.5)
         p = 0.5*p/norm;
     return p;
+}
+
+/*cv::Point2f convertFaceImageVectorToMotionVector(cv::Point2f im_vector){
+    cv::Point2f p(0,-im_vector.x);
+    float k=0.004;
+    p = k*p;
+    float norm = std::sqrt(p.x*p.x + p.y*p.y);
+    if(norm>0.5)
+        p = 0.5*p/norm;
+    return p;
+}*/
+
+
+cv::Point3f TagPos2Control(cv::Point3f tag_pos, cv::Point3f target_pos, float yaw, float &yaw_rate_op){
+    
+    cv::Point3f p = tag_pos - target_pos;
+    float k_pos=0.4;
+    p = k_pos*p;
+    float norm = std::sqrt(p.x*p.x + p.y*p.y + p.z*p.z);
+    if(norm>0.5)
+        p = 0.5*p/norm;
+    
+    float k_yaw = 0.3;
+    yaw_rate_op = k_yaw*yaw;
+    return p;
+    
 }
 
 //+ (void)filterLaplace:(Mat)image withKernelSize:(int)kernel_size;
@@ -233,6 +277,14 @@ int SimpleFaceDetector::detectFaceInMat(cv::Mat &grayMat)
     return ((int)faces.size());
 }
 
+cv::Point3f TagFrame2DroneFrame(cv::Point3f tag_pos){
+    cv::Point3f drone_pos;
+    drone_pos.x = tag_pos.z;
+    drone_pos.y = tag_pos.x;
+    drone_pos.z = -tag_pos.y;
+    return drone_pos;
+}
+
 void SimpleFaceDetector::loadCascades(std::string filename)
 {
     if(NULL != face_cascade)
@@ -256,6 +308,5 @@ void SimpleFaceDetector::loadCascades(std::string filename)
         NSLog(@"------Loaded cascade file");
     }
 }
-
 
 #endif
