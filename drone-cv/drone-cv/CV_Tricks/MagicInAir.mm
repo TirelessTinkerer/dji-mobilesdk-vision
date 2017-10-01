@@ -73,7 +73,6 @@ std::vector<int> detectARTagIDs(std::vector<std::vector<cv::Point2f> >& corners,
 
 bool goal_achieved3d(cv::Point3f target_pos, cv::Point3f marker_pos){
     float distance_threshold = 0.2;
-    float yaw_threshold = 10.0;
     cv::Point3f p = target_pos - marker_pos;
     float dot_product = p.dot(p);
     if(dot_product < (distance_threshold*distance_threshold))
@@ -82,7 +81,7 @@ bool goal_achieved3d(cv::Point3f target_pos, cv::Point3f marker_pos){
 }
 
 bool goal_achieved_yaw(float yaw){
-    float yaw_threshold = 10.0;
+    float yaw_threshold = 3.5;
     if(std::abs(yaw) < yaw_threshold)
         return true;
     return false;
@@ -128,11 +127,11 @@ cv::Point2f convertImageVectorToMotionVector(cv::Point2f im_vector){
 cv::Point3f TagPos2Control(cv::Point3f tag_pos, cv::Point3f target_pos, float yaw, float &yaw_rate_op){
     
     cv::Point3f p = tag_pos - target_pos;
-    float k_pos=0.4;
+    float k_pos=0.3;
     p = k_pos*p;
     float norm = std::sqrt(p.x*p.x + p.y*p.y + p.z*p.z);
-    if(norm>0.5)
-        p = 0.5*p/norm;
+    if(norm>0.4)
+        p = 0.4*p/norm;
     
     float k_yaw = 0.3;
     yaw_rate_op = k_yaw*yaw;
@@ -367,7 +366,7 @@ bool CenterOnTag(DJIFlightController *flightController , std::vector<std::vector
         
         //Trying to center
         cv::Point3f tag_pos = TagFrame2DroneFrame(tag_frame);
-        cv::Point3f target_pos(1.2,0,0);
+        cv::Point3f target_pos(1.3,0,0);
         float tag_yaw = rpy[1];
         float yaw_rate_output;
         cv::Point3f motion_vector = TagPos2Control(tag_pos, target_pos, tag_yaw, yaw_rate_output);
@@ -384,7 +383,7 @@ bool CenterOnTag(DJIFlightController *flightController , std::vector<std::vector
         }
     }
     else{
-        Move(flightController, 0, 0, 20, 1.5);
+        Move(flightController, 0, 0, 15, height);
     }
     return false;
 }
@@ -406,17 +405,34 @@ bool detectTagID(std::vector<int>& detected_marker_IDs, int query_id)
 
 cv::Mat drawRectangles(cv::Mat im, std::vector<int>& detected_ids){
     im  = Scalar(125);
-    int x_offset = 20;
-    int y_offset = 20;
+    int x_offset = 178;
+    int y_offset = 40;
     int rect_size = 80;
     Scalar valid_color(255);
     Scalar invalid_color(50);
     Scalar black(0);
-    int rect_space_x = 10;
+    int rect_space_x = 15;
+    int rect_space_y = 30;
     cv::Point p1(0,0);
     cv::Point p2(20,40);
-    cv::rectangle(im, p1, p2, valid_color, -1);
-    cv::rectangle(im, p1, p2, black, 1.5);
+    int index=0;
+    std::string test;
+    cv::putText(im,test, p2, cv::FONT_HERSHEY_TRIPLEX, 1, Scalar(0));
+    
+    for(int j=0; j<3; j++){
+        for(int i=0; i<3; i++){
+            //detected_ids[index];
+            index = index+1;
+            p1.x = x_offset + i*(rect_size+rect_space_x);
+            p1.y = y_offset + j*(rect_size+rect_space_y);
+            
+            p2.x = x_offset + i*(rect_size+rect_space_x)+rect_size;
+            p2.y = y_offset + j*(rect_size+rect_space_y)+rect_size*0.8;
+            
+            cv::rectangle(im, p1, p2, valid_color, -1);
+            cv::rectangle(im, p1, p2, black, 1.5);
+        }
+    }
 
     return im;
 }

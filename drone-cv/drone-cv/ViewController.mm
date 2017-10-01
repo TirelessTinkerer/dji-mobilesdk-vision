@@ -394,7 +394,7 @@ using namespace std;
     [self.spark enterVirtualStickMode];
     [self.spark setVerticleModeToAbsoluteHeight];
     static int goal_id = 1;
-    enum RobotState {IN_AIR, ON_GROUND, EXPLORE_START, EXPLORE_11=8, EXPLORE_12=9, EXPLORE_21=33, EXPLORE_22=22, EXPLORE_31=18, EXPLORE_32=24};
+    enum RobotState {IN_AIR, ON_GROUND, DO_LAND,EXPLORE_LAND=15, EXPLORE_11=8, EXPLORE_12=9, EXPLORE_21=33, EXPLORE_22=22, EXPLORE_31=18, EXPLORE_32=24, EXPLORE_31R};
     static int detect_state  = IN_AIR;
     static int counter= 0;
     static bool yaw_mode = false;
@@ -449,7 +449,7 @@ using namespace std;
                     CURR_STATE = EXPLORE_11;
                     break;
                 case EXPLORE_11:
-                    if(CenterOnTag(flightController ,corners, detected_marker_IDs, EXPLORE_11,2.0)){
+                    if(CenterOnTag(flightController ,corners, detected_marker_IDs, EXPLORE_11,2.2)){
                         std::cout<<"\n\n Got 11! \n\n";
                         CURR_STATE = EXPLORE_12;
                     }
@@ -462,7 +462,7 @@ using namespace std;
                         Move(flightController, 0, 0.3, 0, 2);
                         //std::cout<<"Looking for tag12::"<<EXPLORE_12;
                     }
-                    else if(CenterOnTag(flightController ,corners, detected_marker_IDs, EXPLORE_12,2.0))
+                    else if(CenterOnTag(flightController ,corners, detected_marker_IDs, EXPLORE_12,2.2))
                     {
                         std::cout<<"\n\n Got 12! \n\n";
                         CURR_STATE = EXPLORE_22;
@@ -470,25 +470,62 @@ using namespace std;
                     break;
                 case EXPLORE_22:
                     if(!detectTagID(detected_marker_IDs, (int)EXPLORE_22)){
-                        Move(flightController, 0, 0, 0, 1.5);
+                        Move(flightController, 0, 0, 0, 1.7);
                         //std::cout<<"Looking for tag12::"<<EXPLORE_12;
                     }
-                    else if(CenterOnTag(flightController ,corners, detected_marker_IDs, EXPLORE_22,1.5)){
+                    else if(CenterOnTag(flightController ,corners, detected_marker_IDs, EXPLORE_22,1.7)){
                         std::cout<<"\n\n Got 22! \n\n";
                         CURR_STATE = EXPLORE_21;
                     }
                     break;
                 case EXPLORE_21:
                     if(!detectTagID(detected_marker_IDs, EXPLORE_21))
-                        Move(flightController, 0, -0.3, 0, 1.5);
-                    else if(CenterOnTag(flightController ,corners, detected_marker_IDs, EXPLORE_21,1.5))
+                        Move(flightController, 0, -0.3, 0, 1.7);
+                    else if(CenterOnTag(flightController ,corners, detected_marker_IDs, EXPLORE_21,1.7))
                     {
                         std::cout<<"\n\n Got 12! \n\n";
                         CURR_STATE = EXPLORE_31;
                     }
                     break;
                 case EXPLORE_31:
+                    if(!detectTagID(detected_marker_IDs, (int)EXPLORE_31)){
+                        Move(flightController, 0, 0, 0, 1.4);
+                        //std::cout<<"Looking for tag12::"<<EXPLORE_12;
+                    }
+                    else if(CenterOnTag(flightController ,corners, detected_marker_IDs, EXPLORE_31,1.4)){
+                        std::cout<<"\n\n Got 31! \n\n";
+                        CURR_STATE = EXPLORE_32;
+                    }
+                    break;
+                case EXPLORE_32:
+                    if(!detectTagID(detected_marker_IDs, EXPLORE_32))
+                        Move(flightController, 0, 0.3, 0, 1.4);
+                    else if(CenterOnTag(flightController ,corners, detected_marker_IDs, EXPLORE_32,1.4))
+                    {
+                        std::cout<<"\n\n Got 32! \n\n";
+                        CURR_STATE = EXPLORE_31R;
+                    }
+                    break;
+                case EXPLORE_31R:
+                    if(!detectTagID(detected_marker_IDs, EXPLORE_31))
+                        Move(flightController, 0, -0.3, 0, 1.4);
+                    else if(CenterOnTag(flightController ,corners, detected_marker_IDs, EXPLORE_31,1.4))
+                    {
+                        std::cout<<"\n\n Got 12! \n\n";
+                        CURR_STATE = EXPLORE_LAND;
+                    }
+                    break;
+                case EXPLORE_LAND:
+                    if(CenterOnTag(flightController ,corners, detected_marker_IDs, EXPLORE_LAND,1.4))
+                    {
+                        std::cout<<"\n\n Got LAND! \n\n";
+                        CURR_STATE = DO_LAND;
+                    }
+                    break;
+                case DO_LAND:
                     Land(spark_ptr);
+                    CURR_STATE = IN_AIR;
+                    break;
                     
             }
             //</STATE MACHINE>
