@@ -42,6 +42,8 @@ void filterLaplace(Mat image, int kernel_size);
 void filterBlurHomogeneousAccelerated(Mat image, int kernel_size);
 int  detectARTag(Mat image);
 void sampleFeedback(Mat image, DroneHelper * drone);
+cv::Mat drawRectangles(cv::Mat im, std::vector<int>& detected_ids);
+bool detectTagID(std::vector<int>& detected_marker_IDs, int query_id);
 
 class SimpleFaceDetector
 {

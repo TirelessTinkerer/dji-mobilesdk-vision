@@ -394,10 +394,12 @@ using namespace std;
     [self.spark enterVirtualStickMode];
     [self.spark setVerticleModeToAbsoluteHeight];
     static int goal_id = 1;
-    enum {IN_AIR, ON_GROUND};
+    enum RobotState {IN_AIR, ON_GROUND, EXPLORE_START, EXPLORE_11=8, EXPLORE_12=9, EXPLORE_21=33, EXPLORE_22=22, EXPLORE_31=18, EXPLORE_32=24};
     static int detect_state  = IN_AIR;
     static int counter= 0;
     static bool yaw_mode = false;
+    static RobotState CURR_STATE = IN_AIR;
+
 
     if(self.imgProcType == IMG_PROC_USER_1)
     {
@@ -432,12 +434,64 @@ using namespace std;
             std::vector<std::vector<cv::Point2f> > corners;
             std::vector<int> detected_marker_IDs = detectARTagIDs(corners,grayImg);
             NSInteger n = detected_marker_IDs.size();
-            int query_id = 30;
-            float height = 1.5;
-            if(CenterOnTag(flightController ,corners, detected_marker_IDs, query_id,height)){
-                std::cout<<"\n\n Got it! \n\n";
-            }
+            //int query_id = 30;
+            //float height = 1.5;
+            //if(CenterOnTag(flightController ,corners, detected_marker_IDs, query_id,height)){
+            //    std::cout<<"\n\n Got it! \n\n";
+            //}
             PitchGimbal(spark_ptr,0.0);
+            grayImg = drawRectangles(grayImg, detected_marker_IDs);
+            
+            //<STATE MACHINE>
+            switch(CURR_STATE)
+            {
+                case IN_AIR:
+                    CURR_STATE = EXPLORE_11;
+                    break;
+                case EXPLORE_11:
+                    if(CenterOnTag(flightController ,corners, detected_marker_IDs, EXPLORE_11,2.0)){
+                        std::cout<<"\n\n Got 11! \n\n";
+                        CURR_STATE = EXPLORE_12;
+                    }
+                    break;
+                case EXPLORE_12:
+                    // MOVE RIGHT and detect ID
+                    // If found id, do centering
+                    // If centering done change state
+                    if(!detectTagID(detected_marker_IDs, (int)EXPLORE_12)){
+                        Move(flightController, 0, 0.3, 0, 2);
+                        //std::cout<<"Looking for tag12::"<<EXPLORE_12;
+                    }
+                    else if(CenterOnTag(flightController ,corners, detected_marker_IDs, EXPLORE_12,2.0))
+                    {
+                        std::cout<<"\n\n Got 12! \n\n";
+                        CURR_STATE = EXPLORE_22;
+                    }
+                    break;
+                case EXPLORE_22:
+                    if(!detectTagID(detected_marker_IDs, (int)EXPLORE_22)){
+                        Move(flightController, 0, 0, 0, 1.5);
+                        //std::cout<<"Looking for tag12::"<<EXPLORE_12;
+                    }
+                    else if(CenterOnTag(flightController ,corners, detected_marker_IDs, EXPLORE_22,1.5)){
+                        std::cout<<"\n\n Got 22! \n\n";
+                        CURR_STATE = EXPLORE_21;
+                    }
+                    break;
+                case EXPLORE_21:
+                    if(!detectTagID(detected_marker_IDs, EXPLORE_21))
+                        Move(flightController, 0, -0.3, 0, 1.5);
+                    else if(CenterOnTag(flightController ,corners, detected_marker_IDs, EXPLORE_21,1.5))
+                    {
+                        std::cout<<"\n\n Got 12! \n\n";
+                        CURR_STATE = EXPLORE_31;
+                    }
+                    break;
+                case EXPLORE_31:
+                    Land(spark_ptr);
+                    
+            }
+            //</STATE MACHINE>
             
             // TAKEOFF
             //TakeOff(spark_ptr);

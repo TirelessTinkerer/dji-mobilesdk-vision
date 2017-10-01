@@ -336,8 +336,8 @@ void MarkerPose(std::vector<Point2f> detectedCorners, cv::Point3f &tag_frame, cv
     cv::Rodrigues(rvec, rvec);
     cv::Mat u,l;
     rpy = cv::RQDecomp3x3(rvec, u, l);
-    std::cout<<"\nTvec: "<<tvec;
-    std::cout<<"\nRPY: "<<rpy;
+    //std::cout<<"\nTvec: "<<tvec;
+    //std::cout<<"\nRPY: "<<rpy;
     tag_frame; tag_frame.x = tvec.at<double>(0);
     tag_frame.y = tvec.at<double>(1);
     tag_frame.z = tvec.at<double>(2);
@@ -355,6 +355,9 @@ bool CenterOnTag(DJIFlightController *flightController , std::vector<std::vector
             goal_index_detect = i;
             break;
         }
+    }
+    if(n>0){
+        std::cout<<"ID::"<<detected_marker_IDs[0];
     }
     if(found_goal_id)
     {
@@ -384,5 +387,37 @@ bool CenterOnTag(DJIFlightController *flightController , std::vector<std::vector
         Move(flightController, 0, 0, 20, 1.5);
     }
     return false;
+}
+
+bool detectTagID(std::vector<int>& detected_marker_IDs, int query_id)
+{  bool found_goal_id = false;
+    int goal_index_detect = 0;
+    for(auto i=0; i<detected_marker_IDs.size(); i++)
+    {
+        if(detected_marker_IDs[i]==query_id){
+            found_goal_id = true;
+            goal_index_detect = i;
+            break;
+        }
+    }
+    return found_goal_id;
+}
+
+
+cv::Mat drawRectangles(cv::Mat im, std::vector<int>& detected_ids){
+    im  = Scalar(125);
+    int x_offset = 20;
+    int y_offset = 20;
+    int rect_size = 80;
+    Scalar valid_color(255);
+    Scalar invalid_color(50);
+    Scalar black(0);
+    int rect_space_x = 10;
+    cv::Point p1(0,0);
+    cv::Point p2(20,40);
+    cv::rectangle(im, p1, p2, valid_color, -1);
+    cv::rectangle(im, p1, p2, black, 1.5);
+
+    return im;
 }
 #endif
