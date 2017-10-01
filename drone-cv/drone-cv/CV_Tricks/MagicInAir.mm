@@ -403,34 +403,69 @@ bool detectTagID(std::vector<int>& detected_marker_IDs, int query_id)
 }
 
 
-cv::Mat drawRectangles(cv::Mat im, std::vector<int>& detected_ids){
+cv::Mat drawRectangles(cv::Mat im, std::vector<int>& inventory_list, std::vector<int>& prev_inventory_list){
     im  = Scalar(125);
     int x_offset = 178;
     int y_offset = 40;
     int rect_size = 80;
     Scalar valid_color(255);
-    Scalar invalid_color(50);
+    Scalar invalid_color(125);
+    Scalar change_color(50);
     Scalar black(0);
+    Scalar white(255);
     int rect_space_x = 15;
     int rect_space_y = 30;
     cv::Point p1(0,0);
     cv::Point p2(20,40);
     int index=0;
-    std::string test;
-    cv::putText(im,test, p2, cv::FONT_HERSHEY_TRIPLEX, 1, Scalar(0));
     
+    // managing_list
+    std::vector<int> status_list = inventory_list;
+    if(prev_inventory_list.size()== inventory_list.size()){
+        for(int i=0; i<status_list.size(); i++){
+            if(status_list[i] != prev_inventory_list[i] && prev_inventory_list[i] >= 0){
+                status_list[i] = -10;
+            }
+        }
+    }
+    int text_offset = 5;
     for(int j=0; j<3; j++){
         for(int i=0; i<3; i++){
             //detected_ids[index];
-            index = index+1;
+            //std::cout<<"\n status_list::"<<index<<"::"<<status_list[index]<<"\t";
+
             p1.x = x_offset + i*(rect_size+rect_space_x);
             p1.y = y_offset + j*(rect_size+rect_space_y);
             
             p2.x = x_offset + i*(rect_size+rect_space_x)+rect_size;
             p2.y = y_offset + j*(rect_size+rect_space_y)+rect_size*0.8;
+            cv::Point p_text((p1.x+5), (p2.y-5));
             
-            cv::rectangle(im, p1, p2, valid_color, -1);
-            cv::rectangle(im, p1, p2, black, 1.5);
+            std::stringstream ss;
+            ss << status_list[index];
+            std::string test = ss.str();
+            if(status_list[index]>=0){
+                cv::rectangle(im, p1, p2, valid_color, -1);
+                cv::rectangle(im, p1, p2, black, 1.5);
+                cv::putText(im,test, p_text, cv::FONT_HERSHEY_TRIPLEX, 1, Scalar(0));
+                //std::cout<<"Making valid box \n";
+            }
+            else if(status_list[index]==-1){
+                cv::rectangle(im, p1, p2, invalid_color, -1);
+                cv::rectangle(im, p1, p2, black, 1.5);
+                //cv::putText(im,test, p_text, cv::FONT_HERSHEY_TRIPLEX, 1, Scalar(0));
+                //std::cout<<"Making invalid box \n";
+            }
+            else if(status_list[index]==-10){
+                cv::rectangle(im, p1, p2, change_color, -1);
+                cv::rectangle(im, p1, p2, white, 1.5);
+                std::stringstream new_stream;
+                new_stream << prev_inventory_list[index];
+                test = new_stream.str();
+                cv::putText(im,test, p_text, cv::FONT_HERSHEY_TRIPLEX, 1, white);
+                //std::cout<<"Making change box \n";
+            }
+            index = index+1;
         }
     }
 

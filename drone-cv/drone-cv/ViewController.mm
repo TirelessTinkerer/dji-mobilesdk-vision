@@ -399,7 +399,8 @@ using namespace std;
     static int counter= 0;
     static bool yaw_mode = false;
     static RobotState CURR_STATE = IN_AIR;
-
+    static std::vector<int> inventory_list = {-1,-1,3,-1,-1,-1,-1,-1,-1};
+    static std::vector<int> prev_inventory_list= {0,-1,3,4,5,6,7,8,9};
 
     if(self.imgProcType == IMG_PROC_USER_1)
     {
@@ -440,7 +441,7 @@ using namespace std;
             //    std::cout<<"\n\n Got it! \n\n";
             //}
             PitchGimbal(spark_ptr,0.0);
-            grayImg = drawRectangles(grayImg, detected_marker_IDs);
+            grayImg = drawRectangles(grayImg, inventory_list,prev_inventory_list);
             
             //<STATE MACHINE>
             switch(CURR_STATE)

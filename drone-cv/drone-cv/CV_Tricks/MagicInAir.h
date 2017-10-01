@@ -44,6 +44,7 @@ int  detectARTag(Mat image);
 void sampleFeedback(Mat image, DroneHelper * drone);
 cv::Mat drawRectangles(cv::Mat im, std::vector<int>& detected_ids);
 bool detectTagID(std::vector<int>& detected_marker_IDs, int query_id);
+cv::Mat drawRectangles(cv::Mat im, std::vector<int>& inventory_list, std::vector<int>& prev_inventory_list);
 
 class SimpleFaceDetector
 {
