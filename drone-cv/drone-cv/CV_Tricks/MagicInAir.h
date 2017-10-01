@@ -20,6 +20,7 @@
 
 using namespace std;
 using namespace cv;
+enum RobotState {IN_AIR, ON_GROUND, DO_LAND,EXPLORE_LAND=15, EXPLORE_11=8, EXPLORE_12=9, EXPLORE_21=33, EXPLORE_22=22, EXPLORE_31=18, EXPLORE_32=24, EXPLORE_31R};
 
 bool PitchGimbal(DroneHelper *spark,float pitch);
 bool TakeOff(DroneHelper *spark);
@@ -45,6 +46,8 @@ void sampleFeedback(Mat image, DroneHelper * drone);
 cv::Mat drawRectangles(cv::Mat im, std::vector<int>& detected_ids);
 bool detectTagID(std::vector<int>& detected_marker_IDs, int query_id);
 cv::Mat drawRectangles(cv::Mat im, std::vector<int>& inventory_list, std::vector<int>& prev_inventory_list);
+void MaintainInventory(std::vector<std::vector<cv::Point2f> > &corners,
+                       std::vector<int> &detected_marker_IDs, std::vector<int> &inventory_list, int state);
 
 class SimpleFaceDetector
 {

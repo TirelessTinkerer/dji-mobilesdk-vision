@@ -90,8 +90,8 @@ bool goal_achieved_yaw(float yaw){
 
 bool goal_achieved(cv::Point2f point)
 {
-    int MINIMUM_DIST_PIXELS = 1000;
-    cv::Point2f image_vector = point - cv::Point2f(240,180);
+    int MINIMUM_DIST_PIXELS = 5000;
+    cv::Point2f image_vector = point - cv::Point2f(320,180);
     return (image_vector.x*image_vector.x + image_vector.y*image_vector.y) < MINIMUM_DIST_PIXELS;
 }
 
@@ -460,7 +460,11 @@ cv::Mat drawRectangles(cv::Mat im, std::vector<int>& inventory_list, std::vector
                 cv::rectangle(im, p1, p2, change_color, -1);
                 cv::rectangle(im, p1, p2, white, 1.5);
                 std::stringstream new_stream;
-                new_stream << prev_inventory_list[index];
+                if(inventory_list[index]>0)
+                    new_stream << inventory_list[index];
+                else
+                    new_stream << prev_inventory_list[index];
+                
                 test = new_stream.str();
                 cv::putText(im,test, p_text, cv::FONT_HERSHEY_TRIPLEX, 1, white);
                 //std::cout<<"Making change box \n";
@@ -470,5 +474,51 @@ cv::Mat drawRectangles(cv::Mat im, std::vector<int>& inventory_list, std::vector
     }
 
     return im;
+}
+
+void MaintainInventory(std::vector<std::vector<cv::Point2f> > &corners,
+                       std::vector<int> &detected_marker_IDs, std::vector<int> &inventory_list, int state){
+    for(int i=0; i<detected_marker_IDs.size();i++){
+        if(detected_marker_IDs[i] == EXPLORE_11 || detected_marker_IDs[i] == EXPLORE_12 ||
+           detected_marker_IDs[i] == EXPLORE_21 || detected_marker_IDs[i] == EXPLORE_22 ||
+           detected_marker_IDs[i] == EXPLORE_31 || detected_marker_IDs[i] == EXPLORE_32){
+            continue;
+        }
+        cv::Point2f m = VectorAverage(corners[i]);
+        if(!goal_achieved(m)) continue;
+        bool already_there = false;
+        for(int j=0; j<inventory_list.size();j++){
+            if(inventory_list[j] == detected_marker_IDs[i])
+                already_there = true;
+        }
+        if(already_there) continue;
+        
+        if(state== EXPLORE_11 || state== EXPLORE_12){
+            for(int k=0; k<3;k++){
+                if(inventory_list[k] == -1){
+                    inventory_list[k] = detected_marker_IDs[i];
+                    break;
+                }
+            }
+        }
+        else if(state== EXPLORE_21 || state== EXPLORE_22){
+            for(int k=5; k>2;k--){
+                if(inventory_list[k] == -1){
+                    inventory_list[k] = detected_marker_IDs[i];
+                    break;
+                }
+            }
+        }
+        else if(state== EXPLORE_31 || state== EXPLORE_32){
+            for(int k=6; k<9;k++){
+                if(inventory_list[k] == -1){
+                    inventory_list[k] = detected_marker_IDs[i];
+                    break;
+                }
+            }
+        }
+
+    }
+    
 }
 #endif

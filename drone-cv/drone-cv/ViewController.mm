@@ -394,13 +394,13 @@ using namespace std;
     [self.spark enterVirtualStickMode];
     [self.spark setVerticleModeToAbsoluteHeight];
     static int goal_id = 1;
-    enum RobotState {IN_AIR, ON_GROUND, DO_LAND,EXPLORE_LAND=15, EXPLORE_11=8, EXPLORE_12=9, EXPLORE_21=33, EXPLORE_22=22, EXPLORE_31=18, EXPLORE_32=24, EXPLORE_31R};
+    //enum RobotState {IN_AIR, ON_GROUND, DO_LAND,EXPLORE_LAND=15, EXPLORE_11=8, EXPLORE_12=9, EXPLORE_21=33, EXPLORE_22=22, EXPLORE_31=18, EXPLORE_32=24, EXPLORE_31R};
     static int detect_state  = IN_AIR;
     static int counter= 0;
     static bool yaw_mode = false;
     static RobotState CURR_STATE = IN_AIR;
-    static std::vector<int> inventory_list = {-1,-1,3,-1,-1,-1,-1,-1,-1};
-    static std::vector<int> prev_inventory_list= {0,-1,3,4,5,6,7,8,9};
+    static std::vector<int> inventory_list = {-1,-1,-1,-1,-1,-1,-1,-1,-1};
+    static std::vector<int> prev_inventory_list;
 
     if(self.imgProcType == IMG_PROC_USER_1)
     {
@@ -441,9 +441,9 @@ using namespace std;
             //    std::cout<<"\n\n Got it! \n\n";
             //}
             PitchGimbal(spark_ptr,0.0);
-            grayImg = drawRectangles(grayImg, inventory_list,prev_inventory_list);
             
             //<STATE MACHINE>
+            std::vector<int> temp_list = {-1,-1,-1,-1,-1,-1,-1,-1,-1};
             switch(CURR_STATE)
             {
                 case IN_AIR:
@@ -453,6 +453,8 @@ using namespace std;
                     if(CenterOnTag(flightController ,corners, detected_marker_IDs, EXPLORE_11,2.2)){
                         std::cout<<"\n\n Got 11! \n\n";
                         CURR_STATE = EXPLORE_12;
+                        prev_inventory_list = inventory_list;
+                        inventory_list = temp_list;
                     }
                     break;
                 case EXPLORE_12:
@@ -513,7 +515,7 @@ using namespace std;
                     else if(CenterOnTag(flightController ,corners, detected_marker_IDs, EXPLORE_31,1.4))
                     {
                         std::cout<<"\n\n Got 12! \n\n";
-                        CURR_STATE = EXPLORE_LAND;
+                        CURR_STATE = DO_LAND;
                     }
                     break;
                 case EXPLORE_LAND:
@@ -529,6 +531,8 @@ using namespace std;
                     break;
                     
             }
+            if(CURR_STATE != EXPLORE_11 && CURR_STATE != DO_LAND && CURR_STATE != EXPLORE_LAND)
+                MaintainInventory(corners,detected_marker_IDs,inventory_list, CURR_STATE);
             //</STATE MACHINE>
             
             // TAKEOFF
@@ -542,6 +546,8 @@ using namespace std;
             //   Move(flightController, motion_vector.x, motion_vector.y, 0, 3);
             //else
             //Move(flightController, motion_vector.x, motion_vector.y, 0, 3);
+            grayImg = drawRectangles(grayImg, inventory_list,prev_inventory_list);
+            
             [self.viewProcessed setImage:[OpenCVConversion UIImageFromCVMat:grayImg]];
             self.debug2.text = [NSString stringWithFormat:@"%d Tags", n];
         };
