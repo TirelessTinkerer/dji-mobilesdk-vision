@@ -433,7 +433,8 @@ using namespace std;
             std::vector<int> detected_marker_IDs = detectARTagIDs(corners,grayImg);
             NSInteger n = detected_marker_IDs.size();
             int query_id = 30;
-            if(CenterOnTag(flightController ,corners, detected_marker_IDs, query_id)){
+            float height = 1.5;
+            if(CenterOnTag(flightController ,corners, detected_marker_IDs, query_id,height)){
                 std::cout<<"\n\n Got it! \n\n";
             }
             PitchGimbal(spark_ptr,0.0);

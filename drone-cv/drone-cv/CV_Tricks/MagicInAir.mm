@@ -343,7 +343,7 @@ void MarkerPose(std::vector<Point2f> detectedCorners, cv::Point3f &tag_frame, cv
     tag_frame.z = tvec.at<double>(2);
 }
 
-bool CenterOnTag(DJIFlightController *flightController , std::vector<std::vector<cv::Point2f> > &corners, std::vector<int>& detected_marker_IDs, int query_id){
+bool CenterOnTag(DJIFlightController *flightController , std::vector<std::vector<cv::Point2f> > &corners, std::vector<int>& detected_marker_IDs, int query_id, float height){
     //<TESTING INTRISICS>
     int n = detected_marker_IDs.size();
     bool found_goal_id = false;
@@ -377,7 +377,7 @@ bool CenterOnTag(DJIFlightController *flightController , std::vector<std::vector
             return true;
         }
         else{
-            Move(flightController, motion_vector.x, motion_vector.y, yaw_rate_output, 1.5);
+            Move(flightController, motion_vector.x, motion_vector.y, yaw_rate_output, height);
         }
     }
     else{
