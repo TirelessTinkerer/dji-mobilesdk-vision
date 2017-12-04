@@ -401,6 +401,7 @@ using namespace std;
     static RobotState CURR_STATE = IN_AIR;
     static std::vector<int> inventory_list = {-1,-1,-1,-1,-1,-1,-1,-1,-1};
     static std::vector<int> prev_inventory_list;
+    
 
     if(self.imgProcType == IMG_PROC_USER_1)
     {
