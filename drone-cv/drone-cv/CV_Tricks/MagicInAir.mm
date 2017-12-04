@@ -460,10 +460,13 @@ cv::Mat drawRectangles(cv::Mat im, std::vector<int>& inventory_list, std::vector
                 cv::rectangle(im, p1, p2, change_color, -1);
                 cv::rectangle(im, p1, p2, white, 1.5);
                 std::stringstream new_stream;
-                if(inventory_list[index]>0)
+                if(inventory_list[index]>=0)
                     new_stream << inventory_list[index];
-                else
+                else{
+                    cv::rectangle(im, p1, p2, invalid_color, -1);
+                    cv::rectangle(im, p1, p2, black, 1.5);
                     new_stream << prev_inventory_list[index];
+                }
                 
                 test = new_stream.str();
                 cv::putText(im,test, p_text, cv::FONT_HERSHEY_TRIPLEX, 1, white);
