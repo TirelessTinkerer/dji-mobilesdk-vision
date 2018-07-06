@@ -73,7 +73,7 @@ using namespace std;
     self.viewProcessed.contentMode = UIViewContentModeScaleAspectFit;
     [self.viewProcessed setBackgroundColor:[UIColor clearColor]];
     
-    UIImage *image = [UIImage imageNamed:@"mavic.jpg"];
+    UIImage *image = [UIImage imageNamed:@"mavic_air.jpg"];
     if(image != nil)
         self.viewProcessed.image = image;
 
