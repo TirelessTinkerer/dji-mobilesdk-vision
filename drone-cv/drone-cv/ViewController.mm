@@ -71,7 +71,7 @@ using namespace std;
     // Do any additional setup after loading the view, typically from a nib.
     [self registerApp];
     self.viewProcessed.contentMode = UIViewContentModeScaleAspectFit;
-    [self.viewProcessed setBackgroundColor:[UIColor redColor]];
+    [self.viewProcessed setBackgroundColor:[UIColor clearColor]];
     
     UIImage *image = [UIImage imageNamed:@"mavic.jpg"];
     if(image != nil)
