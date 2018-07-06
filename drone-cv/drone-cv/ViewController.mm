@@ -57,6 +57,7 @@ using namespace std;
 @property (weak, nonatomic) IBOutlet UIButton *btnTakeoffLand;
 @property (weak, nonatomic) IBOutlet UIButton *btnMoveTest;
 @property (weak, nonatomic) IBOutlet UIButton *btnArucoTag;
+@property (weak, nonatomic) IBOutlet UIButton *btnAR;
 
 @property (atomic) double aircraftAltitude;
 
@@ -581,6 +582,140 @@ using namespace std;
         }
     }];
 
+}
+- (IBAction)doAR:(id)sender {
+    
+    self.debug2.text = @"AR mode";
+    
+    if(self.imgProcType == IMG_PROC_AR)
+    {
+        self.imgProcType = IMG_PROC_DEFAULT;
+        self.debug2.text = @"Default";
+        self.processFrame = self.defaultProcess;
+        [self.spark exitVirtualStickMode];
+    }
+    else
+    {
+        // Virtual stick mode is a control interface
+        // allow user to progrmmatically control the drone's movement
+        [self.spark enterVirtualStickMode];
+        
+        // This will change the behavior in the z-axis of the drone
+        // If you call change set vertical mode to absolute height
+        // Use MoveVxVyYawrateHeight(...)
+        // Otherwise use MoveVxVyYawrateVz(...)
+        [self.spark setVerticleModeToAbsoluteHeight];
+        
+        self.imgProcType = IMG_PROC_AR;
+        
+        // Here we load the dji logo as the image we would like to overlay as our AR object
+        NSString *logoPath = [[NSBundle mainBundle] pathForResource:@"dji_logo" ofType:@"jpg"];
+        const char* logoPathInC = [logoPath cStringUsingEncoding:NSUTF8StringEncoding];
+        cv::Mat logo = imread(logoPathInC);
+        
+        // Load the camera parameters from yml file
+        // Each camera has different parameters but they should be close to for every DJI Spark
+        // If you find the calibration or AR effect is not accurate, please calibrate your Spark
+        NSString *path = [[NSBundle mainBundle] pathForResource:@"spark_main_cam_param" ofType:@"yml"];
+        const char* pathInC = [path cStringUsingEncoding:NSUTF8StringEncoding];
+        cv::FileStorage fs(pathInC, cv::FileStorage::READ);
+        int w, h;
+        cv::Mat intrinsic, distortion;
+        fs["image_width"] >> w;
+        fs["image_height"] >> h;
+        fs["distortion_coefficients"] >> distortion;
+        fs["camera_matrix"] >> intrinsic;
+        
+        
+        // Please measure the marker size in Meter and enter it here
+        const float markerSizeMeter = 0.13;
+        const float halfSize = markerSizeMeter * 0.5;
+        
+        // Self-defined tag location in 3D, this is used in step 2 below
+        std::vector<cv::Point3f> objPoints{
+            cv::Point3f(-halfSize, halfSize, 0),
+            cv::Point3f(halfSize, halfSize, 0),
+            cv::Point3f(halfSize, -halfSize, 0),
+            cv::Point3f(-halfSize, -halfSize, 0)
+        };
+        
+        // AR object points in 3D, this is used in step 4 below
+        cv::Mat objectPoints(8, 3, CV_32FC1);
+        
+        objectPoints.at< float >(0, 0) = -halfSize;
+        objectPoints.at< float >(0, 1) = -halfSize;
+        objectPoints.at< float >(0, 2) = 0;
+        objectPoints.at< float >(1, 0) = halfSize;
+        objectPoints.at< float >(1, 1) = -halfSize;
+        objectPoints.at< float >(1, 2) = 0;
+        objectPoints.at< float >(2, 0) = halfSize;
+        objectPoints.at< float >(2, 1) = halfSize;
+        objectPoints.at< float >(2, 2) = 0;
+        objectPoints.at< float >(3, 0) = -halfSize;
+        objectPoints.at< float >(3, 1) = halfSize;
+        objectPoints.at< float >(3, 2) = 0;
+        
+        objectPoints.at< float >(4, 0) = -halfSize;
+        objectPoints.at< float >(4, 1) = -halfSize;
+        objectPoints.at< float >(4, 2) = markerSizeMeter;
+        objectPoints.at< float >(5, 0) = halfSize;
+        objectPoints.at< float >(5, 1) = -halfSize;
+        objectPoints.at< float >(5, 2) = markerSizeMeter;
+        objectPoints.at< float >(6, 0) = halfSize;
+        objectPoints.at< float >(6, 1) = halfSize;
+        objectPoints.at< float >(6, 2) = markerSizeMeter;
+        objectPoints.at< float >(7, 0) = -halfSize;
+        objectPoints.at< float >(7, 1) = halfSize;
+        objectPoints.at< float >(7, 2) = markerSizeMeter;
+        
+        self.processFrame =
+        ^(UIImage *frame){
+            
+            
+            // Since this is the bonus part, only high-level instructions will be provided
+            // One way you can do this is to:
+            // 1. Identify the Aruco tags with corner pixel location
+            //    Hint: cv::aruco::detectMarkers(...)
+            // 2. For each corner in 3D space, define their 3D locations
+            //    The 3D locations you defined here will determine the origin of your coordinate frame
+            // 3. Given the 3D locatiions you defined, their 2D pixel location in the image, and camera parameters
+            //    You can calculate the 6 DOF of the camera relative to the tag coordinate frame
+            //    Hint: cv::solvePnP(...)
+            // 4. To put artificial object in the image, you need to create 3D points first and project them into 2D image
+            //    With the projected image points, you can draw lines or polygon
+            //    Hint: cv::projectPoints(...)
+            // 5. To put dji logo on certain location,
+            //    you need find the homography between the projected 4 corners and the 4 corners of the logo image
+            //    Hint: cv::findHomography(...)
+            // 6. Once the homography is found, warp the image with perspective
+            //    Hint: cv::warpPerspective(...)
+            // 7. Now you have the warped logo image in the right location, just overlay them on top of the camera image
+            
+            // Load the images
+            cv::Mat colorImg = [OpenCVConversion cvMatFromUIImage:frame];
+            cv::cvtColor(colorImg, colorImg, CV_RGB2BGR);
+            cv::Mat grayImg = [OpenCVConversion cvMatGrayFromUIImage:frame];
+
+            // Do your magic!!!
+                
+                
+            // Hint how to overlay warped logo onto the original camera image
+//            cv::Mat gray,grayInv,src1Final,src2Final;
+//            cvtColor(logoWarped,gray,CV_BGR2GRAY);
+//            threshold(gray,gray,0,255,CV_THRESH_BINARY);
+//            bitwise_not(gray, grayInv);
+//            colorImg.copyTo(src1Final,grayInv);
+//            logoWarped.copyTo(src2Final,gray);
+//            colorImg = src1Final+src2Final;
+            
+            cv::cvtColor(colorImg, colorImg, CV_BGR2RGB);
+            [self.viewProcessed setImage:[OpenCVConversion UIImageFromCVMat:colorImg]];
+            
+            
+        };
+        
+    }
+    
 }
 
 

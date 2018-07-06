@@ -18,7 +18,8 @@ enum ImgProcess_Mode {
     IMG_PROC_USER_1,
     IMG_PROC_USER_2,
     IMG_PROC_USER_3,
-    IMG_PROC_USER_4
+    IMG_PROC_USER_4,
+    IMG_PROC_AR
 };
 @end
 
