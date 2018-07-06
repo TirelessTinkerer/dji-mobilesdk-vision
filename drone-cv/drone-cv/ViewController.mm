@@ -248,19 +248,7 @@ using namespace std;
 -(void)videoFeed:(DJIVideoFeed *)videoFeed didUpdateVideoData:(NSData *)videoData {
     [[VideoPreviewer instance] push:(uint8_t *)videoData.bytes length:(int)videoData.length];
 }
-//
-//- (void)takeSnapshot
-//{
-//    UIView *snapshot = [self.fpvPreview snapshotViewAfterScreenUpdates:YES];
-//    snapshot.tag = 100001;
-//    
-//    if ([self.imgView viewWithTag:100001]) {
-//        [[self.imgView viewWithTag:100001] removeFromSuperview];
-//    }
-//    
-//    [self.imgView addSubview:snapshot];
-//    self.debug2.text = [NSString stringWithFormat:@"%d", self.counter++];
-//}
+
 
 -(void) timerCallback
 {
@@ -340,19 +328,6 @@ using namespace std;
     }
 }
 
-//-(void) detect(cv::Mat &img, cv::CascadeClassifier &detectorBody)
-//{
-//    vector<cv::Rect> human;
-//    cvtColor(img, img, CV_BGR2GRAY);
-//
-//    detectorBody.detectMultiScale(img, human, 1.1, 2, 0 | 1, cv::Size(40,70), cv::Size(80, 300));
-//    // Draw results from detectorBody into original colored image
-//    if (human.size() > 0) {
-//        for (int gg = 0; gg < human.size(); gg++) {
-//            cv::rectangle(img, human[gg].tl(), human[gg].br(), Scalar(0,0,255), 2, 8, 0);
-//        }
-//    }
-//}
 
 - (IBAction)doDetectFace:(id)sender;
 {
@@ -387,7 +362,7 @@ using namespace std;
 
 - (IBAction)doDetectAR:(id)sender
 {
-    //Not using here, just show how to use static variable
+    // Not using here, just show how to use static variable
     static int counter= 0;
 
     if(self.imgProcType == IMG_PROC_USER_1)
@@ -398,70 +373,86 @@ using namespace std;
     }
     else
     {
+        // Virtual stick mode is a control interface
+        // allow user to progrmmatically control the drone's movement
         [self.spark enterVirtualStickMode];
+        
+        // This will change the behavior in the z-axis of the drone
+        // If you call change set vertical mode to absolute height
+        // Use MoveVxVyYawrateHeight(...)
+        // Otherwise use MoveVxVyYawrateVz(...)
         [self.spark setVerticleModeToAbsoluteHeight];
         
         self.imgProcType = IMG_PROC_USER_1;
+        
+        // This is a timer callback function that will run repeatedly when button is clicked
         self.processFrame =
         ^(UIImage *frame){
             counter = counter+1;
             DroneHelper *spark_ptr = [self spark];
             
+            // From here we get the image from the main camera of the drone
             cv::Mat grayImg = [OpenCVConversion cvMatGrayFromUIImage:frame];
             if(grayImg.cols == 0)
             {
                 NSLog(@"Invalid frame!");
                 return;
             }
+            
+            // Shrink the image for faster processing
             cv::resize(grayImg, grayImg, cv::Size(480, 360));
             
+            // Call detectARTagIDs to get Aruco tag IDs and corner pixel location
             std::vector<std::vector<cv::Point2f> > corners;
             std::vector<int> ids = detectARTagIDs(corners,grayImg);
             NSInteger n = ids.size();
 
-            cv::Point2f marker_center(0,0);
-            bool tag_for_takeoff = FALSE;
-            for(auto i=0;i<n;i++)
-            {
-                if(ids[i] == 34)
-                {
-                    if(self.spark.isFlying == FALSE && tag_for_takeoff == FALSE)
-                    {
-                        tag_for_takeoff = TRUE;
-                        TakeOff(spark_ptr);
-                    }
-                }
-
-                std::cout<<"\nID: "<<ids[i];
-                marker_center = VectorAverage(corners[i]);
-            }
+            // Implement your logic to decide where to move the drone
+            // Below snippet is an example of how you can calcualte the center of the marker
+//            cv::Point2f marker_center(0,0);
+//            bool tag_for_takeoff = FALSE;
+//            for(auto i=0;i<n;i++)
+//            {
+//                std::cout<<"\nID: "<<ids[i];
+//                // This function calculate the average marker center from all the detected tags
+//                marker_center = VectorAverage(corners[i]);
+//            }
             
-//          Codes commented below show how to drive the drone to move to the direction
-//          such that desired tag is in the center of image frame
+            // Codes commented below show how to drive the drone to move to the direction
+            // such that desired tag is in the center of image frame
+            
+            // Calculate the image vector relative to the center of the image
 //            cv::Point2f image_vector = marker_center-cv::Point2f(240,180);
+            
+            // Convert vector from image coordinate to drone navigation coordinate
 //            cv::Point2f motion_vector = convertImageVectorToMotionVector(image_vector);
+            
+            // If there's no tag detected, no motion required
 //            if(n==0){
 //                motion_vector = cv::Point2f(0,0);
 //            }
+            
+            // Use MoveVxVyYawrateVz(...) or MoveVxVyYawrateHeight(...)
+            // depending on the mode you choose at the beginning of this function
 //            if((image_vector.x*image_vector.x + image_vector.y*image_vector.y)<900)
 //                MoveVxVyYawrateVz(spark_ptr, motion_vector.x, motion_vector.y, 0, -0.2);
 //            else
 //                MoveVxVyYawrateVz(spark_ptr, motion_vector.x, motion_vector.y, 0, 0);
-//            
+
 //            std::cout<<"Moving By::"<<motion_vector<<"\n";
             
+            // Move the camera to look down so you can see the tags
             PitchGimbal(spark_ptr,-75.0);
             
-            // TAKEOFF
-            //TakeOff(spark_ptr);
-
-            //LAND
-            //Land(spark_ptr);
+            // Sample function to help you control the drone
+            // Such as takeoff and land
+//            TakeOff(spark_ptr);
+//            Land(spark_ptr);
             
-
-
-            
+            // Convert opencv image back to iOS UIImage
             [self.viewProcessed setImage:[OpenCVConversion UIImageFromCVMat:grayImg]];
+            
+            // Print some debug text on the App
             self.debug2.text = [NSString stringWithFormat:@"%d Tags", n];
         };
     }
@@ -558,15 +549,7 @@ using namespace std;
     }
 }
 
-//- (IBAction)onDroneMoveClicked:(id)sender
-//{
-//    [self enableVS];
-//    
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//        [self executeVirtualStickControl];
-//    });
-//}
-//
+
 - (void) enableVS
 {
     // disable gesture mode
@@ -600,68 +583,5 @@ using namespace std;
 
 }
 
-//
-//- (void)executeVirtualStickControl
-//{
-//    __weak DJICamera *camera = [self fetchCamera];
-//    
-//    for(int i = 0;i < PHOTO_NUMBER; i++){
-//        
-//        float yawAngle = ROTATE_ANGLE*i;
-//        NSLog(@"Yaw angle=%f", yawAngle);
-//        if (yawAngle > 180.0) { //Filter the angle between -180 ~ 0, 0 ~ 180
-//            yawAngle = yawAngle - 360;
-//        }
-//        
-//        NSTimer *timer =  [NSTimer scheduledTimerWithTimeInterval:0.2 target:self selector:@selector(rotateDrone:) userInfo:@{@"YawAngle":@(yawAngle)} repeats:YES];
-//        [timer fire];
-//        
-//        [[NSRunLoop currentRunLoop]addTimer:timer forMode:NSDefaultRunLoopMode];
-//        [[NSRunLoop currentRunLoop]runUntilDate:[NSDate dateWithTimeIntervalSinceNow:2]];
-//        
-//        [timer invalidate];
-//        timer = nil;
-//        
-//        sleep(2);
-//    }
-//    
-//    DJIFlightController *flightController = [self fetchFlightController];
-//    [flightController setVirtualStickModeEnabled:NO withCompletion:^(NSError * _Nullable error) {
-//        if (error) {
-//            NSLog(@"Disable VirtualStickControlMode Failed");
-//            DJIFlightController *flightController = [self fetchFlightController];
-//            [flightController setVirtualStickModeEnabled:NO withCompletion:nil];
-//        }
-//    }];
-//    
-//    weakSelf(target);
-//    dispatch_async(dispatch_get_main_queue(), ^{
-//        weakReturn(target);
-//        [target showAlertViewWithTitle:@"Capture Photos" withMessage:@"Capture finished"];
-//    });
-//}
-//
-//- (void)rotateDrone:(NSTimer *)timer
-//{
-//    NSDictionary *dict = [timer userInfo];
-//    float yawAngle = [[dict objectForKey:@"YawAngle"] floatValue];
-//    
-//    DJIFlightController *flightController = [self fetchFlightController];
-//    
-//    DJIVirtualStickFlightControlData vsFlightCtrlData;
-//    vsFlightCtrlData.pitch = 0;
-//    vsFlightCtrlData.roll = 0;
-//    vsFlightCtrlData.verticalThrottle = 0;
-//    vsFlightCtrlData.yaw = yawAngle;
-//    
-//    flightController.isVirtualStickAdvancedModeEnabled = YES;
-//    
-//    [flightController sendVirtualStickFlightControlData:vsFlightCtrlData withCompletion:^(NSError * _Nullable error) {
-//        if (error) {
-//            NSLog(@"Send FlightControl Data Failed %@", error.description);
-//        }
-//    }];
-//    
-//}
 
 @end
