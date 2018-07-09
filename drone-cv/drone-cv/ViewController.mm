@@ -367,6 +367,7 @@ using namespace std;
     // Not using here, just show how to use static variable
     static int counter= 0;
     static int current_tag = 0;
+    static bool done = 0;
 
     if(self.imgProcType == IMG_PROC_USER_1)
     {
@@ -455,16 +456,24 @@ using namespace std;
             // Find the largest consequnce id
             #endif
             std::vector<cv::Point2f>  corner;
-            std::sort(ids.begin(),ids.end());
+            std::vector<int> ids_tmp(ids);
+            std::sort(ids_tmp.begin(),ids_tmp.end());
             for (size_t i = 0; i < n; i++) {
-              if(current_tag + 1 == ids[i])
+              if(current_tag + 1 == ids_tmp[i])
               {
                 current_tag++;
-                corner = corners[i];
+                  break;
+                //corner = corners[i];
               }
-                else if(current_tag == ids[i])
+            }
+            //int index = ids.find(current_tag);
+            for (size_t i = 0; i < n ; i++) {
+                if( current_tag == ids[i])
                     corner = corners[i];
             }
+            //corner = corners[index];
+            
+            
             float error;
             std::cout<<"\n current_tag " <<  current_tag;
             if(!corner.empty())
@@ -479,10 +488,10 @@ using namespace std;
         
             
             float const TOL = 0.1;
-            float const FORWARD_SPEED = 0.4;
-            float const SPEED_WHILE_ROTATION = 0;
+            float const FORWARD_SPEED = 0.7;
+            float const SPEED_WHILE_ROTATION = 0.5;
             //float YAW_RATE = 2 * ( error > 0 ? (-1) : (1) );
-            float YAW_RATE = 20 * ( error > 0 ? (-1) : (1) );
+            float YAW_RATE = (-25) * ( error > 0 ? (-1) : (1) );
 
             if (abs(error) > TOL) {
                 MoveVxVyYawrateHeight(spark_ptr, SPEED_WHILE_ROTATION , 0 , YAW_RATE , 2.5); // vx,vy,yaw_rate,vz
@@ -491,25 +500,32 @@ using namespace std;
             {
                 MoveVxVyYawrateHeight(spark_ptr, FORWARD_SPEED, 0 ,  0 , 2.5);
             }
-            self.debug2.text = [NSString stringWithFormat:@"%d,%d,%.2f,%.2f", n , current_tag , YAW_RATE , error];
-            
+            self.debug2.text = [NSString stringWithFormat:@"%d", current_tag];
 
+            //if(current_tag == 12 || current_tag == 11)
+            //    MoveVxVyYawrateHeight(spark_ptr, 0, 0 , - 30 , 2.5);
 
             // If there's no tag detected or reach the end, no motion required
             if(n==0) // Number_AR_Tags == 17
             {
-                MoveVxVyYawrateHeight(spark_ptr, 0, 0 ,  YAW_RATE , 2.5);
+                MoveVxVyYawrateHeight(spark_ptr, 0, 0 ,  - 30 , 2.5);
                 //self.debug2.text = [NSString stringWithFormat:@"No tags"];
             }
             if(current_tag == Number_AR_Tags) // Number_AR_Tags == 17
             {
                 MoveVxVyYawrateHeight(spark_ptr, 0, 0 ,  0 , 1);
+                done = 1;
                 
                 self.debug2.text = [NSString stringWithFormat:@"finished!"];
             }
 
             // Move the camera to look down so you can see the tags
-            PitchGimbal(spark_ptr,-45.0);
+            //if (done ==0){
+            //    PitchGimbal(spark_ptr,-50.0);
+            //}else{
+            //    PitchGimbal(spark_ptr,-70.0);
+           //  }
+            PitchGimbal(spark_ptr,-65.0);
 
             // Sample function to help you control the drone
             // Such as takeoff and land
