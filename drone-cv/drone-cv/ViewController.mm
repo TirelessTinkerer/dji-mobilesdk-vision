@@ -364,6 +364,7 @@ using namespace std;
 {
     // Not using here, just show how to use static variable
     static int counter= 0;
+    static int current_tag = 0;
 
     if(self.imgProcType == IMG_PROC_USER_1)
     {
@@ -432,6 +433,7 @@ using namespace std;
 
             bool tag_for_takeoff = FALSE;
 
+            #if 0
             for(　auto i　=　0; i　<　n; i++　)
             {
                 std::cout << "\nID: " << ids[i]; //Output the ID of the tag whose center is being calculated.
@@ -448,28 +450,48 @@ using namespace std;
             }
 
             //---> Codes commented below show how to drive the drone to move to the direction such that desired tag is in the center of image frame
-
-            // If there's no tag detected, no motion required
-            if(n==0)
+            // Find the largest consequnce id
+            #endif
+            std::vector<cv::Point2f>  corner;
+            std::sort(ids,ids.begin(),ids.end());
+            for (size_t i = 0; i < n; i++) {
+              if(current_tag + 1 == ids[i])
               {
-                  motion_vector = cv::Point2f(0,0);
+                current_tag++;
+                corner = corners[i];
               }
+            }
+            std::cout<<"\n current_tag " <<  current_tag;
+            cv::Point2f mark_center = VectorAverage(corner);
+            float error = (mark_center - 240) / 480.0f; // get the error and normalize it
+            float const TOL = 0.1;
+            float const FORWARD_SPEED = 0.4;
+            float const SPEED_WHILE_ROTATION = 0.1;
+            float const YAW_RATE = 0.1;
 
-            // Use MoveVxVyYawrateVz(...) or MoveVxVyYawrateHeight(...) depending on the mode you choose at the beginning of this function
-            if(((image_vector.x * image_vector.x) + (image_vector.y * image_vector.y))　<　900)
-                MoveVxVyYawrateVz(spark_ptr, motion_vector.x, motion_vector.y, 0, -0.2);
+            if (abs(error) > TOL) {
+                MoveVxVyYawrateVz(spark_ptr, SPEED_WHILE_ROTATION , 0 , YAW_RATE , 0); // vx,vy,yaw_rate,vz
+            }
             else
-                MoveVxVyYawrateVz(spark_ptr, motion_vector.x, motion_vector.y, 0, 0);
+            {
+                MoveVxVyYawrateVz(spark_ptr, FORWARD_SPEED, 0 ,  0 , 0);
+            }
 
-            std::cout<<"Moving By::"<<motion_vector<<"\n";
+
+
+            // If there's no tag detected or reach the end, no motion required
+            if(n==0 || current_tag == Number_AR_Tags) // Number_AR_Tags == 17
+            {
+                MoveVxVyYawrateVz(spark_ptr, 0, 0 ,  0 , 0);
+            }
 
             // Move the camera to look down so you can see the tags
-            PitchGimbal(spark_ptr,-75.0);
+            PitchGimbal(spark_ptr,-40.0);
 
             // Sample function to help you control the drone
             // Such as takeoff and land
-            TakeOff(spark_ptr);
-            Land(spark_ptr);
+            //TakeOff(spark_ptr);
+            //Land(spark_ptr);
 
             // Convert opencv image back to iOS UIImage
             [self.viewProcessed setImage:[OpenCVConversion UIImageFromCVMat:grayImg]];
