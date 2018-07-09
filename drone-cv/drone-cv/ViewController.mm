@@ -462,29 +462,50 @@ using namespace std;
                 current_tag++;
                 corner = corners[i];
               }
+                else if(current_tag == ids[i])
+                    corner = corners[i];
             }
+            float error;
             std::cout<<"\n current_tag " <<  current_tag;
-            cv::Point2f mark_center = VectorAverage(corner);
-            float error = (mark_center.y - 240) / 480.0f; // get the error and normalize it
+            if(!corner.empty())
+            {
+                cv::Point2f mark_center = VectorAverage(corner);
+                error = (mark_center.x - 240.0f) / 480.0f; // get the error and normalize it
+                std::cout<<mark_center.x <<" "<<current_tag<< std::endl;
+            }
+            else {
+                error = 0;
+            }
+        
+            
             float const TOL = 0.1;
             float const FORWARD_SPEED = 0.4;
-            float const SPEED_WHILE_ROTATION = 0.1;
-            float const YAW_RATE = 0.1;
+            float const SPEED_WHILE_ROTATION = 0;
+            //float YAW_RATE = 2 * ( error > 0 ? (-1) : (1) );
+            float YAW_RATE = 20 * ( error > 0 ? (-1) : (1) );
 
             if (abs(error) > TOL) {
-                MoveVxVyYawrateVz(spark_ptr, SPEED_WHILE_ROTATION , 0 , YAW_RATE , 0); // vx,vy,yaw_rate,vz
+                MoveVxVyYawrateHeight(spark_ptr, SPEED_WHILE_ROTATION , 0 , YAW_RATE , 2.5); // vx,vy,yaw_rate,vz
             }
             else
             {
-                MoveVxVyYawrateVz(spark_ptr, FORWARD_SPEED, 0 ,  0 , 0);
+                MoveVxVyYawrateHeight(spark_ptr, FORWARD_SPEED, 0 ,  0 , 2.5);
             }
-
+            self.debug2.text = [NSString stringWithFormat:@"%d,%d,%.2f,%.2f", n , current_tag , YAW_RATE , error];
+            
 
 
             // If there's no tag detected or reach the end, no motion required
-            if(n==0 || current_tag == Number_AR_Tags) // Number_AR_Tags == 17
+            if(n==0) // Number_AR_Tags == 17
             {
-                MoveVxVyYawrateVz(spark_ptr, 0, 0 ,  0 , 0);
+                MoveVxVyYawrateHeight(spark_ptr, 0, 0 ,  YAW_RATE , 2.5);
+                //self.debug2.text = [NSString stringWithFormat:@"No tags"];
+            }
+            if(current_tag == Number_AR_Tags) // Number_AR_Tags == 17
+            {
+                MoveVxVyYawrateHeight(spark_ptr, 0, 0 ,  0 , 1);
+                
+                self.debug2.text = [NSString stringWithFormat:@"finished!"];
             }
 
             // Move the camera to look down so you can see the tags
@@ -499,7 +520,7 @@ using namespace std;
             [self.viewProcessed setImage:[OpenCVConversion UIImageFromCVMat:grayImg]];
 
             // Print some debug text on the App
-            self.debug2.text = [NSString stringWithFormat:@"%d Tags", n];
+            
         };
     }
 }
@@ -629,9 +650,9 @@ using namespace std;
 
 }
 - (IBAction)doAR:(id)sender {
-
+    
     self.debug2.text = @"AR mode";
-
+    
     if(self.imgProcType == IMG_PROC_AR)
     {
         self.imgProcType = IMG_PROC_DEFAULT;
@@ -644,20 +665,20 @@ using namespace std;
         // Virtual stick mode is a control interface
         // allow user to progrmmatically control the drone's movement
         [self.spark enterVirtualStickMode];
-
+        
         // This will change the behavior in the z-axis of the drone
         // If you call change set vertical mode to absolute height
         // Use MoveVxVyYawrateHeight(...)
         // Otherwise use MoveVxVyYawrateVz(...)
         [self.spark setVerticleModeToAbsoluteHeight];
-
+        
         self.imgProcType = IMG_PROC_AR;
-
+        
         // Here we load the dji logo as the image we would like to overlay as our AR object
         NSString *logoPath = [[NSBundle mainBundle] pathForResource:@"dji_logo" ofType:@"jpg"];
         const char* logoPathInC = [logoPath cStringUsingEncoding:NSUTF8StringEncoding];
         cv::Mat logo = imread(logoPathInC);
-
+        
         // Load the camera parameters from yml file
         // Each camera has different parameters but they should be close to for every DJI Spark
         // If you find the calibration or AR effect is not accurate, please calibrate your Spark
@@ -670,12 +691,12 @@ using namespace std;
         fs["image_height"] >> h;
         fs["distortion_coefficients"] >> distortion;
         fs["camera_matrix"] >> intrinsic;
-
-
+        
+        
         // Please measure the marker size in Meter and enter it here
         const float markerSizeMeter = 0.13;
         const float halfSize = markerSizeMeter * 0.5;
-
+        
         // Self-defined tag location in 3D, this is used in step 2 below
         std::vector<cv::Point3f> objPoints{
             cv::Point3f(-halfSize, halfSize, 0),
@@ -683,10 +704,10 @@ using namespace std;
             cv::Point3f(halfSize, -halfSize, 0),
             cv::Point3f(-halfSize, -halfSize, 0)
         };
-
+        
         // AR object points in 3D, this is used in step 4 below
         cv::Mat objectPoints(8, 3, CV_32FC1);
-
+        
         objectPoints.at< float >(0, 0) = -halfSize;
         objectPoints.at< float >(0, 1) = -halfSize;
         objectPoints.at< float >(0, 2) = 0;
@@ -699,7 +720,7 @@ using namespace std;
         objectPoints.at< float >(3, 0) = -halfSize;
         objectPoints.at< float >(3, 1) = halfSize;
         objectPoints.at< float >(3, 2) = 0;
-
+        
         objectPoints.at< float >(4, 0) = -halfSize;
         objectPoints.at< float >(4, 1) = -halfSize;
         objectPoints.at< float >(4, 2) = markerSizeMeter;
@@ -712,11 +733,16 @@ using namespace std;
         objectPoints.at< float >(7, 0) = -halfSize;
         objectPoints.at< float >(7, 1) = halfSize;
         objectPoints.at< float >(7, 2) = markerSizeMeter;
-
+        
+        
+        std::vector<cv::Point2f> logoPoints{
+            cv::Point2f(0,0),
+            cv::Point2f(0,logo.cols),
+            cv::Point2f(logo.rows, logo.cols),
+            cv::Point2f(logo.rows,0)
+        };
         self.processFrame =
         ^(UIImage *frame){
-
-
             // Since this is the bonus part, only high-level instructions will be provided
             // One way you can do this is to:
             // 1. Identify the Aruco tags with corner pixel location
@@ -735,32 +761,79 @@ using namespace std;
             // 6. Once the homography is found, warp the image with perspective
             //    Hint: cv::warpPerspective(...)
             // 7. Now you have the warped logo image in the right location, just overlay them on top of the camera image
-
+            
             // Load the images
             cv::Mat colorImg = [OpenCVConversion cvMatFromUIImage:frame];
             cv::cvtColor(colorImg, colorImg, CV_RGB2BGR);
             cv::Mat grayImg = [OpenCVConversion cvMatGrayFromUIImage:frame];
-
+            
             // Do your magic!!!
-
-
-            // Hint how to overlay warped logo onto the original camera image
-//            cv::Mat gray,grayInv,src1Final,src2Final;
-//            cvtColor(logoWarped,gray,CV_BGR2GRAY);
-//            threshold(gray,gray,0,255,CV_THRESH_BINARY);
-//            bitwise_not(gray, grayInv);
-//            colorImg.copyTo(src1Final,grayInv);
-//            logoWarped.copyTo(src2Final,gray);
-//            colorImg = src1Final+src2Final;
-
-            cv::cvtColor(colorImg, colorImg, CV_BGR2RGB);
+            cv::Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_250);
+            std::vector<std::vector<cv::Point2f> > corners;
+            std::vector<cv::Point2f> projectPoints;
+            cv::Mat rvec,tvec;
+            
+            cv::Mat logoWarped;
+            
+            
+            // Step 1
+            std::vector <int> ids;
+            cv::aruco::detectMarkers(colorImg, dictionary, corners, ids);
+            // Step 2
+            
+            // Step 3 TODO
+            if ((int)corners.size()!= 0){
+                cv::solvePnP(objPoints, corners[0], intrinsic, distortion, rvec, tvec);
+                // Step 4
+                cv::projectPoints(objectPoints, rvec, tvec, intrinsic, distortion, projectPoints);
+                cv::line(colorImg, projectPoints[0], projectPoints[1], cv::Scalar(0,255,0),4);
+                cv::line(colorImg, projectPoints[1], projectPoints[2], cv::Scalar(0,255,0),4);
+                cv::line(colorImg, projectPoints[2], projectPoints[3], cv::Scalar(0,255,0),4);
+                cv::line(colorImg, projectPoints[3], projectPoints[0], cv::Scalar(0,255,0),4);
+                cv::line(colorImg, projectPoints[4], projectPoints[5], cv::Scalar(255,0,0),4);
+                cv::line(colorImg, projectPoints[5], projectPoints[6], cv::Scalar(255,0,0),4);
+                cv::line(colorImg, projectPoints[6], projectPoints[7], cv::Scalar(255,0,0),4);
+                cv::line(colorImg, projectPoints[7], projectPoints[4], cv::Scalar(255,0,0),4);
+                cv::line(colorImg, projectPoints[0], projectPoints[4], cv::Scalar(0,0,255),4);
+                cv::line(colorImg, projectPoints[1], projectPoints[5], cv::Scalar(0,0,255),4);
+                cv::line(colorImg, projectPoints[2], projectPoints[6], cv::Scalar(0,0,255),4);
+                cv::line(colorImg, projectPoints[3], projectPoints[7], cv::Scalar(0,0,255),4);
+                
+                
+                
+                
+                std::vector<cv::Point2f> targetPoints{
+                    projectPoints[4],
+                    projectPoints[5],
+                    projectPoints[6],
+                    projectPoints[7]
+                };
+                
+                // Step 5
+                //cv::Mat M = cv::findHomography(objPoints, corners[0]);
+                cv::Mat M = cv::findHomography(logoPoints, targetPoints);
+                // Step 6
+                
+                cv::warpPerspective(logo, logoWarped, M, grayImg.size());
+                
+                // Hint how to overlay warped logo onto the original camera image
+                cv::Mat gray,grayInv,src1Final,src2Final;
+                cvtColor(logoWarped,gray,CV_BGR2GRAY);
+                threshold(gray,gray,0,255,CV_THRESH_BINARY);
+                bitwise_not(gray, grayInv);
+                colorImg.copyTo(src1Final,grayInv);
+                logoWarped.copyTo(src2Final,gray);
+                colorImg = src1Final+src2Final;
+                
+                cv::cvtColor(colorImg, colorImg, CV_BGR2RGB);
+            }
             [self.viewProcessed setImage:[OpenCVConversion UIImageFromCVMat:colorImg]];
-
-
+            
+            
         };
-
+        
     }
-
+    
 }
 
 
