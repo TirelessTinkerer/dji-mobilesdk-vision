@@ -72,13 +72,13 @@ using namespace std;
     [self registerApp];
     self.viewProcessed.contentMode = UIViewContentModeScaleAspectFit;
     [self.viewProcessed setBackgroundColor:[UIColor clearColor]];
-    
+
     UIImage *image = [UIImage imageNamed:@"mavic_air.jpg"];
     if(image != nil)
         self.viewProcessed.image = image;
 
     self.myTimer=nil;
-    
+
     // We define the default frame processing function (block)
     // to be just add a "Default" label on the resized image
     self.defaultProcess = ^(UIImage *frame){
@@ -88,13 +88,13 @@ using namespace std;
             return;
         }
         cv::resize(colorImg, colorImg, cv::Size(480, 360));
-        
+
         // The default image processing routine just put a text to the resized image
         putText(colorImg, "Default" , cv::Point(150, 40), 1, 4, cv::Scalar(255, 255, 255), 2, 8, 0);
-        
+
         [self.viewProcessed setImage:[OpenCVConversion UIImageFromCVMat:colorImg]];
     };
-    
+
     self.imgProcType = IMG_PROC_DEFAULT;
 
     myFaceDetector = new SimpleFaceDetector("lbpcascade_frontalface");
@@ -105,7 +105,7 @@ using namespace std;
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-    
+
     [self resetVideoPreview];
 }
 
@@ -137,12 +137,12 @@ using namespace std;
     if (error) {
         message = [NSString stringWithFormat:@"Register:Failed. %@"];
     }
-    
+
     self.debug1.text = message;
     NSLog(message);
-    
+
     [DJISDKManager startConnectionToProduct];
-    
+
     //Use the following line if you are debugging with bridge
     //[DJISDKManager enableBridgeModeWithBridgeAppIP:@"192.168.0.107"];
 }
@@ -152,11 +152,11 @@ using namespace std;
     if(product)
     {
         [self setupVideoPreviewer]; // Implemented below
-        
+
         DJICamera * myCamera = [self fetchCamera];
         DJIGimbal * myGimbal = [self fetchGimbal];
         DJIFlightController * myFC = [self fetchFlightController];
-        
+
         if(myCamera == nil){
             [self showAlertViewWithTitle:@"Product Connected" withMessage:@"Failed to fetch camera"];
         }
@@ -194,11 +194,11 @@ using namespace std;
     if (![DJISDKManager product]) {
         return nil;
     }
-    
+
     if ([[DJISDKManager product] isKindOfClass:[DJIAircraft class]]) {
         return ((DJIAircraft*)[DJISDKManager product]).flightController;
     }
-    
+
     return nil;
 }
 
@@ -206,14 +206,14 @@ using namespace std;
     if (![DJISDKManager product]) {
         return nil;
     }
-    
+
     if ([[DJISDKManager product] isKindOfClass:[DJIAircraft class]]) {
         return ((DJIAircraft*)[DJISDKManager product]).gimbal;
     }
     else if ([[DJISDKManager product] isKindOfClass:[DJIHandheld class]]) {
         return ((DJIHandheld*)[DJISDKManager product]).gimbal;
     }
-    
+
     return nil;
 }
 
@@ -226,13 +226,13 @@ using namespace std;
     [[VideoPreviewer instance] setView:self.viewLive];
     [[DJISDKManager videoFeeder].primaryVideoFeed addListener:self withQueue:nil];
     [[VideoPreviewer instance] start];
-    
+
     self.myTimer = [NSTimer scheduledTimerWithTimeInterval:0.1
                                                     target:self
                                                   selector:@selector(timerCallback)
                                                   userInfo:nil
                                                    repeats:YES];
-    
+
     self.processFrame = self.defaultProcess;
 }
 
@@ -258,8 +258,7 @@ using namespace std;
                                                        vx=%.2f\n\
                                                        vy=%.2f\n\
                                                        vz=%.2f\n\
-                                                       yaw=%.2f\n\
-                                                       pitch=%.2f\
+                                                       yaw=%.2f\n\ pitch=%.2f\
                                                        roll=%.2f",
                            self.spark.heightAboveHome,
                            self.spark.NEDVelocityX, self.spark.NEDVelocityY, self.spark.NEDVelocityZ,
@@ -287,11 +286,11 @@ using namespace std;
                 return;
             }
             cv::resize(grayImg, grayImg, cv::Size(480, 360));
-            
+
             //TODO CMU: insert the image processing function call here
             //Implement the function in MagicInAir.mm.
             filterLaplace(grayImg, 3);
-            
+
             [self.viewProcessed setImage:[OpenCVConversion UIImageFromCVMat:grayImg]];
         };
         self.debug2.text = @"Laplace";
@@ -322,7 +321,7 @@ using namespace std;
             //TODO CMU: insert the image processing function call here
             //Implement the function in MagicInAir.mm.
             filterBlurHomogeneousAccelerated(grayImg, 21);
-            
+
             [self.viewProcessed setImage:[OpenCVConversion UIImageFromCVMat:grayImg]];
         };
         self.debug2.text = @"Blur";
@@ -350,18 +349,18 @@ using namespace std;
                 return;
             }
             cv::resize(grayImg, grayImg, cv::Size(480, 360));
-            
+
             //TODO CMU: insert the image processing function call here
             //Implement the function in MagicInAir.mm.
             NSInteger f = myFaceDetector->detectFaceInMat(grayImg);
-            
+
             [self.viewProcessed setImage:[OpenCVConversion UIImageFromCVMat:grayImg]];
             self.debug2.text = [NSString stringWithFormat:@"%d faces", f];
         };
     }
 }
 
-- (IBAction)doDetectAR:(id)sender
+- (IBAction)doDetectAR:(id)sender //IBAction is a macro defined to denote variables and methods that can be referred to the Interface builder.
 {
     // Not using here, just show how to use static variable
     static int counter= 0;
@@ -371,88 +370,110 @@ using namespace std;
         self.imgProcType = IMG_PROC_DEFAULT;
         self.processFrame = self.defaultProcess;
         self.debug2.text = @"Default";
+
+        [self.spark exitVirtualStickMode];
     }
     else
     {
         // Virtual stick mode is a control interface
         // allow user to progrmmatically control the drone's movement
         [self.spark enterVirtualStickMode];
-        
+
         // This will change the behavior in the z-axis of the drone
-        // If you call change set vertical mode to absolute height
-        // Use MoveVxVyYawrateHeight(...)
-        // Otherwise use MoveVxVyYawrateVz(...)
+        // If you call change set vertical mode to absolute height, use MoveVxVyYawrateHeight(...) else Otherwise use MoveVxVyYawrateVz(...)
+
+        //Set the height to a height that can view more than two AR tages (potentially three)
         [self.spark setVerticleModeToAbsoluteHeight];
-        
+
         self.imgProcType = IMG_PROC_USER_1;
-        
+
         // This is a timer callback function that will run repeatedly when button is clicked
         self.processFrame =
         ^(UIImage *frame){
             counter = counter+1;
             DroneHelper *spark_ptr = [self spark];
-            
+
             // From here we get the image from the main camera of the drone
             cv::Mat grayImg = [OpenCVConversion cvMatGrayFromUIImage:frame];
+            /*
+            Ｍat is a matrix that stores the images in OpenCV cmpatible format.
+            */
+
             if(grayImg.cols == 0)
             {
                 NSLog(@"Invalid frame!");
                 return;
             }
-            
             // Shrink the image for faster processing
+
             cv::resize(grayImg, grayImg, cv::Size(480, 360));
-            
+
             // Call detectARTagIDs to get Aruco tag IDs and corner pixel location
             std::vector<std::vector<cv::Point2f> > corners;
+            //It is a vector of vectors, where we have as many vectors as there are tags, and each vector is 4-dimensional
+            //containing four Point2F objects, where each point2F object is the X-Y coordinte of the corners of a tag.
             std::vector<int> ids = detectARTagIDs(corners,grayImg);
-            NSInteger n = ids.size();
+            //detectATTagIDs returns a vector of the IDs detected by the function.
 
-            // Implement your logic to decide where to move the drone
-            // Below snippet is an example of how you can calcualte the center of the marker
-//            cv::Point2f marker_center(0,0);
-//            bool tag_for_takeoff = FALSE;
-//            for(auto i=0;i<n;i++)
-//            {
-//                std::cout<<"\nID: "<<ids[i];
-//                // This function calculate the average marker center from all the detected tags
-//                marker_center = VectorAverage(corners[i]);
-//            }
-            
-            // Codes commented below show how to drive the drone to move to the direction
-            // such that desired tag is in the center of image frame
-            
-            // Calculate the image vector relative to the center of the image
-//            cv::Point2f image_vector = marker_center-cv::Point2f(240,180);
-            
-            // Convert vector from image coordinate to drone navigation coordinate
-//            cv::Point2f motion_vector = convertImageVectorToMotionVector(image_vector);
-            
+            NSInteger n = ids.size(); //n represents the number of aruco tags that are under the flying image
+
+            auto Number_AR_Tags = 17 //This variable contains the total number of AR tags in teh course
+
+            //----------------LOGIC-----------------Implement your logic to decide where to move the drone----------------
+
+            //---> Below snippet is an example of how you can calculate the center of the marker
+
+
+            <std::vector<cv::Point2f> marker_center;
+            <std::vector<cv::Point2f> image_vector;
+            <std::vector<cv::Point2f> motion_vector;
+            //cv::Point2f marker_center(0,0);
+            //Initialising the marker center to 0, 0
+
+            bool tag_for_takeoff = FALSE;
+
+            for(　auto i　=　0; i　<　n; i++　)
+            {
+                std::cout << "\nID: " << ids[i]; //Output the ID of the tag whose center is being calculated.
+                // This function calculates the average marker center from all the detected tags
+                marker_center[i] = VectorAverage(corners[i]);
+
+                // Calculate the image vector relative to the center of the image
+                cv::Point2f image_vector[i] = marker_center[i] - cv::Point2f(240,180);
+                //Here we align the cener of the aruco tag to the center of the image
+                //The image vector is the vector that connects the center of the image with the center of the aruco tag
+
+                // Convert vector from image coordinate to drone navigation coordinate
+                cv::Point2f motion_vector[i] = convertImageVectorToMotionVector(image_vector[i]);
+            }
+
+            //---> Codes commented below show how to drive the drone to move to the direction such that desired tag is in the center of image frame
+
             // If there's no tag detected, no motion required
-//            if(n==0){
-//                motion_vector = cv::Point2f(0,0);
-//            }
-            
-            // Use MoveVxVyYawrateVz(...) or MoveVxVyYawrateHeight(...)
-            // depending on the mode you choose at the beginning of this function
-//            if((image_vector.x*image_vector.x + image_vector.y*image_vector.y)<900)
-//                MoveVxVyYawrateVz(spark_ptr, motion_vector.x, motion_vector.y, 0, -0.2);
-//            else
-//                MoveVxVyYawrateVz(spark_ptr, motion_vector.x, motion_vector.y, 0, 0);
+            if(n==0)
+              {
+                  motion_vector = cv::Point2f(0,0);
+              }
 
-//            std::cout<<"Moving By::"<<motion_vector<<"\n";
-            
+            // Use MoveVxVyYawrateVz(...) or MoveVxVyYawrateHeight(...) depending on the mode you choose at the beginning of this function
+            if(((image_vector.x * image_vector.x) + (image_vector.y * image_vector.y))　<　900)
+                MoveVxVyYawrateVz(spark_ptr, motion_vector.x, motion_vector.y, 0, -0.2);
+            else
+                MoveVxVyYawrateVz(spark_ptr, motion_vector.x, motion_vector.y, 0, 0);
+
+            std::cout<<"Moving By::"<<motion_vector<<"\n";
+
             // Move the camera to look down so you can see the tags
             PitchGimbal(spark_ptr,-75.0);
-            
+
             // Sample function to help you control the drone
             // Such as takeoff and land
-//            TakeOff(spark_ptr);
-//            Land(spark_ptr);
-            
+            TakeOff(spark_ptr);
+            Land(spark_ptr);
+
             // Convert opencv image back to iOS UIImage
             [self.viewProcessed setImage:[OpenCVConversion UIImageFromCVMat:grayImg]];
-            
+
             // Print some debug text on the App
             self.debug2.text = [NSString stringWithFormat:@"%d Tags", n];
         };
@@ -466,7 +487,7 @@ using namespace std;
 {
     enum {FORWARD=0, DOWN=1};
     static int action = FORWARD;
-    
+
     if(action == FORWARD)
     {
         if([self.spark setGimbalPitchDegree: 0.0] == FALSE) {
@@ -490,7 +511,7 @@ using namespace std;
 {
     enum {TAKEOFF=0, LAND=1};
     static int action = TAKEOFF;
-    
+
     if(action == TAKEOFF)
     {
         if([self.spark takeoff] == FALSE) {
@@ -510,7 +531,7 @@ using namespace std;
         else {
             [self showAlertViewWithTitle:@"Land" withMessage:@"Succeeded"];
         }
-        
+
         [self.btnTakeoffLand setTitle:@"Takeoff" forState:UIControlStateNormal];
         action = TAKEOFF;
     }
@@ -539,11 +560,11 @@ using namespace std;
                 return;
             }
             cv::resize(colorImg, colorImg, cv::Size(480, 360));
-            
+
             //TODO CMU: insert the image processing function call here
             //Implement the function in MagicInAir.mm.
             sampleMovement(colorImg, self.spark);
-            
+
             [self.viewProcessed setImage:[OpenCVConversion UIImageFromCVMat:colorImg]];
             //self.debug2.text = [NSString stringWithFormat:@"%d Tags", n];
         };
@@ -584,9 +605,9 @@ using namespace std;
 
 }
 - (IBAction)doAR:(id)sender {
-    
+
     self.debug2.text = @"AR mode";
-    
+
     if(self.imgProcType == IMG_PROC_AR)
     {
         self.imgProcType = IMG_PROC_DEFAULT;
@@ -599,20 +620,20 @@ using namespace std;
         // Virtual stick mode is a control interface
         // allow user to progrmmatically control the drone's movement
         [self.spark enterVirtualStickMode];
-        
+
         // This will change the behavior in the z-axis of the drone
         // If you call change set vertical mode to absolute height
         // Use MoveVxVyYawrateHeight(...)
         // Otherwise use MoveVxVyYawrateVz(...)
         [self.spark setVerticleModeToAbsoluteHeight];
-        
+
         self.imgProcType = IMG_PROC_AR;
-        
+
         // Here we load the dji logo as the image we would like to overlay as our AR object
         NSString *logoPath = [[NSBundle mainBundle] pathForResource:@"dji_logo" ofType:@"jpg"];
         const char* logoPathInC = [logoPath cStringUsingEncoding:NSUTF8StringEncoding];
         cv::Mat logo = imread(logoPathInC);
-        
+
         // Load the camera parameters from yml file
         // Each camera has different parameters but they should be close to for every DJI Spark
         // If you find the calibration or AR effect is not accurate, please calibrate your Spark
@@ -625,23 +646,23 @@ using namespace std;
         fs["image_height"] >> h;
         fs["distortion_coefficients"] >> distortion;
         fs["camera_matrix"] >> intrinsic;
-        
-        
+
+
         // Please measure the marker size in Meter and enter it here
         const float markerSizeMeter = 0.13;
         const float halfSize = markerSizeMeter * 0.5;
-        
+
         // Self-defined tag location in 3D, this is used in step 2 below
         std::vector<cv::Point3f> objPoints{
             cv::Point3f(-halfSize, halfSize, 0),
             cv::Point3f(halfSize, halfSize, 0),
             cv::Point3f(halfSize, -halfSize, 0),
             cv::Point3f(-halfSize, -halfSize, 0)
-        };
-        
+         ;
+
         // AR object points in 3D, this is used in step 4 below
         cv::Mat objectPoints(8, 3, CV_32FC1);
-        
+
         objectPoints.at< float >(0, 0) = -halfSize;
         objectPoints.at< float >(0, 1) = -halfSize;
         objectPoints.at< float >(0, 2) = 0;
@@ -654,7 +675,7 @@ using namespace std;
         objectPoints.at< float >(3, 0) = -halfSize;
         objectPoints.at< float >(3, 1) = halfSize;
         objectPoints.at< float >(3, 2) = 0;
-        
+
         objectPoints.at< float >(4, 0) = -halfSize;
         objectPoints.at< float >(4, 1) = -halfSize;
         objectPoints.at< float >(4, 2) = markerSizeMeter;
@@ -667,11 +688,11 @@ using namespace std;
         objectPoints.at< float >(7, 0) = -halfSize;
         objectPoints.at< float >(7, 1) = halfSize;
         objectPoints.at< float >(7, 2) = markerSizeMeter;
-        
+
         self.processFrame =
         ^(UIImage *frame){
-            
-            
+
+
             // Since this is the bonus part, only high-level instructions will be provided
             // One way you can do this is to:
             // 1. Identify the Aruco tags with corner pixel location
@@ -690,15 +711,15 @@ using namespace std;
             // 6. Once the homography is found, warp the image with perspective
             //    Hint: cv::warpPerspective(...)
             // 7. Now you have the warped logo image in the right location, just overlay them on top of the camera image
-            
+
             // Load the images
             cv::Mat colorImg = [OpenCVConversion cvMatFromUIImage:frame];
             cv::cvtColor(colorImg, colorImg, CV_RGB2BGR);
             cv::Mat grayImg = [OpenCVConversion cvMatGrayFromUIImage:frame];
 
             // Do your magic!!!
-                
-                
+
+
             // Hint how to overlay warped logo onto the original camera image
 //            cv::Mat gray,grayInv,src1Final,src2Final;
 //            cvtColor(logoWarped,gray,CV_BGR2GRAY);
@@ -707,15 +728,15 @@ using namespace std;
 //            colorImg.copyTo(src1Final,grayInv);
 //            logoWarped.copyTo(src2Final,gray);
 //            colorImg = src1Final+src2Final;
-            
+
             cv::cvtColor(colorImg, colorImg, CV_BGR2RGB);
             [self.viewProcessed setImage:[OpenCVConversion UIImageFromCVMat:colorImg]];
-            
-            
+
+
         };
-        
+
     }
-    
+
 }
 
 
