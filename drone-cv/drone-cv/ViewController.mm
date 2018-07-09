@@ -7,6 +7,7 @@
 //
 
 #import <opencv2/opencv.hpp>
+
 #import "ViewController.h"
 #import <DJISDK/DJISDK.h>
 #import <VideoPreviewer/VideoPreviewer.h>
@@ -17,6 +18,7 @@
   #include <opencv2/imgproc/imgproc.hpp>
   #include <opencv2/objdetect/objdetect.hpp>
   #include <opencv2/video/tracking.hpp>
+  #include <algorithm>
 #include "MagicInAir.h"
 using namespace std;
 #endif
@@ -418,16 +420,16 @@ using namespace std;
 
             NSInteger n = ids.size(); //n represents the number of aruco tags that are under the flying image
 
-            auto Number_AR_Tags = 17 //This variable contains the total number of AR tags in teh course
+            auto Number_AR_Tags = 17; //This variable contains the total number of AR tags in teh course
 
             //----------------LOGIC-----------------Implement your logic to decide where to move the drone----------------
 
             //---> Below snippet is an example of how you can calculate the center of the marker
 
 
-            <std::vector<cv::Point2f> marker_center;
-            <std::vector<cv::Point2f> image_vector;
-            <std::vector<cv::Point2f> motion_vector;
+            std::vector<cv::Point2f> marker_center;
+            std::vector<cv::Point2f> image_vector;
+            std::vector<cv::Point2f> motion_vector;
             //cv::Point2f marker_center(0,0);
             //Initialising the marker center to 0, 0
 
@@ -453,7 +455,7 @@ using namespace std;
             // Find the largest consequnce id
             #endif
             std::vector<cv::Point2f>  corner;
-            std::sort(ids,ids.begin(),ids.end());
+            std::sort(ids.begin(),ids.end());
             for (size_t i = 0; i < n; i++) {
               if(current_tag + 1 == ids[i])
               {
@@ -463,7 +465,7 @@ using namespace std;
             }
             std::cout<<"\n current_tag " <<  current_tag;
             cv::Point2f mark_center = VectorAverage(corner);
-            float error = (mark_center - 240) / 480.0f; // get the error and normalize it
+            float error = (mark_center.y - 240) / 480.0f; // get the error and normalize it
             float const TOL = 0.1;
             float const FORWARD_SPEED = 0.4;
             float const SPEED_WHILE_ROTATION = 0.1;
@@ -486,7 +488,7 @@ using namespace std;
             }
 
             // Move the camera to look down so you can see the tags
-            PitchGimbal(spark_ptr,-40.0);
+            PitchGimbal(spark_ptr,-45.0);
 
             // Sample function to help you control the drone
             // Such as takeoff and land
@@ -680,7 +682,7 @@ using namespace std;
             cv::Point3f(halfSize, halfSize, 0),
             cv::Point3f(halfSize, -halfSize, 0),
             cv::Point3f(-halfSize, -halfSize, 0)
-         ;
+        };
 
         // AR object points in 3D, this is used in step 4 below
         cv::Mat objectPoints(8, 3, CV_32FC1);
