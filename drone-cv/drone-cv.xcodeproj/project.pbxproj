@@ -25,6 +25,9 @@
 		02EC54BD1F0F5B62004010BB /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 02EC54BC1F0F5B62004010BB /* libiconv.tbd */; };
 		02EC54C71F0F5E76004010BB /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02EC54C61F0F5E76004010BB /* AVFoundation.framework */; };
 		02EC54C91F0F5E7D004010BB /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02EC54C81F0F5E7D004010BB /* CoreMedia.framework */; };
+		22E5473720F0173D0046B044 /* spark_main_cam_param.yml in Resources */ = {isa = PBXBuildFile; fileRef = 22E5473420F0173D0046B044 /* spark_main_cam_param.yml */; };
+		22E5473820F0173D0046B044 /* dji_logo.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 22E5473520F0173D0046B044 /* dji_logo.jpg */; };
+		22E5473920F0173D0046B044 /* mavic_air.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 22E5473620F0173D0046B044 /* mavic_air.jpg */; };
 		25C4FA351F11E3C400B46006 /* mavic.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 25C4FA341F11E3C400B46006 /* mavic.jpg */; };
 		320626CE1F30E553007ABADC /* VideoPreviewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 320626CD1F30E542007ABADC /* VideoPreviewer.framework */; };
 		320626CF1F30E553007ABADC /* VideoPreviewer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 320626CD1F30E542007ABADC /* VideoPreviewer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -93,6 +96,9 @@
 		02EC54C61F0F5E76004010BB /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		02EC54C81F0F5E7D004010BB /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		0F8B5F0459EBB972032268B3 /* Pods-drone-cv.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-drone-cv.debug.xcconfig"; path = "Pods/Target Support Files/Pods-drone-cv/Pods-drone-cv.debug.xcconfig"; sourceTree = "<group>"; };
+		22E5473420F0173D0046B044 /* spark_main_cam_param.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spark_main_cam_param.yml; sourceTree = SOURCE_ROOT; };
+		22E5473520F0173D0046B044 /* dji_logo.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = dji_logo.jpg; sourceTree = SOURCE_ROOT; };
+		22E5473620F0173D0046B044 /* mavic_air.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = mavic_air.jpg; sourceTree = SOURCE_ROOT; };
 		25C4FA341F11E3C400B46006 /* mavic.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = mavic.jpg; sourceTree = SOURCE_ROOT; };
 		320626C81F30E541007ABADC /* VideoPreviewer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VideoPreviewer.xcodeproj; path = ../VideoPreviewer/VideoPreviewer.xcodeproj; sourceTree = "<group>"; };
 		321110431F319BCE009D88EC /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
@@ -164,6 +170,9 @@
 				25C4FA341F11E3C400B46006 /* mavic.jpg */,
 				02E271041F0EF6A900474319 /* AppDelegate.h */,
 				02E271051F0EF6A900474319 /* AppDelegate.m */,
+				22E5473520F0173D0046B044 /* dji_logo.jpg */,
+				22E5473620F0173D0046B044 /* mavic_air.jpg */,
+				22E5473420F0173D0046B044 /* spark_main_cam_param.yml */,
 				02E271071F0EF6A900474319 /* ViewController.h */,
 				02E271081F0EF6A900474319 /* ViewController.mm */,
 				0284886E1F16D78500787BF8 /* drone-cv-PrefixHeader.pch */,
@@ -237,7 +246,6 @@
 				02E270FB1F0EF6A900474319 /* Frameworks */,
 				02E270FC1F0EF6A900474319 /* Resources */,
 				D7C582536F1D81199CFC3B7A /* [CP] Embed Pods Frameworks */,
-				5E3D3357E26F00DF516E791A /* [CP] Copy Pods Resources */,
 				02E271361F0EFF3A00474319 /* Embed Frameworks */,
 			);
 			buildRules = (
@@ -307,9 +315,12 @@
 			files = (
 				32ECCF4E1F29611E00186107 /* haarcascade_frontalface_alt.xml in Resources */,
 				25C4FA351F11E3C400B46006 /* mavic.jpg in Resources */,
+				22E5473820F0173D0046B044 /* dji_logo.jpg in Resources */,
 				02E271111F0EF6A900474319 /* LaunchScreen.storyboard in Resources */,
 				02E2710E1F0EF6A900474319 /* Assets.xcassets in Resources */,
+				22E5473720F0173D0046B044 /* spark_main_cam_param.yml in Resources */,
 				02E2710C1F0EF6A900474319 /* Main.storyboard in Resources */,
+				22E5473920F0173D0046B044 /* mavic_air.jpg in Resources */,
 				328864811F2BE8740073B6A9 /* lbpcascade_frontalface.xml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -323,28 +334,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-drone-cv-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		5E3D3357E26F00DF516E791A /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-drone-cv/Pods-drone-cv-resources.sh\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		D7C582536F1D81199CFC3B7A /* [CP] Embed Pods Frameworks */ = {
@@ -353,9 +352,12 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-drone-cv/Pods-drone-cv-frameworks.sh",
+				"${PODS_ROOT}/DJI-SDK-iOS/iOS_Mobile_SDK/DJISDK.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DJISDK.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
